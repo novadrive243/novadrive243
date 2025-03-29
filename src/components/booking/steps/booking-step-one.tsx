@@ -36,6 +36,7 @@ interface BookingStepOneProps {
   dayOptions: number[];
   monthOptions: number[];
   handleContinue: () => void;
+  selectedVehicle: string | null; // Add the missing prop
 }
 
 export function BookingStepOne({
@@ -60,7 +61,8 @@ export function BookingStepOne({
   hourOptions,
   dayOptions,
   monthOptions,
-  handleContinue
+  handleContinue,
+  selectedVehicle // Add the parameter to destructuring
 }: BookingStepOneProps) {
   const { t } = useLanguage();
   
