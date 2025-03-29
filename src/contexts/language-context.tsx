@@ -16,6 +16,7 @@ const translations: Record<Language, TranslationData> = {
       home: 'Accueil',
       about: 'À propos',
       services: 'Services',
+      pricing: 'Tarifs',
       contact: 'Contact',
       bookNow: 'Réserver maintenant'
     },
@@ -44,6 +45,23 @@ const translations: Record<Language, TranslationData> = {
       capacity: 'Capacité',
       select: 'Sélectionner'
     },
+    pricing: {
+      title: 'Nos Tarifs',
+      bookNow: 'Réserver',
+      perDay: 'par jour',
+      perHour: 'par heure',
+      hourRange: 'De 7h à 21h',
+      nightSupplement: 'Supplément après 21h',
+      standard: {
+        title: 'Standard'
+      },
+      premium: {
+        title: 'Premium'
+      },
+      vip: {
+        title: 'VIP'
+      }
+    },
     footer: {
       company: 'Entreprise',
       about: 'À propos',
@@ -65,6 +83,7 @@ const translations: Record<Language, TranslationData> = {
       home: 'Home',
       about: 'About',
       services: 'Services',
+      pricing: 'Pricing',
       contact: 'Contact',
       bookNow: 'Book Now'
     },
@@ -92,6 +111,23 @@ const translations: Record<Language, TranslationData> = {
       comfort: 'Comfort',
       capacity: 'Capacity',
       select: 'Select'
+    },
+    pricing: {
+      title: 'Our Pricing',
+      bookNow: 'Book Now',
+      perDay: 'per day',
+      perHour: 'per hour',
+      hourRange: 'From 7am to 9pm',
+      nightSupplement: 'Night supplement after 9pm',
+      standard: {
+        title: 'Standard'
+      },
+      premium: {
+        title: 'Premium'
+      },
+      vip: {
+        title: 'VIP'
+      }
     },
     footer: {
       company: 'Company',
