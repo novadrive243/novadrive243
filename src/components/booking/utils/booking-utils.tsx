@@ -15,28 +15,36 @@ export const calculateVehiclePrice = (
 ): number => {
   if (!vehicle) return 0;
   
+  // Add some debugging
+  console.log(`Calculating price for vehicle: ${vehicle.name}`);
+  console.log(`Duration type: ${durationType}, Days: ${days}`);
+  
   switch (durationType) {
     case 'hourly': 
       return vehicle.price.hourly * duration;
     case 'daily': 
       // Apply tiered pricing based on number of days
+      console.log('Vehicle price structure:', vehicle.price);
+      
       if (days >= 30) {
         // If days >= 30, use monthly rate
+        console.log(`Using monthly rate: ${vehicle.price.monthly}`);
         return vehicle.price.monthly;
-      } else if (days >= 25 && days <= 29) {
-        // 25-29 days: use daily rate from 25-day package
-        const dailyRate = vehicle.price.twentyFiveDayPackage / 25;
-        return dailyRate * days;
-      } else if (days >= 15 && days <= 24) {
-        // 15-24 days: use daily rate from 15-day package
-        const dailyRate = vehicle.price.fifteenDayPackage / 15;
-        return dailyRate * days;
-      } else if (days >= 10 && days <= 14) {
-        // 10-14 days: use daily rate from 10-day package
-        const dailyRate = vehicle.price.tenDayPackage / 10;
-        return dailyRate * days;
+      } else if (days >= 25) {
+        // 25+ days: use 25-day package price
+        console.log(`Using 25-day package: ${vehicle.price.twentyFiveDayPackage}`);
+        return vehicle.price.twentyFiveDayPackage;
+      } else if (days >= 15) {
+        // 15+ days: use 15-day package price
+        console.log(`Using 15-day package: ${vehicle.price.fifteenDayPackage}`);
+        return vehicle.price.fifteenDayPackage;
+      } else if (days >= 10) {
+        // 10+ days: use 10-day package price
+        console.log(`Using 10-day package: ${vehicle.price.tenDayPackage}`);
+        return vehicle.price.tenDayPackage;
       } else {
         // 1-9 days: use standard daily rate
+        console.log(`Using daily rate: ${vehicle.price.daily * days}`);
         return vehicle.price.daily * days;
       }
     case 'monthly': 

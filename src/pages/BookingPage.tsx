@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -62,17 +63,19 @@ const BookingPage = () => {
     const vehicle = getSelectedVehicle();
     if (!vehicle) return "0";
     
+    console.log('BookingPage - Vehicle:', vehicle.name);
+    console.log('BookingPage - Duration Type:', durationType);
+    console.log('BookingPage - Days:', days);
+    
     const total = calculateVehiclePrice(vehicle, durationType, hours, days, months);
+    console.log('BookingPage - Calculated Base Price:', total);
     
     let finalPrice = total;
     if (paymentMethod && paymentMethod !== 'cash') {
       finalPrice = total * 0.95;
+      console.log('BookingPage - Applied 5% discount for non-cash payment');
     }
     
-    console.log('BookingPage - Vehicle:', vehicle.name);
-    console.log('BookingPage - Duration Type:', durationType);
-    console.log('BookingPage - Days:', days);
-    console.log('BookingPage - Base Price:', total);
     console.log('BookingPage - Final Price:', finalPrice);
     
     return finalPrice.toFixed(2);
