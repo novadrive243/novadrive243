@@ -25,6 +25,9 @@ interface Message {
   timestamp: Date;
 }
 
+// API key for OpenAI
+const OPENAI_API_KEY = "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";
+
 const ContactChat = () => {
   const { t, language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
@@ -70,7 +73,7 @@ const ContactChat = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer YOUR_OPENAI_API_KEY`, // This should be replaced with an environment variable
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
           model: 'gpt-4o-mini',

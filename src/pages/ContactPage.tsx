@@ -6,6 +6,15 @@ import { useLanguage } from "@/contexts/language-context";
 import ContactForm from '@/components/contact/contact-form';
 import ContactInfo from '@/components/contact/contact-info';
 import ContactChat from '@/components/contact/contact-chat';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle,
+  DialogTrigger 
+} from "@/components/ui/dialog";
+import { MessageCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const ContactPage = () => {
   const { t } = useLanguage();
@@ -25,6 +34,33 @@ const ContactPage = () => {
               <p className="text-nova-white/70 text-lg">
                 {t('contact.subtitle')}
               </p>
+              
+              {/* Chat Dialog Trigger */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="mt-8 gold-btn flex items-center gap-2">
+                    <MessageCircle className="h-5 w-5" />
+                    {language === 'fr' ? 'Chat avec nous' : 'Chat with us'}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <MessageCircle className="h-5 w-5 text-nova-gold" />
+                      {t('contact.chatTitle')}
+                    </DialogTitle>
+                  </DialogHeader>
+                  {/* Chat interface inside dialog */}
+                  <div className="h-[60vh] flex flex-col">
+                    {/* We'll embed the chat functionality directly */}
+                    <iframe 
+                      src="/contact" 
+                      className="w-full h-full border-none"
+                      title="Chat"
+                    />
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
