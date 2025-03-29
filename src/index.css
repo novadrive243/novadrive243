@@ -53,6 +53,24 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-poppins font-semibold;
   }
+  
+  /* Custom scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #1a1a1a;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgba(232, 191, 82, 0.5);
+    border-radius: 3px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(232, 191, 82, 0.8);
+  }
 }
 
 @layer components {
@@ -70,5 +88,87 @@
   
   .language-switcher {
     @apply text-nova-gold hover:text-nova-lightgold transition-colors duration-300;
+  }
+  
+  /* Styles for the OTP component */
+  .clip-path-half {
+    clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+  }
+  
+  /* Login and authentication styling */
+  .auth-container {
+    @apply min-h-screen flex flex-col items-center justify-center bg-nova-black p-4;
+  }
+  
+  /* Custom tab navigation styling */
+  .tab-nav {
+    @apply fixed bottom-0 left-0 right-0 bg-nova-black border-t border-nova-gold/20 p-2 z-10;
+  }
+  
+  .tab-item {
+    @apply flex flex-col items-center p-2 transition-colors duration-200;
+  }
+  
+  .tab-item.active {
+    @apply text-nova-gold;
+  }
+  
+  .tab-item.inactive {
+    @apply text-nova-white/70 hover:text-nova-white;
+  }
+}
+
+@layer utilities {
+  .bg-gold-gradient {
+    background: linear-gradient(90deg, #E8BF52 0%, #C99D2D 100%);
+  }
+  
+  .bg-nova-black {
+    background-color: #0A0A0A;
+  }
+  
+  .bg-nova-gray {
+    background-color: #1A1A1A;
+  }
+  
+  .text-nova-gold {
+    color: #E8BF52;
+  }
+  
+  .text-nova-lightgold {
+    color: #F0D082;
+  }
+  
+  .border-nova-gold {
+    border-color: #E8BF52;
+  }
+  
+  /* For mobile optimization */
+  .mobile-container {
+    @apply max-w-lg mx-auto w-full;
+  }
+  
+  /* Responsive text sizes */
+  .text-responsive {
+    @apply text-base md:text-lg;
+  }
+  
+  /* Animations */
+  .fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .slide-up {
+    animation: slideUp 0.3s ease-in-out;
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
   }
 }
