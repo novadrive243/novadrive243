@@ -35,7 +35,7 @@ export function Header() {
               e.currentTarget.style.display = 'none';
             }}
           />
-          <span className="bg-gold-gradient text-white px-6 py-2 rounded-lg shadow-[0_0_20px_rgba(232,191,82,0.6)] border border-nova-gold/30 font-sfpro text-2xl font-bold">NovaDrive</span>
+          <span className="font-sfpro text-2xl font-bold text-white px-3 py-1 rounded shadow-[0_0_10px_rgba(232,191,82,0.5)] bg-nova-black border border-nova-gold">NovaDrive</span>
         </Link>
         
         <nav className="hidden md:flex items-center space-x-6">
