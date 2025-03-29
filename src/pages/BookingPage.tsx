@@ -11,6 +11,7 @@ import { BookingStepOneDetails } from '@/components/booking/steps/BookingStepOne
 import { BookingStepTwoVehicle } from '@/components/booking/steps/BookingStepTwoVehicle';
 import { BookingStepThreePayment } from '@/components/booking/steps/BookingStepThreePayment';
 import { renderStars } from '@/components/booking/utils/booking-utils';
+import { format } from "date-fns";
 
 const BookingPage = () => {
   const { language } = useLanguage();
@@ -58,9 +59,9 @@ const BookingPage = () => {
     return vehicles.find(v => v.id === selectedVehicle);
   };
   
-  const calculateTotalPrice = () => {
+  const calculateTotalPrice = (): string => {
     const vehicle = getSelectedVehicle();
-    if (!vehicle) return 0;
+    if (!vehicle) return "0";
     
     let total = 0;
     switch (durationType) {
@@ -210,7 +211,5 @@ const BookingPage = () => {
     </div>
   );
 };
-
-import { format } from "date-fns";
 
 export default BookingPage;
