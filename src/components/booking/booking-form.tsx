@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function BookingForm() {
   const { t } = useLanguage();
@@ -119,8 +120,12 @@ export function BookingForm() {
 
   // Generate arrays for the duration options
   const hourOptions = [1, 2, 3, 4, 5, 6, 7, 14, 21, 30];
-  const dayOptions = Array.from({ length: 31 }, (_, i) => i + 1); // 1-31 days
-  const monthOptions = Array.from({ length: 12 }, (_, i) => i + 1); // 1-12 months
+  
+  // Create an array with all days of the month (1-31)
+  const dayOptions = Array.from({ length: 31 }, (_, i) => i + 1);
+  
+  // Create an array with all months of the year (1-12)
+  const monthOptions = Array.from({ length: 12 }, (_, i) => i + 1);
   
   return (
     <Card className="nova-card max-w-3xl mx-auto">
@@ -264,14 +269,16 @@ export function BookingForm() {
                         <SelectTrigger className="w-full bg-nova-gray/30 border-nova-gold/30 text-nova-white">
                           <SelectValue placeholder="Select hours" />
                         </SelectTrigger>
-                        <SelectContent className="max-h-60 overflow-auto bg-nova-gray border-nova-gold/30">
-                          <SelectGroup>
-                            {hourOptions.map((hour) => (
-                              <SelectItem key={hour} value={hour.toString()} className="text-nova-white hover:bg-nova-gold/20">
-                                {hour} {hour === 1 ? 'jour' : 'jours'}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
+                        <SelectContent className="bg-nova-gray border-nova-gold/30 text-nova-white">
+                          <ScrollArea className="h-60">
+                            <SelectGroup>
+                              {hourOptions.map((hour) => (
+                                <SelectItem key={hour} value={hour.toString()} className="text-nova-white hover:bg-nova-gold/20">
+                                  {hour} {hour === 1 ? 'hour' : 'hours'}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </ScrollArea>
                         </SelectContent>
                       </Select>
                     </div>
@@ -287,14 +294,16 @@ export function BookingForm() {
                         <SelectTrigger className="w-full bg-nova-gray/30 border-nova-gold/30 text-nova-white">
                           <SelectValue placeholder="Select days" />
                         </SelectTrigger>
-                        <SelectContent className="max-h-60 overflow-auto bg-nova-gray border-nova-gold/30">
-                          <SelectGroup>
-                            {dayOptions.map((day) => (
-                              <SelectItem key={day} value={day.toString()} className="text-nova-white hover:bg-nova-gold/20">
-                                {day} {day === 1 ? 'jour' : 'jours'}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
+                        <SelectContent className="bg-nova-gray border-nova-gold/30 text-nova-white">
+                          <ScrollArea className="h-60">
+                            <SelectGroup>
+                              {dayOptions.map((day) => (
+                                <SelectItem key={day} value={day.toString()} className="text-nova-white hover:bg-nova-gold/20">
+                                  {day} {day === 1 ? 'jour' : 'jours'}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </ScrollArea>
                         </SelectContent>
                       </Select>
                     </div>
@@ -310,14 +319,16 @@ export function BookingForm() {
                         <SelectTrigger className="w-full bg-nova-gray/30 border-nova-gold/30 text-nova-white">
                           <SelectValue placeholder="Select months" />
                         </SelectTrigger>
-                        <SelectContent className="max-h-60 overflow-auto bg-nova-gray border-nova-gold/30">
-                          <SelectGroup>
-                            {monthOptions.map((month) => (
-                              <SelectItem key={month} value={month.toString()} className="text-nova-white hover:bg-nova-gold/20">
-                                {month} {month === 1 ? 'mois' : 'mois'}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
+                        <SelectContent className="bg-nova-gray border-nova-gold/30 text-nova-white">
+                          <ScrollArea className="h-60">
+                            <SelectGroup>
+                              {monthOptions.map((month) => (
+                                <SelectItem key={month} value={month.toString()} className="text-nova-white hover:bg-nova-gold/20">
+                                  {month} {month === 1 ? 'mois' : 'mois'}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </ScrollArea>
                         </SelectContent>
                       </Select>
                     </div>
