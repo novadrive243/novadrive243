@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Card, CardContent } from "@/components/ui/card";
@@ -81,7 +82,7 @@ export function VehiclesSection() {
     {
       id: 'toyota-fortuner',
       name: 'Toyota Fortuner',
-      image: '/lovable-uploads/8337e561-5a74-4d76-8fac-6fb00b629bad.png',
+      image: '/lovable-uploads/d46547d7-848f-40e6-8df3-826987faa8ef.png',
       comfort: 5,
       capacity: 6
     }
