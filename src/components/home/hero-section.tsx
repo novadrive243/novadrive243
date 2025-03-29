@@ -25,7 +25,7 @@ export function HeroSection() {
       <div className="container mx-auto px-4 z-10">
         <div className="max-w-3xl">
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 animate-slide-down">
-            <span className="gold-gradient-text">NovaDrive</span>
+            <span className="gold-gradient-text">Novakin</span>
           </h1>
           <h2 className="text-3xl md:text-4xl font-medium mb-6 animate-slide-down" style={{ animationDelay: '0.1s' }}>
             {t('hero.title')}

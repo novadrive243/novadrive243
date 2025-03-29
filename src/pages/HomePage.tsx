@@ -1,6 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 import { HeroSection } from "@/components/home/hero-section";
 import { VehiclesSection } from "@/components/home/vehicles-section";
 import { useNavigate } from 'react-router-dom';
@@ -26,6 +27,7 @@ const HomePage = () => {
         <HeroSection />
         <VehiclesSection />
       </div>
+      <Footer />
     </div>
   );
 };
