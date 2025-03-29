@@ -35,7 +35,7 @@ export function Header() {
               e.currentTarget.style.display = 'none';
             }}
           />
-          <span className="font-sfpro text-2xl font-bold bg-gold-gradient text-transparent bg-clip-text">NovaDrive</span>
+          <span className="font-sfpro text-2xl font-bold bg-gold-gradient text-transparent bg-clip-text drop-shadow-[0_1px_2px_rgba(232,191,82,0.6)]">NovaDrive</span>
         </Link>
         
         <nav className="hidden md:flex items-center space-x-6">
