@@ -8,6 +8,7 @@ export interface Vehicle {
   price: {
     hourly: number;
     daily: number;
+    monthly: number;
   };
 }
 
@@ -20,7 +21,8 @@ export const vehicles: Vehicle[] = [
     capacity: 6,
     price: {
       hourly: 60,
-      daily: 400
+      daily: 400,
+      monthly: 9000
     }
   },
   {
@@ -31,7 +33,8 @@ export const vehicles: Vehicle[] = [
     capacity: 6,
     price: {
       hourly: 35,
-      daily: 200
+      daily: 200,
+      monthly: 4500
     }
   },
   {
@@ -42,7 +45,8 @@ export const vehicles: Vehicle[] = [
     capacity: 6,
     price: {
       hourly: 25,
-      daily: 150
+      daily: 150,
+      monthly: 3000
     }
   }
 ];

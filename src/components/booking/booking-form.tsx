@@ -26,9 +26,10 @@ export function BookingForm() {
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [durationType, setDurationType] = useState<'hourly' | 'daily'>('hourly');
+  const [durationType, setDurationType] = useState<'hourly' | 'daily' | 'monthly'>('hourly');
   const [duration, setDuration] = useState<number>(3); // Default: 3 hours
   const [days, setDays] = useState<number>(1); // Default: 1 day
+  const [months, setMonths] = useState<number>(1); // Default: 1 month
   
   useEffect(() => {
     const vehicleId = searchParams.get('vehicle');
@@ -59,7 +60,7 @@ export function BookingForm() {
           vehicle: selectedVehicle,
           vehicleName: vehicles.find(v => v.id === selectedVehicle)?.name,
           durationType,
-          duration: durationType === 'hourly' ? duration : days,
+          duration: getDurationValue(),
           price: getSelectedVehiclePrice(),
         };
         
@@ -82,7 +83,17 @@ export function BookingForm() {
         setDurationType('hourly');
         setDuration(3);
         setDays(1);
+        setMonths(1);
       }, 2000);
+    }
+  };
+  
+  const getDurationValue = () => {
+    switch (durationType) {
+      case 'hourly': return duration;
+      case 'daily': return days;
+      case 'monthly': return months;
+      default: return duration;
     }
   };
   
@@ -90,9 +101,12 @@ export function BookingForm() {
     const vehicle = vehicles.find(v => v.id === selectedVehicle);
     if (!vehicle) return 0;
     
-    return durationType === 'hourly' 
-      ? vehicle.price.hourly * duration
-      : vehicle.price.daily * days;
+    switch (durationType) {
+      case 'hourly': return vehicle.price.hourly * duration;
+      case 'daily': return vehicle.price.daily * days;
+      case 'monthly': return vehicle.price.monthly * months;
+      default: return vehicle.price.hourly * duration;
+    }
   };
   
   return (
@@ -195,10 +209,10 @@ export function BookingForm() {
                     </div>
                   </div>
                   
-                  {/* Durée - Hourly or Daily */}
+                  {/* Duration Type - Hourly, Daily or Monthly */}
                   <div className="mt-4">
                     <Label className="mb-2 block">Duration Type</Label>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-3 gap-2">
                       <Button
                         type="button"
                         variant={durationType === 'hourly' ? 'default' : 'outline'}
@@ -215,10 +229,18 @@ export function BookingForm() {
                       >
                         {t('booking.daily') || 'Daily'}
                       </Button>
+                      <Button
+                        type="button"
+                        variant={durationType === 'monthly' ? 'default' : 'outline'}
+                        className={durationType === 'monthly' ? 'bg-nova-gold text-nova-black' : 'border-nova-gold/30'}
+                        onClick={() => setDurationType('monthly')}
+                      >
+                        {t('booking.monthly') || 'Monthly'}
+                      </Button>
                     </div>
                   </div>
                   
-                  {durationType === 'hourly' ? (
+                  {durationType === 'hourly' && (
                     <div>
                       <Label htmlFor="duration">Hours</Label>
                       <select
@@ -234,7 +256,9 @@ export function BookingForm() {
                         ))}
                       </select>
                     </div>
-                  ) : (
+                  )}
+                  
+                  {durationType === 'daily' && (
                     <div>
                       <Label htmlFor="days">Days</Label>
                       <select
@@ -246,6 +270,24 @@ export function BookingForm() {
                         {[1, 2, 3, 4, 5, 6, 7, 14, 30].map((day) => (
                           <option key={day} value={day}>
                             {day} {day === 1 ? 'day' : 'days'}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                  
+                  {durationType === 'monthly' && (
+                    <div>
+                      <Label htmlFor="months">Months</Label>
+                      <select
+                        id="months"
+                        className="w-full p-2 mt-1 bg-nova-gray/30 border border-nova-gold/30 rounded-md text-nova-white"
+                        value={months}
+                        onChange={(e) => setMonths(parseInt(e.target.value))}
+                      >
+                        {[1, 2, 3, 6, 12].map((month) => (
+                          <option key={month} value={month}>
+                            {month} {month === 1 ? 'month' : 'months'}
                           </option>
                         ))}
                       </select>
@@ -292,6 +334,8 @@ export function BookingForm() {
                     <p className="text-xs text-nova-white/70">{t('booking.perHour') || 'per hour'}</p>
                     <p className="text-nova-gold font-bold mt-1">${vehicle.price.daily}</p>
                     <p className="text-xs text-nova-white/70">{t('booking.perDay') || 'per day'}</p>
+                    <p className="text-nova-gold font-bold mt-1">${vehicle.price.monthly}</p>
+                    <p className="text-xs text-nova-white/70">{t('booking.perMonth') || 'per month'}</p>
                   </div>
                 </div>
               ))}
@@ -303,7 +347,9 @@ export function BookingForm() {
                   <span className="text-lg">
                     {durationType === 'hourly'
                       ? `${t('booking.estimatedPrice') || 'Estimated price'} (${duration} ${duration === 1 ? 'hour' : 'hours'})`
-                      : `${t('booking.estimatedPrice') || 'Estimated price'} (${days} ${days === 1 ? 'day' : 'days'})`}
+                      : durationType === 'daily'
+                        ? `${t('booking.estimatedPrice') || 'Estimated price'} (${days} ${days === 1 ? 'day' : 'days'})`
+                        : `${t('booking.estimatedPrice') || 'Estimated price'} (${months} ${months === 1 ? 'month' : 'months'})`}
                   </span>
                   <span className="text-2xl font-bold text-nova-gold">${getSelectedVehiclePrice()}</span>
                 </div>
