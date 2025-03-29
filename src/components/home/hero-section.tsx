@@ -11,13 +11,13 @@ export function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background gradient overlay */}
-      <div className="absolute inset-0 bg-nova-black z-0 opacity-70"></div>
+      <div className="absolute inset-0 bg-nova-black z-0 opacity-50"></div>
       
       {/* Background image */}
       <div 
         className="absolute inset-0 bg-cover bg-center z-[-1]"
         style={{ 
-          backgroundImage: "url('/lovable-uploads/65d17b10-d820-4eba-b913-99b9b12e7c35.png')"
+          backgroundImage: "url('/lovable-uploads/06e63a55-32c9-4efa-b61b-83012b46f61c.png')"
         }}
       ></div>
       
