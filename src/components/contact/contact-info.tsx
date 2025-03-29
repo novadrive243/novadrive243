@@ -2,7 +2,7 @@
 import React from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Card } from "@/components/ui/card";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { Phone, Mail, MapPin, Instagram, Share2 } from "lucide-react";
 
 const ContactInfo = () => {
   const { t } = useLanguage();
@@ -17,7 +17,7 @@ const ContactInfo = () => {
     {
       icon: <Mail className="text-nova-gold" />,
       title: t('contact.email'),
-      info: "info@novadrive.cd",
+      info: "novadrive243@gmail.com",
       description: t('contact.emailDescription')
     },
     {
@@ -25,6 +25,21 @@ const ContactInfo = () => {
       title: t('contact.address'),
       info: t('contact.addressLine'),
       description: t('contact.addressDescription')
+    }
+  ];
+
+  const socialMedia = [
+    {
+      icon: <Instagram className="text-nova-gold" />,
+      platform: "Instagram",
+      username: "novadrive243",
+      url: "https://www.instagram.com/novadrive243"
+    },
+    {
+      icon: <Share2 className="text-nova-gold" />,
+      platform: "TikTok",
+      username: "novadrive243",
+      url: "https://www.tiktok.com/@novadrive243"
     }
   ];
   
@@ -49,6 +64,30 @@ const ContactInfo = () => {
               </div>
             </div>
           ))}
+
+          {/* Social Media Links */}
+          <div className="mt-8">
+            <h4 className="text-lg font-semibold text-nova-gold mb-4">{t('contact.socialMedia') || 'Social Media'}</h4>
+            <div className="flex flex-col space-y-4">
+              {socialMedia.map((item, index) => (
+                <a 
+                  key={index}
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-3 bg-nova-gray/20 rounded-md hover:bg-nova-gray/30 transition-colors"
+                >
+                  <div className="p-2 bg-nova-gray/30 rounded-full">
+                    {item.icon}
+                  </div>
+                  <div>
+                    <span className="font-medium text-nova-white">{item.platform}</span>
+                    <p className="text-nova-white/70 text-sm">@{item.username}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
       
