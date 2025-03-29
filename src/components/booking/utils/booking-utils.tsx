@@ -1,4 +1,3 @@
-
 import { Vehicle } from '@/data/vehicles';
 import React from 'react';
 import { Star } from 'lucide-react';
@@ -25,17 +24,14 @@ export const calculateVehiclePrice = (
         // If days >= 30, use monthly rate
         return vehicle.price.monthly;
       } else if (days >= 25) {
-        // 25-29 days: use 25-day package price ÷ 25
-        const dailyRate = vehicle.price.twentyFiveDayPackage / 25;
-        return dailyRate * days;
+        // 25-29 days: use 25-day package price
+        return vehicle.price.twentyFiveDayPackage;
       } else if (days >= 15) {
-        // 15-24 days: use 15-day package price ÷ 15
-        const dailyRate = vehicle.price.fifteenDayPackage / 15;
-        return dailyRate * days;
+        // 15-24 days: use 15-day package price
+        return vehicle.price.fifteenDayPackage;
       } else if (days >= 10) {
-        // 10-14 days: use 10-day package price ÷ 10
-        const dailyRate = vehicle.price.tenDayPackage / 10;
-        return dailyRate * days;
+        // 10-14 days: use 10-day package price
+        return vehicle.price.tenDayPackage;
       } else {
         // 1-9 days: use standard daily rate
         return vehicle.price.daily * days;

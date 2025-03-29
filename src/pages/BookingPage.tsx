@@ -9,7 +9,7 @@ import { BookingFooter } from '@/components/booking/page-sections/BookingFooter'
 import { BookingStepOneDetails } from '@/components/booking/steps/BookingStepOneDetails';
 import { BookingStepTwoVehicle } from '@/components/booking/steps/BookingStepTwoVehicle';
 import { BookingStepThreePayment } from '@/components/booking/steps/BookingStepThreePayment';
-import { renderStars } from '@/components/booking/utils/booking-utils';
+import { renderStars, calculateVehiclePrice } from '@/components/booking/utils/booking-utils';
 import { format } from "date-fns";
 
 const BookingPage = () => {
@@ -62,26 +62,20 @@ const BookingPage = () => {
     const vehicle = getSelectedVehicle();
     if (!vehicle) return "0";
     
-    let total = 0;
-    switch (durationType) {
-      case 'hourly':
-        total = vehicle.price.hourly * hours;
-        break;
-      case 'daily':
-        total = vehicle.price.daily * days;
-        break;
-      case 'monthly':
-        total = vehicle.price.daily * 30 * months;
-        break;
-      default:
-        total = vehicle.price.hourly * hours;
-    }
+    const total = calculateVehiclePrice(vehicle, durationType, hours, days, months);
     
+    let finalPrice = total;
     if (paymentMethod && paymentMethod !== 'cash') {
-      total = total * 0.95;
+      finalPrice = total * 0.95;
     }
     
-    return total.toFixed(2);
+    console.log('BookingPage - Vehicle:', vehicle.name);
+    console.log('BookingPage - Duration Type:', durationType);
+    console.log('BookingPage - Days:', days);
+    console.log('BookingPage - Base Price:', total);
+    console.log('BookingPage - Final Price:', finalPrice);
+    
+    return finalPrice.toFixed(2);
   };
 
   const handleConfirmBooking = () => {

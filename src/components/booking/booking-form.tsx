@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/language-context';
 import { useSearchParams } from 'react-router-dom';
@@ -99,6 +100,12 @@ export function BookingForm() {
     const vehicle = vehicles.find(v => v.id === selectedVehicle);
     return calculateVehiclePrice(vehicle, durationType, duration, days, months);
   };
+
+  // Add a debug log to check the price calculation
+  console.log('Selected vehicle:', selectedVehicle);
+  console.log('Duration type:', durationType);
+  console.log('Days:', days);
+  console.log('Calculated price:', getSelectedVehiclePrice());
 
   return (
     <Card className="nova-card max-w-3xl mx-auto">
