@@ -23,15 +23,18 @@ export const calculateVehiclePrice = (
       if (days >= 30) {
         // If days >= 30, use monthly rate
         return vehicle.price.monthly;
-      } else if (days >= 25) {
-        // 25-29 days: use 25-day package price
-        return vehicle.price.twentyFiveDayPackage;
-      } else if (days >= 15) {
-        // 15-24 days: use 15-day package price
-        return vehicle.price.fifteenDayPackage;
-      } else if (days >= 10) {
-        // 10-14 days: use 10-day package price
-        return vehicle.price.tenDayPackage;
+      } else if (days >= 25 && days <= 29) {
+        // 25-29 days: use daily rate from 25-day package
+        const dailyRate = vehicle.price.twentyFiveDayPackage / 25;
+        return dailyRate * days;
+      } else if (days >= 15 && days <= 24) {
+        // 15-24 days: use daily rate from 15-day package
+        const dailyRate = vehicle.price.fifteenDayPackage / 15;
+        return dailyRate * days;
+      } else if (days >= 10 && days <= 14) {
+        // 10-14 days: use daily rate from 10-day package
+        const dailyRate = vehicle.price.tenDayPackage / 10;
+        return dailyRate * days;
       } else {
         // 1-9 days: use standard daily rate
         return vehicle.price.daily * days;
