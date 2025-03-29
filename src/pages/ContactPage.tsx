@@ -5,6 +5,7 @@ import { Footer } from '@/components/layout/footer';
 import { useLanguage } from "@/contexts/language-context";
 import ContactForm from '@/components/contact/contact-form';
 import ContactInfo from '@/components/contact/contact-info';
+import ContactChat from '@/components/contact/contact-chat';
 
 const ContactPage = () => {
   const { t } = useLanguage();
@@ -33,6 +34,8 @@ const ContactPage = () => {
           </div>
         </section>
       </main>
+      
+      <ContactChat />
       
       <Footer />
     </div>

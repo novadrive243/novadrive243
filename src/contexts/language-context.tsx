@@ -83,7 +83,11 @@ const translations: Record<Language, TranslationData> = {
       emailDescription: 'Nous répondons dans les 24 heures',
       address: 'Adresse',
       addressLine: 'Kinshasa, République Démocratique du Congo',
-      addressDescription: 'Notre bureau principal'
+      addressDescription: 'Notre bureau principal',
+      chatTitle: 'Assistant NovaDrive',
+      chatPlaceholder: 'Écrivez votre message ici...',
+      chatClose: 'Fermer',
+      chatSendButton: 'Envoyer'
     },
     footer: {
       company: 'Entreprise',
@@ -174,7 +178,11 @@ const translations: Record<Language, TranslationData> = {
       emailDescription: 'We reply within 24 hours',
       address: 'Address',
       addressLine: 'Kinshasa, Democratic Republic of Congo',
-      addressDescription: 'Our main office'
+      addressDescription: 'Our main office',
+      chatTitle: 'NovaDrive Assistant',
+      chatPlaceholder: 'Type your message here...',
+      chatClose: 'Close',
+      chatSendButton: 'Send'
     },
     footer: {
       company: 'Company',
