@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Available languages
@@ -61,6 +60,30 @@ const translations: Record<Language, TranslationData> = {
       vip: {
         title: 'VIP'
       }
+    },
+    contact: {
+      title: 'Contactez-nous',
+      subtitle: 'Notre équipe est prête à vous aider pour toutes vos demandes de service chauffeur à Kinshasa',
+      formTitle: 'Envoyez-nous un message',
+      infoTitle: 'Informations de contact',
+      infoDescription: 'Vous pouvez nous contacter par téléphone, email ou en personne. Notre équipe est disponible pour vous servir.',
+      nameLabel: 'Nom',
+      namePlaceholder: 'Votre nom complet',
+      emailLabel: 'Email',
+      emailPlaceholder: 'votre.email@exemple.com',
+      subjectLabel: 'Sujet',
+      subjectPlaceholder: 'Sujet de votre message',
+      messageLabel: 'Message',
+      messagePlaceholder: 'Écrivez votre message ici...',
+      sendButton: 'Envoyer le message',
+      messageSent: 'Message envoyé avec succès!',
+      phone: 'Téléphone',
+      phoneDescription: 'Disponible 7j/7 de 7h à 21h',
+      email: 'Email',
+      emailDescription: 'Nous répondons dans les 24 heures',
+      address: 'Adresse',
+      addressLine: 'Kinshasa, République Démocratique du Congo',
+      addressDescription: 'Notre bureau principal'
     },
     footer: {
       company: 'Entreprise',
@@ -128,6 +151,30 @@ const translations: Record<Language, TranslationData> = {
       vip: {
         title: 'VIP'
       }
+    },
+    contact: {
+      title: 'Contact Us',
+      subtitle: 'Our team is ready to help you with all your chauffeur service requests in Kinshasa',
+      formTitle: 'Send us a message',
+      infoTitle: 'Contact Information',
+      infoDescription: 'You can reach us by phone, email, or in person. Our team is available to serve you.',
+      nameLabel: 'Name',
+      namePlaceholder: 'Your full name',
+      emailLabel: 'Email',
+      emailPlaceholder: 'your.email@example.com',
+      subjectLabel: 'Subject',
+      subjectPlaceholder: 'Subject of your message',
+      messageLabel: 'Message',
+      messagePlaceholder: 'Write your message here...',
+      sendButton: 'Send Message',
+      messageSent: 'Message sent successfully!',
+      phone: 'Phone',
+      phoneDescription: 'Available 7 days a week from 7am to 9pm',
+      email: 'Email',
+      emailDescription: 'We reply within 24 hours',
+      address: 'Address',
+      addressLine: 'Kinshasa, Democratic Republic of Congo',
+      addressDescription: 'Our main office'
     },
     footer: {
       company: 'Company',
