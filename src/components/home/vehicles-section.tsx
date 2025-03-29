@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Card, CardContent } from "@/components/ui/card";
@@ -70,7 +69,7 @@ export function VehiclesSection() {
       name: 'Chevrolet Tahoe',
       image: '/lovable-uploads/a564e144-c5d6-4636-8cba-43b5410310a6.png',
       comfort: 5,
-      capacity: 7
+      capacity: 6
     },
     {
       id: 'nissan-xterra',
@@ -88,7 +87,6 @@ export function VehiclesSection() {
     }
   ];
   
-  // Placeholder for vehicle selection
   const handleVehicleSelect = (id: string) => {
     console.log(`Vehicle selected: ${id}`);
     // Would typically navigate to booking page with this vehicle pre-selected
