@@ -4,9 +4,9 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { useLanguage } from "@/contexts/language-context";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Wifi, Droplet, Battery, Clock, MapPin, Sparkles, Coffee, UserCheck, Shield, 
-         Briefcase, Check, Award, Plane, BookCheck, Phone, Users, Heart } from "lucide-react";
+         Check, Award, Plane, BookCheck, Phone, Users, Heart } from "lucide-react";
 import { Link } from 'react-router-dom';
 
 const ServicesPage = () => {
