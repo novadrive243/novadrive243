@@ -15,17 +15,17 @@ export function Header() {
   const { t } = useLanguage();
   
   const menuLinks = [
-    { href: "/", label: t('header.home') },
-    { href: "/about", label: t('header.about') },
-    { href: "/services", label: t('header.services') },
+    { href: "/home", label: t('header.home') || 'Home' },
+    { href: "/about", label: t('header.about') || 'About' },
+    { href: "/services", label: t('header.services') || 'Services' },
     { href: "/pricing", label: t('header.pricing') || 'Pricing' },
-    { href: "/contact", label: t('header.contact') },
+    { href: "/contact", label: t('header.contact') || 'Contact' },
   ];
   
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-nova-black/80 backdrop-blur-md border-b border-nova-gold/20">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <Link to="/" className="flex items-center">
+        <Link to="/home" className="flex items-center">
           <img 
             src="/lovable-uploads/your-image.png" 
             alt="NovaDrive Logo" 
@@ -50,7 +50,7 @@ export function Header() {
           ))}
           
           <Button asChild variant="default" className="gold-btn px-5 py-2 rounded-full ml-4">
-            <Link to="/book">{t('header.bookNow')}</Link>
+            <Link to="/book">{t('header.bookNow') || 'Book Now'}</Link>
           </Button>
           
           <LanguageSwitcher />
@@ -78,7 +78,7 @@ export function Header() {
                 ))}
                 
                 <Button asChild variant="default" className="gold-btn w-full mt-4">
-                  <Link to="/book">{t('header.bookNow')}</Link>
+                  <Link to="/book">{t('header.bookNow') || 'Book Now'}</Link>
                 </Button>
               </nav>
             </SheetContent>
