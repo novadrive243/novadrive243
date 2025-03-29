@@ -5,10 +5,10 @@ import { Footer } from "@/components/layout/footer";
 import { useLanguage } from "@/contexts/language-context";
 
 const TermsPage = () => {
-  const { t, currentLanguage } = useLanguage();
+  const { t, language } = useLanguage();
   
   // Déterminer quel contenu afficher en fonction de la langue
-  const content = currentLanguage === 'fr' ? frenchContent : englishContent;
+  const content = language === 'fr' ? frenchContent : englishContent;
   
   return (
     <div className="flex flex-col min-h-screen bg-nova-black text-nova-white">
@@ -17,7 +17,7 @@ const TermsPage = () => {
       <main className="flex-grow pt-24 pb-16">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center bg-gold-gradient text-transparent bg-clip-text">
-            {currentLanguage === 'fr' ? 'Conditions d\'utilisation & Politique de confidentialité' : 'Terms of Use & Privacy Policy'}
+            {language === 'fr' ? 'Conditions d\'utilisation & Politique de confidentialité' : 'Terms of Use & Privacy Policy'}
           </h1>
           
           <div className="space-y-12 nova-card p-6 md:p-8">

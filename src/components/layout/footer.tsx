@@ -72,14 +72,14 @@ export function Footer() {
               &copy; {currentYear} NovaDrive. {t('footer.rights')}
             </p>
             <div className="flex space-x-4 mt-4 md:mt-0">
-              <a href="#" className="text-nova-white/70 hover:text-nova-gold">
+              <a href="https://www.instagram.com/novadrive243" target="_blank" rel="noopener noreferrer" className="text-nova-white/70 hover:text-nova-gold">
                 Instagram
               </a>
-              <a href="#" className="text-nova-white/70 hover:text-nova-gold">
-                Facebook
+              <a href="https://www.tiktok.com/@novadrive243" target="_blank" rel="noopener noreferrer" className="text-nova-white/70 hover:text-nova-gold">
+                TikTok
               </a>
-              <a href="#" className="text-nova-white/70 hover:text-nova-gold">
-                Twitter
+              <a href="mailto:novadrive243@gmail.com" className="text-nova-white/70 hover:text-nova-gold">
+                Email
               </a>
             </div>
           </div>
