@@ -1,6 +1,8 @@
 
 import React from 'react';
 import { Label } from '@/components/ui/label';
+import { calculateEffectiveDailyRate } from '../utils/booking-utils';
+import { vehicles } from '@/data/vehicles';
 
 interface DurationSelectorProps {
   durationType: 'hourly' | 'daily' | 'monthly';
@@ -11,6 +13,7 @@ interface DurationSelectorProps {
   setDays: (days: number) => void;
   months: number;
   setMonths: (months: number) => void;
+  selectedVehicle?: string | null;
 }
 
 export const DurationSelector = ({
@@ -21,13 +24,33 @@ export const DurationSelector = ({
   days,
   setDays,
   months,
-  setMonths
+  setMonths,
+  selectedVehicle
 }: DurationSelectorProps) => {
   // Generate all available options for days (1-31)
   const allDays = Array.from({ length: 31 }, (_, i) => i + 1);
   
   // Generate all available options for months (1-12)
   const allMonths = Array.from({ length: 12 }, (_, i) => i + 1);
+  
+  // Get the selected vehicle object
+  const vehicleObject = selectedVehicle ? vehicles.find(v => v.id === selectedVehicle) : undefined;
+  
+  // Get tier information for the current day selection
+  const getDayTierInfo = (day: number): string => {
+    if (!vehicleObject) return '';
+    
+    if (day >= 30) {
+      return language === 'fr' ? '(Tarif mensuel)' : '(Monthly rate)';
+    } else if (day >= 25) {
+      return language === 'fr' ? '(Forfait 25 jours)' : '(25-day package)';
+    } else if (day >= 15) {
+      return language === 'fr' ? '(Forfait 15 jours)' : '(15-day package)';
+    } else if (day >= 10) {
+      return language === 'fr' ? '(Forfait 10 jours)' : '(10-day package)';
+    }
+    return '';
+  };
   
   return (
     <div className="mb-6">
@@ -53,18 +76,28 @@ export const DurationSelector = ({
       )}
       
       {durationType === 'daily' && (
-        <select
-          id="duration-days"
-          value={days}
-          onChange={(e) => setDays(Number(e.target.value))}
-          className="flex h-10 w-full rounded-md border border-nova-gold/50 bg-nova-black px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-nova-white"
-        >
-          {allDays.map((value) => (
-            <option key={value} value={value}>
-              {value} {language === 'fr' ? 'jour(s)' : 'day(s)'}
-            </option>
-          ))}
-        </select>
+        <div>
+          <select
+            id="duration-days"
+            value={days}
+            onChange={(e) => setDays(Number(e.target.value))}
+            className="flex h-10 w-full rounded-md border border-nova-gold/50 bg-nova-black px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-nova-white"
+          >
+            {allDays.map((value) => (
+              <option key={value} value={value}>
+                {value} {language === 'fr' ? 'jour(s)' : 'day(s)'} {getDayTierInfo(value)}
+              </option>
+            ))}
+          </select>
+          
+          {selectedVehicle && vehicleObject && (
+            <div className="mt-2 text-xs text-nova-gold">
+              {language === 'fr' 
+                ? `Prix par jour: $${calculateEffectiveDailyRate(vehicleObject, days).toFixed(2)}` 
+                : `Per day price: $${calculateEffectiveDailyRate(vehicleObject, days).toFixed(2)}`}
+            </div>
+          )}
+        </div>
       )}
       
       {durationType === 'monthly' && (

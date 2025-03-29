@@ -5,7 +5,7 @@ import { Star } from 'lucide-react';
 
 /**
  * Calculate the price based on the selected vehicle and duration
- * All calculations are now based on daily rates for consistency
+ * Implements tiered pricing for daily bookings
  */
 export const calculateVehiclePrice = (
   vehicle: Vehicle | undefined,
@@ -20,13 +20,54 @@ export const calculateVehiclePrice = (
     case 'hourly': 
       return vehicle.price.hourly * duration;
     case 'daily': 
-      // Direct calculation using daily rate
-      return vehicle.price.daily * days;
+      // Apply tiered pricing based on number of days
+      if (days >= 30) {
+        // If days >= 30, use monthly rate
+        return vehicle.price.monthly;
+      } else if (days >= 25) {
+        // 25-29 days: use 25-day package price ÷ 25
+        const dailyRate = vehicle.price.twentyFiveDayPackage / 25;
+        return dailyRate * days;
+      } else if (days >= 15) {
+        // 15-24 days: use 15-day package price ÷ 15
+        const dailyRate = vehicle.price.fifteenDayPackage / 15;
+        return dailyRate * days;
+      } else if (days >= 10) {
+        // 10-14 days: use 10-day package price ÷ 10
+        const dailyRate = vehicle.price.tenDayPackage / 10;
+        return dailyRate * days;
+      } else {
+        // 1-9 days: use standard daily rate
+        return vehicle.price.daily * days;
+      }
     case 'monthly': 
-      // Monthly calculation based on daily rate (daily price × days per month × number of months)
-      return vehicle.price.daily * 30 * months;
+      // Use fixed monthly price
+      return vehicle.price.monthly * months;
     default: 
       return vehicle.price.hourly * duration;
+  }
+};
+
+/**
+ * Calculate the effective daily rate based on number of days
+ */
+export const calculateEffectiveDailyRate = (
+  vehicle: Vehicle | undefined,
+  days: number
+): number => {
+  if (!vehicle) return 0;
+  
+  if (days >= 30) {
+    // For monthly rates, we show the monthly price divided by 30
+    return vehicle.price.monthly / 30;
+  } else if (days >= 25) {
+    return vehicle.price.twentyFiveDayPackage / 25;
+  } else if (days >= 15) {
+    return vehicle.price.fifteenDayPackage / 15;
+  } else if (days >= 10) {
+    return vehicle.price.tenDayPackage / 10;
+  } else {
+    return vehicle.price.daily;
   }
 };
 

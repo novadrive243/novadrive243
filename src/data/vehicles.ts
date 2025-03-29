@@ -9,6 +9,9 @@ export interface Vehicle {
     hourly: number;
     daily: number;
     monthly: number;
+    tenDayPackage: number;
+    fifteenDayPackage: number;
+    twentyFiveDayPackage: number;
   };
 }
 
@@ -22,7 +25,10 @@ export const vehicles: Vehicle[] = [
     price: {
       hourly: 60,
       daily: 350,
-      monthly: 9000
+      monthly: 9900,
+      tenDayPackage: 3600,
+      fifteenDayPackage: 5250,
+      twentyFiveDayPackage: 8500
     }
   },
   {
@@ -34,7 +40,10 @@ export const vehicles: Vehicle[] = [
     price: {
       hourly: 35,
       daily: 200,
-      monthly: 4500
+      monthly: 4200,
+      tenDayPackage: 1800,
+      fifteenDayPackage: 2650,
+      twentyFiveDayPackage: 4200
     }
   },
   {
@@ -46,7 +55,10 @@ export const vehicles: Vehicle[] = [
     price: {
       hourly: 25,
       daily: 150,
-      monthly: 3000
+      monthly: 3150,
+      tenDayPackage: 1350,
+      fifteenDayPackage: 1950,
+      twentyFiveDayPackage: 3150
     }
   }
 ];

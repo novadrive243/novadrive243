@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/language-context';
 import { useSearchParams } from 'react-router-dom';
@@ -139,6 +138,7 @@ export function BookingForm() {
             dayOptions={dayOptions}
             monthOptions={monthOptions}
             handleContinue={handleContinue}
+            selectedVehicle={selectedVehicle}
           />
         ) : (
           <BookingStepTwo 
