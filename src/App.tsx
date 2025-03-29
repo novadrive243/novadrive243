@@ -18,6 +18,7 @@ const VerifyPinPage = lazy(() => import("./pages/VerifyPinPage"));
 const ResetPinPage = lazy(() => import("./pages/ResetPinPage"));
 const AccountPage = lazy(() => import("./pages/AccountPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const TermsPage = lazy(() => import("./pages/TermsPage"));
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="/verify-pin" element={<VerifyPinPage />} />
           <Route path="/reset-pin" element={<ResetPinPage />} />
           <Route path="/account" element={<AccountPage />} />
+          <Route path="/terms" element={<TermsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster />
