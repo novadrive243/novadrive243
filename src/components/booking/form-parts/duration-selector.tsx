@@ -12,9 +12,9 @@ interface DurationSelectorProps {
   setDays: (value: number) => void;
   months: number;
   setMonths: (value: number) => void;
-  hourOptions: number[];
-  dayOptions: number[];
-  monthOptions: number[];
+  hourOptions?: number[];
+  dayOptions?: number[];
+  monthOptions?: number[];
 }
 
 export function DurationSelector({
@@ -25,10 +25,16 @@ export function DurationSelector({
   setDays,
   months,
   setMonths,
-  hourOptions,
+  hourOptions = [1, 2, 3, 4, 5, 6, 7, 8, 12, 24],
   dayOptions,
   monthOptions
 }: DurationSelectorProps) {
+  // If dayOptions not provided, generate all 31 days
+  const allDayOptions = dayOptions || Array.from({ length: 31 }, (_, i) => i + 1);
+  
+  // If monthOptions not provided, generate all 12 months
+  const allMonthOptions = monthOptions || Array.from({ length: 12 }, (_, i) => i + 1);
+  
   if (durationType === 'hourly') {
     return (
       <div>
@@ -70,7 +76,7 @@ export function DurationSelector({
           <SelectContent className="bg-nova-gray border-nova-gold/30 text-nova-white">
             <ScrollArea className="h-60">
               <SelectGroup>
-                {dayOptions.map((day) => (
+                {allDayOptions.map((day) => (
                   <SelectItem key={day} value={day.toString()} className="text-nova-white hover:bg-nova-gold/20">
                     {day} {day === 1 ? 'day' : 'days'}
                   </SelectItem>
@@ -96,7 +102,7 @@ export function DurationSelector({
         <SelectContent className="bg-nova-gray border-nova-gold/30 text-nova-white">
           <ScrollArea className="h-60">
             <SelectGroup>
-              {monthOptions.map((month) => (
+              {allMonthOptions.map((month) => (
                 <SelectItem key={month} value={month.toString()} className="text-nova-white hover:bg-nova-gold/20">
                   {month} {month === 1 ? 'month' : 'months'}
                 </SelectItem>

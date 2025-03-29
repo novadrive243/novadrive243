@@ -23,6 +23,12 @@ export const DurationSelector = ({
   months,
   setMonths
 }: DurationSelectorProps) => {
+  // Generate all available options for days (1-31)
+  const allDays = Array.from({ length: 31 }, (_, i) => i + 1);
+  
+  // Generate all available options for months (1-12)
+  const allMonths = Array.from({ length: 12 }, (_, i) => i + 1);
+  
   return (
     <div className="mb-6">
       <Label htmlFor="duration" className="text-nova-white mb-2 block">
@@ -53,7 +59,7 @@ export const DurationSelector = ({
           onChange={(e) => setDays(Number(e.target.value))}
           className="flex h-10 w-full rounded-md border border-nova-gold/50 bg-nova-black px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-nova-white"
         >
-          {[1, 2, 3, 4, 5, 6, 7, 14, 21, 30].map((value) => (
+          {allDays.map((value) => (
             <option key={value} value={value}>
               {value} {language === 'fr' ? 'jour(s)' : 'day(s)'}
             </option>
@@ -68,7 +74,7 @@ export const DurationSelector = ({
           onChange={(e) => setMonths(Number(e.target.value))}
           className="flex h-10 w-full rounded-md border border-nova-gold/50 bg-nova-black px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-nova-white"
         >
-          {[1, 2, 3, 6, 12].map((value) => (
+          {allMonths.map((value) => (
             <option key={value} value={value}>
               {value} {language === 'fr' ? 'mois' : 'month(s)'}
             </option>
