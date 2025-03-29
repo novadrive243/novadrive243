@@ -21,7 +21,7 @@ export const vehicles: Vehicle[] = [
     capacity: 6,
     price: {
       hourly: 60,
-      daily: 400,
+      daily: 350,
       monthly: 9000
     }
   },
