@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/language-context';
 import { Button } from '@/components/ui/button';
@@ -299,7 +298,7 @@ export function BookingForm() {
                             <SelectGroup>
                               {dayOptions.map((day) => (
                                 <SelectItem key={day} value={day.toString()} className="text-nova-white hover:bg-nova-gold/20">
-                                  {day} {day === 1 ? 'jour' : 'jours'}
+                                  {day} {day === 1 ? 'day' : 'days'}
                                 </SelectItem>
                               ))}
                             </SelectGroup>
@@ -324,7 +323,7 @@ export function BookingForm() {
                             <SelectGroup>
                               {monthOptions.map((month) => (
                                 <SelectItem key={month} value={month.toString()} className="text-nova-white hover:bg-nova-gold/20">
-                                  {month} {month === 1 ? 'mois' : 'mois'}
+                                  {month} {month === 1 ? 'month' : 'months'}
                                 </SelectItem>
                               ))}
                             </SelectGroup>
