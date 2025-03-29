@@ -26,6 +26,9 @@ export function BookingForm() {
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [durationType, setDurationType] = useState<'hourly' | 'daily'>('hourly');
+  const [duration, setDuration] = useState<number>(3); // Default: 3 hours
+  const [days, setDays] = useState<number>(1); // Default: 1 day
   
   useEffect(() => {
     const vehicleId = searchParams.get('vehicle');
@@ -55,6 +58,8 @@ export function BookingForm() {
           time: bookingType === 'schedule' ? time : null,
           vehicle: selectedVehicle,
           vehicleName: vehicles.find(v => v.id === selectedVehicle)?.name,
+          durationType,
+          duration: durationType === 'hourly' ? duration : days,
           price: getSelectedVehiclePrice(),
         };
         
@@ -74,13 +79,20 @@ export function BookingForm() {
         setBookingType('now');
         setSelectedVehicle(null);
         setBookingStep(1);
+        setDurationType('hourly');
+        setDuration(3);
+        setDays(1);
       }, 2000);
     }
   };
   
   const getSelectedVehiclePrice = () => {
     const vehicle = vehicles.find(v => v.id === selectedVehicle);
-    return vehicle ? vehicle.price.hourly : 0;
+    if (!vehicle) return 0;
+    
+    return durationType === 'hourly' 
+      ? vehicle.price.hourly * duration
+      : vehicle.price.daily * days;
   };
   
   return (
@@ -158,6 +170,7 @@ export function BookingForm() {
                             selected={date}
                             onSelect={setDate}
                             initialFocus
+                            className="pointer-events-auto"
                           />
                         </PopoverContent>
                       </Popover>
@@ -181,6 +194,63 @@ export function BookingForm() {
                       </div>
                     </div>
                   </div>
+                  
+                  {/* Durée - Hourly or Daily */}
+                  <div className="mt-4">
+                    <Label className="mb-2 block">Duration Type</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        type="button"
+                        variant={durationType === 'hourly' ? 'default' : 'outline'}
+                        className={durationType === 'hourly' ? 'bg-nova-gold text-nova-black' : 'border-nova-gold/30'}
+                        onClick={() => setDurationType('hourly')}
+                      >
+                        {t('booking.hourly') || 'Hourly'}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={durationType === 'daily' ? 'default' : 'outline'}
+                        className={durationType === 'daily' ? 'bg-nova-gold text-nova-black' : 'border-nova-gold/30'}
+                        onClick={() => setDurationType('daily')}
+                      >
+                        {t('booking.daily') || 'Daily'}
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  {durationType === 'hourly' ? (
+                    <div>
+                      <Label htmlFor="duration">Hours</Label>
+                      <select
+                        id="duration"
+                        className="w-full p-2 mt-1 bg-nova-gray/30 border border-nova-gold/30 rounded-md text-nova-white"
+                        value={duration}
+                        onChange={(e) => setDuration(parseInt(e.target.value))}
+                      >
+                        {[1, 2, 3, 4, 6, 8, 10, 12].map((hour) => (
+                          <option key={hour} value={hour}>
+                            {hour} {hour === 1 ? 'hour' : 'hours'}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  ) : (
+                    <div>
+                      <Label htmlFor="days">Days</Label>
+                      <select
+                        id="days"
+                        className="w-full p-2 mt-1 bg-nova-gray/30 border border-nova-gold/30 rounded-md text-nova-white"
+                        value={days}
+                        onChange={(e) => setDays(parseInt(e.target.value))}
+                      >
+                        {[1, 2, 3, 4, 5, 6, 7, 14, 30].map((day) => (
+                          <option key={day} value={day}>
+                            {day} {day === 1 ? 'day' : 'days'}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                 </div>
               </TabsContent>
             </Tabs>
@@ -230,7 +300,11 @@ export function BookingForm() {
             {selectedVehicle && (
               <div className="mt-6 p-4 border border-nova-gold/30 rounded-lg bg-nova-gold/10">
                 <div className="flex justify-between items-center">
-                  <span className="text-lg">{t('booking.estimatedHourlyPrice') || 'Estimated hourly price'}</span>
+                  <span className="text-lg">
+                    {durationType === 'hourly'
+                      ? `${t('booking.estimatedPrice') || 'Estimated price'} (${duration} ${duration === 1 ? 'hour' : 'hours'})`
+                      : `${t('booking.estimatedPrice') || 'Estimated price'} (${days} ${days === 1 ? 'day' : 'days'})`}
+                  </span>
                   <span className="text-2xl font-bold text-nova-gold">${getSelectedVehiclePrice()}</span>
                 </div>
               </div>
