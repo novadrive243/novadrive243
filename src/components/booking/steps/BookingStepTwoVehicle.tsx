@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Star, CheckCircle } from 'lucide-react';
 import { vehicles } from '@/data/vehicles';
+import { calculateEffectiveDailyRate } from '../utils/booking-utils';
 
 interface BookingStepTwoVehicleProps {
   language: string;
@@ -43,8 +44,8 @@ export const BookingStepTwoVehicle = ({
   const getPrice = (vehicle: typeof vehicles[0]) => {
     switch (durationType) {
       case 'hourly': return vehicle.price.hourly;
-      case 'daily': return vehicle.price.daily;
-      case 'monthly': return vehicle.price.daily * 30; // Monthly price based on daily rate × 30
+      case 'daily': return calculateEffectiveDailyRate(vehicle, 1); // Show standard daily rate
+      case 'monthly': return vehicle.price.monthly;
       default: return vehicle.price.hourly;
     }
   };
