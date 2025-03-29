@@ -35,10 +35,10 @@ export function BookingForm() {
       image: '/lovable-uploads/6a588e4a-4639-4bb2-800c-1d4ca6adb059.png',
     },
     {
-      id: 'toyota-patrol',
-      name: 'Toyota Patrol',
+      id: 'toyota-fortuner',
+      name: 'Toyota Fortuner',
       price: 80,
-      image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
+      image: '/lovable-uploads/8337e561-5a74-4d76-8fac-6fb00b629bad.png',
     },
   ];
   

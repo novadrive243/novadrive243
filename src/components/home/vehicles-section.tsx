@@ -80,9 +80,9 @@ export function VehiclesSection() {
       capacity: 5
     },
     {
-      id: 'toyota-patrol',
-      name: 'Toyota Patrol',
-      image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
+      id: 'toyota-fortuner',
+      name: 'Toyota Fortuner',
+      image: '/lovable-uploads/8337e561-5a74-4d76-8fac-6fb00b629bad.png',
       comfort: 5,
       capacity: 6
     }
