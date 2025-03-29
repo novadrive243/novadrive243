@@ -18,6 +18,7 @@ export function Header() {
     { href: "/", label: t('header.home') },
     { href: "/about", label: t('header.about') },
     { href: "/services", label: t('header.services') },
+    { href: "/pricing", label: t('header.pricing') || 'Pricing' },
     { href: "/contact", label: t('header.contact') },
   ];
   
@@ -26,9 +27,13 @@ export function Header() {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <Link to="/" className="flex items-center">
           <img 
-            src="/lovable-uploads/65d17b10-d820-4eba-b913-99b9b12e7c35.png" 
+            src="/lovable-uploads/your-image.png" 
             alt="NovaDrive Logo" 
             className="h-10 mr-2"
+            onError={(e) => {
+              console.log("Image failed to load");
+              e.currentTarget.style.display = 'none';
+            }}
           />
           <span className="font-sfpro text-2xl font-bold gold-gradient-text">NovaDrive</span>
         </Link>
