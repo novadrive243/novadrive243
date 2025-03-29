@@ -9,10 +9,18 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
-import { CalendarIcon, Clock, Car } from 'lucide-react';
+import { CalendarIcon, Clock, Car, Check } from 'lucide-react';
 import { vehicles } from '@/data/vehicles';
 import { useSearchParams } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { 
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function BookingForm() {
   const { t } = useLanguage();
@@ -27,7 +35,7 @@ export function BookingForm() {
   const [searchParams] = useSearchParams();
   const [isProcessing, setIsProcessing] = useState(false);
   const [durationType, setDurationType] = useState<'hourly' | 'daily' | 'monthly'>('hourly');
-  const [duration, setDuration] = useState<number>(3); // Default: 3 hours
+  const [duration, setDuration] = useState<number>(1); // Default: 1 hour
   const [days, setDays] = useState<number>(1); // Default: 1 day
   const [months, setMonths] = useState<number>(1); // Default: 1 month
   
@@ -81,7 +89,7 @@ export function BookingForm() {
         setSelectedVehicle(null);
         setBookingStep(1);
         setDurationType('hourly');
-        setDuration(3);
+        setDuration(1);
         setDays(1);
         setMonths(1);
       }, 2000);
@@ -108,6 +116,11 @@ export function BookingForm() {
       default: return vehicle.price.hourly * duration;
     }
   };
+
+  // Generate arrays for the duration options
+  const hourOptions = [1, 2, 3, 4, 5, 6, 7, 14, 21, 30];
+  const dayOptions = Array.from({ length: 31 }, (_, i) => i + 1); // 1-31 days
+  const monthOptions = Array.from({ length: 12 }, (_, i) => i + 1); // 1-12 months
   
   return (
     <Card className="nova-card max-w-3xl mx-auto">
@@ -240,57 +253,73 @@ export function BookingForm() {
                     </div>
                   </div>
                   
+                  {/* Duration Selector based on the duration type */}
                   {durationType === 'hourly' && (
                     <div>
                       <Label htmlFor="duration">Hours</Label>
-                      <select
-                        id="duration"
-                        className="w-full p-2 mt-1 bg-nova-gray/30 border border-nova-gold/30 rounded-md text-nova-white"
-                        value={duration}
-                        onChange={(e) => setDuration(parseInt(e.target.value))}
+                      <Select
+                        value={duration.toString()}
+                        onValueChange={(value) => setDuration(parseInt(value))}
                       >
-                        {[1, 2, 3, 4, 6, 8, 10, 12].map((hour) => (
-                          <option key={hour} value={hour}>
-                            {hour} {hour === 1 ? 'hour' : 'hours'}
-                          </option>
-                        ))}
-                      </select>
+                        <SelectTrigger className="w-full bg-nova-gray/30 border-nova-gold/30 text-nova-white">
+                          <SelectValue placeholder="Select hours" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-60 overflow-auto bg-nova-gray border-nova-gold/30">
+                          <SelectGroup>
+                            {hourOptions.map((hour) => (
+                              <SelectItem key={hour} value={hour.toString()} className="text-nova-white hover:bg-nova-gold/20">
+                                {hour} {hour === 1 ? 'jour' : 'jours'}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
                     </div>
                   )}
                   
                   {durationType === 'daily' && (
                     <div>
                       <Label htmlFor="days">Days</Label>
-                      <select
-                        id="days"
-                        className="w-full p-2 mt-1 bg-nova-gray/30 border border-nova-gold/30 rounded-md text-nova-white"
-                        value={days}
-                        onChange={(e) => setDays(parseInt(e.target.value))}
+                      <Select
+                        value={days.toString()}
+                        onValueChange={(value) => setDays(parseInt(value))}
                       >
-                        {[1, 2, 3, 4, 5, 6, 7, 14, 30].map((day) => (
-                          <option key={day} value={day}>
-                            {day} {day === 1 ? 'day' : 'days'}
-                          </option>
-                        ))}
-                      </select>
+                        <SelectTrigger className="w-full bg-nova-gray/30 border-nova-gold/30 text-nova-white">
+                          <SelectValue placeholder="Select days" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-60 overflow-auto bg-nova-gray border-nova-gold/30">
+                          <SelectGroup>
+                            {dayOptions.map((day) => (
+                              <SelectItem key={day} value={day.toString()} className="text-nova-white hover:bg-nova-gold/20">
+                                {day} {day === 1 ? 'jour' : 'jours'}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
                     </div>
                   )}
                   
                   {durationType === 'monthly' && (
                     <div>
                       <Label htmlFor="months">Months</Label>
-                      <select
-                        id="months"
-                        className="w-full p-2 mt-1 bg-nova-gray/30 border border-nova-gold/30 rounded-md text-nova-white"
-                        value={months}
-                        onChange={(e) => setMonths(parseInt(e.target.value))}
+                      <Select
+                        value={months.toString()}
+                        onValueChange={(value) => setMonths(parseInt(value))}
                       >
-                        {[1, 2, 3, 6, 12].map((month) => (
-                          <option key={month} value={month}>
-                            {month} {month === 1 ? 'month' : 'months'}
-                          </option>
-                        ))}
-                      </select>
+                        <SelectTrigger className="w-full bg-nova-gray/30 border-nova-gold/30 text-nova-white">
+                          <SelectValue placeholder="Select months" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-60 overflow-auto bg-nova-gray border-nova-gold/30">
+                          <SelectGroup>
+                            {monthOptions.map((month) => (
+                              <SelectItem key={month} value={month.toString()} className="text-nova-white hover:bg-nova-gold/20">
+                                {month} {month === 1 ? 'mois' : 'mois'}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
                     </div>
                   )}
                 </div>
