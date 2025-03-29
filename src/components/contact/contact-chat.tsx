@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { MessageCircle, Send } from "lucide-react";
+import { MessageCircle, Send, Bot } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import {
   Drawer,
@@ -39,6 +39,7 @@ const ContactChat = () => {
     },
   ]);
   const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   
   // Quick replies based on common questions
   const quickReplies = [
@@ -56,8 +57,56 @@ const ContactChat = () => {
     }
   ];
   
-  // Simulated bot responses
-  const getBotResponse = (userMessage: string): string => {
+  // Get response from ChatGPT
+  const getChatGPTResponse = async (userMessage: string): Promise<string> => {
+    try {
+      setIsLoading(true);
+      
+      const systemPrompt = language === 'fr' 
+        ? "Tu es un assistant virtuel pour NovaDrive, un service de chauffeur de luxe à Kinshasa, Congo. Réponds de manière professionnelle, concise et utile. Utilise un ton amical mais formel. Limite tes réponses à 3-4 phrases maximum. Réponds en français."
+        : "You are a virtual assistant for NovaDrive, a luxury chauffeur service in Kinshasa, Congo. Answer in a professional, concise, and helpful manner. Use a friendly but formal tone. Limit your responses to 3-4 sentences maximum. Answer in English.";
+      
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer YOUR_OPENAI_API_KEY`, // This should be replaced with an environment variable
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'system',
+              content: systemPrompt
+            },
+            {
+              role: 'user',
+              content: userMessage
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 150
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data.choices[0].message.content;
+    } catch (error) {
+      console.error('Error calling ChatGPT API:', error);
+      return language === 'fr'
+        ? "Désolé, je rencontre des difficultés techniques. Veuillez réessayer plus tard ou contactez-nous directement par téléphone."
+        : "Sorry, I'm experiencing technical difficulties. Please try again later or contact us directly by phone.";
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Use fallback responses if API fails
+  const getFallbackResponse = (userMessage: string): string => {
     const lowercaseMessage = userMessage.toLowerCase();
     
     // Using language-specific responses
@@ -84,7 +133,7 @@ const ContactChat = () => {
     }
   };
   
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
     
     // Add user message
@@ -98,20 +147,55 @@ const ContactChat = () => {
     setMessages((prev) => [...prev, userMessage]);
     setInputValue("");
     
-    // Simulate bot response after a short delay
-    setTimeout(() => {
-      const botResponse: Message = {
-        id: messages.length + 2,
-        type: "bot",
-        text: getBotResponse(inputValue),
-        timestamp: new Date(),
-      };
+    // Processing indicator
+    const processingBotMessage: Message = {
+      id: messages.length + 2,
+      type: "bot",
+      text: language === 'fr' ? "..." : "...",
+      timestamp: new Date(),
+    };
+    
+    setMessages((prev) => [...prev, processingBotMessage]);
+    
+    try {
+      // Get response from ChatGPT
+      const chatGPTResponse = await getChatGPTResponse(inputValue);
       
-      setMessages((prev) => [...prev, botResponse]);
-    }, 1000);
+      // Update the processing message with the actual response
+      setMessages((prev) => 
+        prev.map(msg => 
+          msg.id === processingBotMessage.id 
+            ? { ...msg, text: chatGPTResponse } 
+            : msg
+        )
+      );
+    } catch (error) {
+      console.error('Error getting ChatGPT response:', error);
+      
+      // Use fallback response if ChatGPT fails
+      const fallbackResponse = getFallbackResponse(inputValue);
+      
+      // Update the processing message with the fallback response
+      setMessages((prev) => 
+        prev.map(msg => 
+          msg.id === processingBotMessage.id 
+            ? { ...msg, text: fallbackResponse } 
+            : msg
+        )
+      );
+      
+      // Show toast notification about the issue
+      toast({
+        title: language === 'fr' ? "Problème de connexion" : "Connection issue",
+        description: language === 'fr' 
+          ? "Nous utilisons actuellement des réponses préprogrammées en raison d'un problème technique." 
+          : "We're currently using pre-programmed responses due to a technical issue.",
+        variant: "destructive",
+      });
+    }
   };
   
-  const handleQuickReply = (text: string) => {
+  const handleQuickReply = async (text: string) => {
     const userMessage: Message = {
       id: messages.length + 1,
       type: "user",
@@ -121,17 +205,43 @@ const ContactChat = () => {
     
     setMessages((prev) => [...prev, userMessage]);
     
-    // Simulate bot response after a short delay
-    setTimeout(() => {
-      const botResponse: Message = {
-        id: messages.length + 2,
-        type: "bot",
-        text: getBotResponse(text),
-        timestamp: new Date(),
-      };
+    // Processing indicator
+    const processingBotMessage: Message = {
+      id: messages.length + 2,
+      type: "bot",
+      text: language === 'fr' ? "..." : "...",
+      timestamp: new Date(),
+    };
+    
+    setMessages((prev) => [...prev, processingBotMessage]);
+    
+    try {
+      // Get response from ChatGPT
+      const chatGPTResponse = await getChatGPTResponse(text);
       
-      setMessages((prev) => [...prev, botResponse]);
-    }, 1000);
+      // Update the processing message with the actual response
+      setMessages((prev) => 
+        prev.map(msg => 
+          msg.id === processingBotMessage.id 
+            ? { ...msg, text: chatGPTResponse } 
+            : msg
+        )
+      );
+    } catch (error) {
+      console.error('Error getting ChatGPT response:', error);
+      
+      // Use fallback response if ChatGPT fails
+      const fallbackResponse = getFallbackResponse(text);
+      
+      // Update the processing message with the fallback response
+      setMessages((prev) => 
+        prev.map(msg => 
+          msg.id === processingBotMessage.id 
+            ? { ...msg, text: fallbackResponse } 
+            : msg
+        )
+      );
+    }
   };
   
   return (
@@ -148,7 +258,7 @@ const ContactChat = () => {
         <DrawerContent className="max-h-[80vh]">
           <DrawerHeader className="border-b border-nova-gold/30">
             <DrawerTitle className="flex items-center gap-2">
-              <MessageCircle className="h-5 w-5 text-nova-gold" />
+              <Bot className="h-5 w-5 text-nova-gold" />
               {t('contact.chatTitle') || 'NovaDrive Assistant'}
             </DrawerTitle>
           </DrawerHeader>
@@ -191,6 +301,7 @@ const ContactChat = () => {
                     variant="outline"
                     className="text-nova-white border-nova-gold/30 text-sm"
                     onClick={() => handleQuickReply(language === 'fr' ? reply.fr : reply.en)}
+                    disabled={isLoading}
                   >
                     {language === 'fr' ? reply.fr : reply.en}
                   </Button>
@@ -212,11 +323,13 @@ const ContactChat = () => {
                     handleSendMessage();
                   }
                 }}
+                disabled={isLoading}
               />
               <Button
                 onClick={handleSendMessage}
                 size="icon"
                 className="gold-btn h-[60px]"
+                disabled={isLoading}
               >
                 <Send className="h-5 w-5" />
               </Button>
