@@ -12,9 +12,11 @@ import { format } from 'date-fns';
 import { CalendarIcon, Clock, Car } from 'lucide-react';
 import { vehicles } from '@/data/vehicles';
 import { useSearchParams } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 export function BookingForm() {
   const { t } = useLanguage();
+  const { toast } = useToast();
   const [bookingStep, setBookingStep] = useState<1 | 2>(1);
   const [fromAddress, setFromAddress] = useState('');
   const [toAddress, setToAddress] = useState('');
@@ -23,6 +25,7 @@ export function BookingForm() {
   const [time, setTime] = useState('12:00');
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
+  const [isProcessing, setIsProcessing] = useState(false);
   
   useEffect(() => {
     const vehicleId = searchParams.get('vehicle');
@@ -40,16 +43,38 @@ export function BookingForm() {
   
   const handleBookNow = () => {
     if (selectedVehicle) {
-      console.log('Booking confirmed:', {
-        fromAddress,
-        toAddress,
-        bookingType,
-        date: date ? format(date, 'yyyy-MM-dd') : null,
-        time: bookingType === 'schedule' ? time : null,
-        vehicle: selectedVehicle,
-      });
-      // Would typically submit to API or navigate to confirmation
-      alert('Booking successful! A confirmation will be sent to you.');
+      setIsProcessing(true);
+      
+      // Simulate API call
+      setTimeout(() => {
+        const bookingDetails = {
+          fromAddress,
+          toAddress,
+          bookingType,
+          date: date ? format(date, 'yyyy-MM-dd') : null,
+          time: bookingType === 'schedule' ? time : null,
+          vehicle: selectedVehicle,
+          vehicleName: vehicles.find(v => v.id === selectedVehicle)?.name,
+          price: getSelectedVehiclePrice(),
+        };
+        
+        console.log('Booking confirmed:', bookingDetails);
+        
+        // Show success notification
+        toast({
+          title: t('booking.successTitle') || "Booking successful!",
+          description: t('booking.successMessage') || "A confirmation will be sent to you.",
+          variant: "default",
+        });
+        
+        // Reset form
+        setIsProcessing(false);
+        setFromAddress('');
+        setToAddress('');
+        setBookingType('now');
+        setSelectedVehicle(null);
+        setBookingStep(1);
+      }, 2000);
     }
   };
   
@@ -228,9 +253,19 @@ export function BookingForm() {
             <Button 
               onClick={handleBookNow} 
               className="gold-btn w-full"
-              disabled={!selectedVehicle}
+              disabled={!selectedVehicle || isProcessing}
             >
-              {t('booking.bookNow')}
+              {isProcessing ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  {t('booking.processing') || 'Processing...'}
+                </span>
+              ) : (
+                t('booking.bookNow')
+              )}
             </Button>
             <Button
               variant="outline"

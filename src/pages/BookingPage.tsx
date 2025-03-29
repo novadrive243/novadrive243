@@ -25,6 +25,7 @@ import { Star, MapPin, Calendar as CalendarIcon, Clock, CreditCard, Banknote, Ar
 import { Link } from 'react-router-dom';
 import { cn } from "@/lib/utils";
 import { vehicles } from "@/data/vehicles";
+import { useToast } from "@/hooks/use-toast";
 
 // Add CarIcon component to replace the missing Car icon reference
 const CarIcon = () => {
@@ -51,6 +52,7 @@ const CarIcon = () => {
 
 const BookingPage = () => {
   const { language } = useLanguage();
+  const { toast } = useToast();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [time, setTime] = useState("12:00");
   const [duration, setDuration] = useState(3); // in hours
@@ -58,6 +60,7 @@ const BookingPage = () => {
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
   const [bookingStep, setBookingStep] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
   
   // Payment methods
   const paymentMethods = [
@@ -106,6 +109,48 @@ const BookingPage = () => {
     }
     
     return total.toFixed(2);
+  };
+
+  const handleConfirmBooking = () => {
+    setIsProcessing(true);
+    
+    // Simulate payment processing
+    setTimeout(() => {
+      setIsProcessing(false);
+      
+      // Create booking object for sending to backend (would be used in a real implementation)
+      const bookingDetails = {
+        date: date ? format(date, "yyyy-MM-dd") : '',
+        time,
+        duration,
+        pickup,
+        vehicleId: selectedVehicle,
+        vehicleName: getSelectedVehicle()?.name,
+        paymentMethod,
+        totalPrice: calculateTotalPrice(),
+        createdAt: new Date().toISOString()
+      };
+      
+      console.log('Booking confirmed:', bookingDetails);
+      
+      // Show success toast
+      toast({
+        title: language === 'fr' ? 'Réservation confirmée !' : 'Booking confirmed!',
+        description: language === 'fr' 
+          ? 'Votre chauffeur vous contactera bientôt.' 
+          : 'Your driver will contact you soon.',
+        variant: "default",
+      });
+      
+      // Reset the form and go back to step 1 for a new booking
+      setBookingStep(1);
+      setPickup('');
+      setSelectedVehicle(null);
+      setPaymentMethod(null);
+      setDate(new Date());
+      setTime('12:00');
+      setDuration(3);
+    }, 2000);
   };
   
   const renderStars = (rating: number) => {
@@ -497,10 +542,23 @@ const BookingPage = () => {
                   
                   <Button 
                     className="w-full gold-btn"
-                    disabled={!paymentMethod}
+                    disabled={!paymentMethod || isProcessing}
+                    onClick={handleConfirmBooking}
                   >
-                    {language === 'fr' ? 'Confirmer la réservation' : 'Confirm booking'}
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    {isProcessing ? (
+                      <span className="flex items-center">
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        {language === 'fr' ? 'Traitement en cours...' : 'Processing...'}
+                      </span>
+                    ) : (
+                      <>
+                        {language === 'fr' ? 'Confirmer la réservation' : 'Confirm booking'}
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </>
+                    )}
                   </Button>
                 </CardContent>
               </Card>
