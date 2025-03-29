@@ -2,13 +2,10 @@
 import React from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
-import { LoginForm } from "@/components/auth/login-form";
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { RegisterForm } from "@/components/auth/register-form";
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const { t } = useLanguage();
-  const navigate = useNavigate();
   
   return (
     <div className="min-h-screen bg-nova-black flex flex-col justify-center items-center p-4">
@@ -16,40 +13,27 @@ const LoginPage = () => {
         <LanguageSwitcher />
       </div>
       
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-lg">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">
             <span className="gold-gradient-text">NovaDrive</span>
           </h1>
           <p className="text-nova-white/70">
-            {t('login.slogan') || 'Le Pouvoir du Mouvement'}
+            {t('register.slogan') || 'Le Pouvoir du Mouvement'}
           </p>
         </div>
         
         <div className="bg-nova-black/40 border border-nova-gold/20 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-nova-white mb-6">
-            {t('login.welcome') || 'Welcome Back'}
+            {t('register.title') || 'Create Your Account'}
           </h2>
           
-          <LoginForm />
-        </div>
-        
-        <div className="text-center mt-6">
-          <p className="text-nova-white/50 text-sm mb-2">
-            {t('login.newUser') || 'New to NovaDrive?'}
-          </p>
-          <Button 
-            onClick={() => navigate('/register')}
-            variant="outline" 
-            className="border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10"
-          >
-            {t('login.register') || 'Create Account'}
-          </Button>
+          <RegisterForm />
         </div>
         
         <div className="text-center mt-6">
           <p className="text-nova-white/50 text-sm">
-            &copy; {new Date().getFullYear()} NovaDrive. {t('login.rights') || 'All rights reserved.'}
+            &copy; {new Date().getFullYear()} NovaDrive. {t('register.rights') || 'All rights reserved.'}
           </p>
         </div>
       </div>
@@ -57,4 +41,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

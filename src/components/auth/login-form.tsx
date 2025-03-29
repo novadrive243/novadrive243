@@ -1,249 +1,203 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/language-context";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { Mail, Phone, Lock } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+
+const formSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z.string().min(1, { message: "Password is required" }),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 export function LoginForm() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   
-  const [tab, setTab] = useState("email");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  const handleEmailLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    // In a real app, you would authenticate with a backend service
-    try {
-      // Mock authentication
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // If successful, navigate to PIN creation
-      toast({
-        title: language === 'fr' ? "Connexion réussie" : "Login successful",
-        description: language === 'fr' 
-          ? "Bienvenue sur NovaDrive" 
-          : "Welcome to NovaDrive",
-      });
-      
-      navigate("/create-pin");
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: language === 'fr' ? "Erreur de connexion" : "Login error",
-        description: language === 'fr' 
-          ? "Vérifiez vos informations et réessayez" 
-          : "Please check your credentials and try again",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
-  const handlePhoneLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
     
     try {
-      // Mock OTP verification
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // In a real app, you would verify credentials with your backend
+      console.log("Login attempt:", data);
       
-      toast({
-        title: language === 'fr' ? "Vérification réussie" : "Verification successful",
-        description: language === 'fr' 
-          ? "Bienvenue sur NovaDrive" 
-          : "Welcome to NovaDrive",
-      });
+      // Check if user data exists in localStorage
+      const userData = localStorage.getItem('userData');
       
-      navigate("/create-pin");
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: language === 'fr' ? "Erreur de vérification" : "Verification error",
-        description: language === 'fr' 
-          ? "Code invalide. Veuillez réessayer" 
-          : "Invalid code. Please try again",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
-  return (
-    <Card className="w-full max-w-md mx-auto bg-nova-black border border-nova-gold/30">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold text-center gold-gradient-text">
-          {language === 'fr' ? 'Connexion à' : 'Login to'} NovaDrive
-        </CardTitle>
-        <CardDescription className="text-center text-nova-white/70">
-          {language === 'fr' 
-            ? 'Accédez à votre compte pour réserver votre chauffeur' 
-            : 'Access your account to book your chauffeur'}
-        </CardDescription>
-      </CardHeader>
-      
-      <CardContent className="grid gap-4">
-        <Tabs defaultValue="email" value={tab} onValueChange={setTab}>
-          <TabsList className="grid grid-cols-2 w-full bg-nova-gray">
-            <TabsTrigger value="email" className="flex items-center gap-2">
-              <Mail className="h-4 w-4" />
-              {language === 'fr' ? 'Email' : 'Email'}
-            </TabsTrigger>
-            <TabsTrigger value="phone" className="flex items-center gap-2">
-              <Phone className="h-4 w-4" />
-              {language === 'fr' ? 'Téléphone' : 'Phone'}
-            </TabsTrigger>
-          </TabsList>
+      if (userData) {
+        const user = JSON.parse(userData);
+        
+        // Simple credential check for demo purposes
+        if (user.email === data.email) {
+          // Check if PIN exists
+          const hasPin = localStorage.getItem('userPin') !== null;
           
-          <TabsContent value="email">
-            <form onSubmit={handleEmailLogin} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">
-                  {language === 'fr' ? 'Email' : 'Email'}
-                </Label>
-                <Input 
-                  id="email" 
-                  type="email" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder={language === 'fr' ? 'votre@email.com' : 'your@email.com'}
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">
-                    {language === 'fr' ? 'Mot de passe' : 'Password'}
-                  </Label>
-                  <Button 
-                    variant="link" 
-                    size="sm" 
-                    className="text-xs text-nova-gold"
-                    onClick={() => navigate("/forgot-password")}
+          if (hasPin) {
+            // Redirect to PIN verification
+            navigate("/verify-pin");
+          } else {
+            // Redirect to PIN creation
+            navigate("/create-pin");
+          }
+        } else {
+          throw new Error("Invalid credentials");
+        }
+      } else {
+        // No user data found, redirect to registration
+        toast({
+          title: language === 'fr' ? "Compte inconnu" : "Account not found",
+          description: language === 'fr' 
+            ? "Veuillez créer un compte" 
+            : "Please create an account",
+        });
+        navigate("/register");
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: language === 'fr' ? "Erreur de connexion" : "Login failed",
+        description: language === 'fr' 
+          ? "Adresse e-mail ou mot de passe incorrect" 
+          : "Incorrect email or password",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+  
+  const handleRegister = () => {
+    navigate("/register");
+  };
+  
+  const handleForgotPassword = () => {
+    // Handle forgot password functionality
+    console.log("Forgot password clicked");
+  };
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-nova-white">
+                {language === 'fr' ? 'Adresse e-mail' : 'Email Address'}
+              </FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Input 
+                    placeholder={language === 'fr' ? 'Entrez votre adresse e-mail' : 'Enter your email address'} 
+                    {...field} 
+                    className="bg-nova-black/60 border-nova-gold/30 text-nova-white pl-10"
+                    type="email"
+                  />
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-nova-gold/70" />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-nova-white">
+                {language === 'fr' ? 'Mot de passe' : 'Password'}
+              </FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Input 
+                    placeholder={language === 'fr' ? 'Entrez votre mot de passe' : 'Enter your password'} 
+                    {...field} 
+                    className="bg-nova-black/60 border-nova-gold/30 text-nova-white pl-10 pr-10"
+                    type={showPassword ? "text" : "password"}
+                  />
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-nova-gold/70" />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full text-nova-white/70 hover:text-nova-white"
+                    onClick={togglePasswordVisibility}
                   >
-                    {language === 'fr' ? 'Mot de passe oublié?' : 'Forgot password?'}
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
                 </div>
-                <Input 
-                  id="password" 
-                  type="password" 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                />
-              </div>
-              
-              <Button 
-                type="submit" 
-                className="w-full gold-btn" 
-                disabled={isLoading}
-              >
-                {isLoading 
-                  ? (language === 'fr' ? 'Connexion en cours...' : 'Logging in...') 
-                  : (language === 'fr' ? 'Se connecter' : 'Login')}
-              </Button>
-            </form>
-          </TabsContent>
-          
-          <TabsContent value="phone">
-            <form onSubmit={handlePhoneLogin} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="phone">
-                  {language === 'fr' ? 'Numéro de téléphone' : 'Phone Number'}
-                </Label>
-                <Input 
-                  id="phone" 
-                  type="tel" 
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+243 855971610"
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="otp">
-                  {language === 'fr' ? 'Code de vérification' : 'Verification Code'}
-                </Label>
-                <InputOTP 
-                  maxLength={6}
-                  value={otp}
-                  onChange={setOtp}
-                >
-                  <InputOTPGroup>
-                    {[0, 1, 2, 3, 4, 5].map((_, index) => (
-                      <InputOTPSlot key={index} index={index} />
-                    ))}
-                  </InputOTPGroup>
-                </InputOTP>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full text-sm mt-1 text-nova-gold border-nova-gold"
-                >
-                  {language === 'fr' ? 'Envoyer le code' : 'Send Code'}
-                </Button>
-              </div>
-              
-              <Button 
-                type="submit" 
-                className="w-full gold-btn" 
-                disabled={isLoading}
-              >
-                {isLoading 
-                  ? (language === 'fr' ? 'Vérification...' : 'Verifying...') 
-                  : (language === 'fr' ? 'Vérifier' : 'Verify')}
-              </Button>
-            </form>
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-      
-      <CardFooter className="flex flex-col space-y-4">
-        <div className="text-center text-sm text-nova-white/70">
-          {language === 'fr' ? "Vous n'avez pas de compte?" : "Don't have an account?"}
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <div className="flex justify-end">
           <Button 
             variant="link" 
-            className="text-nova-gold"
-            onClick={() => navigate("/signup")}
+            className="text-nova-gold p-0 h-auto"
+            onClick={() => navigate("/reset-pin")}
           >
-            {language === 'fr' ? "S'inscrire" : "Sign up"}
+            {language === 'fr' ? 'Mot de passe oublié?' : 'Forgot password?'}
           </Button>
         </div>
-      </CardFooter>
-    </Card>
+        
+        <Button 
+          type="submit" 
+          className="w-full gold-btn" 
+          disabled={isLoading}
+        >
+          {isLoading 
+            ? (language === 'fr' ? 'Connexion en cours...' : 'Logging in...') 
+            : (language === 'fr' ? 'Connexion' : 'Login')}
+        </Button>
+        
+        <div className="text-center">
+          <p className="text-nova-white/70 text-sm">
+            {language === 'fr' ? 'Pas encore de compte?' : 'Don\'t have an account?'}{' '}
+            <Button 
+              variant="link" 
+              className="text-nova-gold p-0 h-auto font-medium"
+              onClick={handleRegister}
+            >
+              {language === 'fr' ? 'S\'inscrire' : 'Register'}
+            </Button>
+          </p>
+        </div>
+      </form>
+    </Form>
   );
 }

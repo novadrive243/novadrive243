@@ -28,6 +28,23 @@ export function CreatePinForm() {
   const [confirmPin, setConfirmPin] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   
+  // Check if user is registered
+  React.useEffect(() => {
+    const userData = localStorage.getItem('userData');
+    if (!userData) {
+      // Redirect to registration if not registered
+      navigate("/register");
+      
+      toast({
+        variant: "destructive",
+        title: language === 'fr' ? "Inscription requise" : "Registration required",
+        description: language === 'fr' 
+          ? "Veuillez d'abord vous inscrire" 
+          : "Please register first",
+      });
+    }
+  }, [navigate, toast, language]);
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -62,6 +79,9 @@ export function CreatePinForm() {
       
       // Store the PIN in localStorage (not secure, just for demo)
       localStorage.setItem('userPin', pin);
+      
+      // Mark PIN as verified for this session
+      sessionStorage.setItem('pinVerified', 'true');
       
       toast({
         title: language === 'fr' ? "PIN créé avec succès" : "PIN created successfully",
@@ -144,7 +164,7 @@ export function CreatePinForm() {
           <Button 
             type="submit" 
             className="w-full gold-btn" 
-            disabled={isLoading}
+            disabled={isLoading || pin.length < 6 || confirmPin.length < 6}
           >
             {isLoading 
               ? (language === 'fr' ? 'Création en cours...' : 'Creating...') 

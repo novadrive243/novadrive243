@@ -26,6 +26,8 @@ export function VerifyPinForm() {
   
   const [pin, setPin] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [attempts, setAttempts] = useState(0);
+  const MAX_ATTEMPTS = 3;
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,13 +54,36 @@ export function VerifyPinForm() {
         
         navigate("/home");
       } else {
-        toast({
-          variant: "destructive",
-          title: language === 'fr' ? "PIN incorrect" : "Incorrect PIN",
-          description: language === 'fr' 
-            ? "Veuillez réessayer" 
-            : "Please try again",
-        });
+        // Increment failed attempts
+        const newAttempts = attempts + 1;
+        setAttempts(newAttempts);
+        
+        // Check if max attempts reached
+        if (newAttempts >= MAX_ATTEMPTS) {
+          toast({
+            variant: "destructive",
+            title: language === 'fr' ? "Trop de tentatives" : "Too many attempts",
+            description: language === 'fr' 
+              ? "Pour des raisons de sécurité, veuillez réinitialiser votre PIN" 
+              : "For security reasons, please reset your PIN",
+          });
+          
+          // Redirect to reset PIN page
+          setTimeout(() => {
+            navigate("/reset-pin");
+          }, 2000);
+        } else {
+          toast({
+            variant: "destructive",
+            title: language === 'fr' ? "PIN incorrect" : "Incorrect PIN",
+            description: language === 'fr' 
+              ? `Veuillez réessayer (tentative ${newAttempts}/${MAX_ATTEMPTS})` 
+              : `Please try again (attempt ${newAttempts}/${MAX_ATTEMPTS})`,
+          });
+        }
+        
+        // Clear the PIN input
+        setPin("");
       }
     } catch (error) {
       toast({
@@ -114,7 +139,7 @@ export function VerifyPinForm() {
           <Button 
             type="submit" 
             className="w-full gold-btn" 
-            disabled={isLoading}
+            disabled={isLoading || pin.length < 6}
           >
             {isLoading 
               ? (language === 'fr' ? 'Vérification...' : 'Verifying...') 
