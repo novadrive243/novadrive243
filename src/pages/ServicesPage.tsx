@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -116,8 +115,9 @@ const ServicesPage = () => {
           {sections.map((section, sectionIndex) => (
             <section key={sectionIndex} className="mb-16">
               <div className="flex items-center mb-6">
-                {section.icon}
-                <h2 className="text-2xl font-semibold ml-3 text-nova-gold">{section.title}</h2>
+                <h2 className="text-2xl font-semibold text-nova-gold border-b-2 border-nova-gold pb-2">
+                  {section.title}
+                </h2>
               </div>
               
               <div className="bg-nova-gray/20 border border-nova-gold/20 rounded-lg p-6">
