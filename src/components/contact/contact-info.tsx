@@ -11,7 +11,7 @@ const ContactInfo = () => {
     {
       icon: <Phone className="text-nova-gold" />,
       title: t('contact.phone'),
-      info: "+243 999 999 999",
+      info: "+243 855971610",
       description: t('contact.phoneDescription')
     },
     {
