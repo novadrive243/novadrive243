@@ -2,13 +2,14 @@
 import React from 'react';
 import { useLanguage } from '@/contexts/language-context';
 import { Button } from '@/components/ui/button';
-import { Car } from 'lucide-react';
-import { Vehicle } from '@/data/vehicles';
+import { vehicles } from '@/data/vehicles';
+import { Card, CardContent } from '@/components/ui/card';
+import { calculateVehiclePrice } from '../utils/booking-utils';
 
 interface BookingStepTwoProps {
-  vehicles: Vehicle[];
+  vehicles: typeof vehicles;
   selectedVehicle: string | null;
-  setSelectedVehicle: (id: string) => void;
+  setSelectedVehicle: (id: string | null) => void;
   durationType: 'hourly' | 'daily' | 'monthly';
   duration: number;
   days: number;
@@ -34,91 +35,110 @@ export function BookingStepTwo({
 }: BookingStepTwoProps) {
   const { t } = useLanguage();
   
+  // Get price label based on duration type
+  const getPriceLabel = () => {
+    switch (durationType) {
+      case 'hourly': return t('booking.perHour') || 'per hour';
+      case 'daily': return t('booking.perDay') || 'per day';
+      case 'monthly': return t('booking.perMonth') || 'per month';
+      default: return t('booking.perHour') || 'per hour';
+    }
+  };
+  
+  // Get price based on duration type for a vehicle
+  const getPrice = (vehicle: typeof vehicles[0]) => {
+    switch (durationType) {
+      case 'hourly': return vehicle.price.hourly;
+      case 'daily': return vehicle.price.daily;
+      case 'monthly': return vehicle.price.daily * 30; // Monthly price based on daily rate
+      default: return vehicle.price.hourly;
+    }
+  };
+  
   return (
-    <div className="space-y-6">
-      <h3 className="text-lg font-medium text-nova-white">{t('booking.selectVehicle')}</h3>
+    <div>
+      <Button
+        variant="outline"
+        onClick={() => setBookingStep(1)}
+        className="mb-4 border-nova-gold/50 text-nova-gold"
+      >
+        {t('booking.back')}
+      </Button>
       
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         {vehicles.map((vehicle) => (
-          <div 
+          <Card 
             key={vehicle.id}
-            className={`p-4 rounded-lg border cursor-pointer transition-all flex ${
-              selectedVehicle === vehicle.id 
-                ? 'border-nova-gold bg-nova-gold/10' 
-                : 'border-nova-gold/30 bg-nova-gray/30 hover:bg-nova-gray/40'
+            className={`cursor-pointer hover:bg-nova-gray/50 transition-colors ${
+              selectedVehicle === vehicle.id ? 'border-nova-gold bg-nova-gray/50' : 'bg-nova-gray/20'
             }`}
             onClick={() => setSelectedVehicle(vehicle.id)}
           >
-            <div className="w-24 h-24 mr-4 rounded-md overflow-hidden flex-shrink-0">
-              <img 
-                src={vehicle.image} 
-                alt={vehicle.name} 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex-grow">
-              <h4 className="font-medium">{vehicle.name}</h4>
-              <div className="flex items-center mt-2">
-                <Car className="w-4 h-4 mr-1 text-nova-gold" />
-                <span className="text-sm text-nova-white/70">Premium</span>
+            <CardContent className="p-4">
+              <div className="flex items-center">
+                <div className="flex-shrink-0 h-20 w-20 bg-nova-gray rounded-md overflow-hidden mr-4">
+                  <img 
+                    src={vehicle.image} 
+                    alt={vehicle.name} 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-grow">
+                  <h3 className="text-lg font-medium text-nova-white">{vehicle.name}</h3>
+                  <div className="flex items-center mt-1 space-x-4">
+                    <div className="text-nova-gold text-sm font-medium">
+                      <span className="text-lg">${getPrice(vehicle)}</span> {getPriceLabel()}
+                    </div>
+                    <div className="text-nova-white/70 text-sm">
+                      Capacity: {vehicle.capacity}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="mt-2">
-                <span className="text-sm text-nova-white/70">Capacity: {vehicle.capacity} persons</span>
-              </div>
-            </div>
-            <div className="text-right">
-              <span className="text-nova-gold font-bold">${vehicle.price.hourly}</span>
-              <p className="text-xs text-nova-white/70">{t('booking.perHour') || 'per hour'}</p>
-              <p className="text-nova-gold font-bold mt-1">${vehicle.price.daily}</p>
-              <p className="text-xs text-nova-white/70">{t('booking.perDay') || 'per day'}</p>
-              <p className="text-nova-gold font-bold mt-1">${vehicle.price.monthly}</p>
-              <p className="text-xs text-nova-white/70">{t('booking.perMonth') || 'per month'}</p>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
       
       {selectedVehicle && (
-        <div className="mt-6 p-4 border border-nova-gold/30 rounded-lg bg-nova-gold/10">
-          <div className="flex justify-between items-center">
-            <span className="text-lg">
-              {durationType === 'hourly'
-                ? `${t('booking.estimatedPrice') || 'Estimated price'} (${duration} ${duration === 1 ? 'hour' : 'hours'})`
-                : durationType === 'daily'
-                  ? `${t('booking.estimatedPrice') || 'Estimated price'} (${days} ${days === 1 ? 'day' : 'days'})`
-                  : `${t('booking.estimatedPrice') || 'Estimated price'} (${months} ${months === 1 ? 'month' : 'months'})`}
+        <div className="bg-nova-gray/20 p-4 rounded mb-4">
+          <h3 className="text-lg font-medium text-nova-white mb-2">{t('booking.summary')}</h3>
+          <div className="flex justify-between text-nova-white/70 mb-1">
+            <span>{t('booking.vehicle')}</span>
+            <span>{vehicles.find(v => v.id === selectedVehicle)?.name}</span>
+          </div>
+          <div className="flex justify-between text-nova-white/70 mb-1">
+            <span>{t('booking.duration')}</span>
+            <span>
+              {durationType === 'hourly' && `${duration} ${t('booking.hours')}`}
+              {durationType === 'daily' && `${days} ${t('booking.days')}`}
+              {durationType === 'monthly' && `${months} ${t('booking.months')}`}
             </span>
-            <span className="text-2xl font-bold text-nova-gold">${getSelectedVehiclePrice()}</span>
+          </div>
+          <div className="flex justify-between font-medium mt-2 pt-2 border-t border-nova-white/10">
+            <span className="text-nova-white">{t('booking.totalPrice')}</span>
+            <span className="text-nova-gold">${getSelectedVehiclePrice()}</span>
           </div>
         </div>
       )}
       
-      <div className="w-full space-y-3 mt-6">
-        <Button 
-          onClick={handleBookNow} 
-          className="gold-btn w-full"
-          disabled={!selectedVehicle || isProcessing}
-        >
-          {isProcessing ? (
-            <span className="flex items-center justify-center">
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              {t('booking.processing') || 'Processing...'}
-            </span>
-          ) : (
-            t('booking.bookNow')
-          )}
-        </Button>
-        <Button
-          variant="outline"
-          onClick={() => setBookingStep(1)}
-          className="w-full border-nova-gold/50 text-nova-white hover:bg-nova-black"
-        >
-          {t('booking.back') || 'Back'}
-        </Button>
-      </div>
+      <Button 
+        onClick={handleBookNow} 
+        className="w-full bg-nova-gold hover:bg-nova-gold/90 text-nova-black"
+        disabled={!selectedVehicle || isProcessing}
+      >
+        {isProcessing ? (
+          <span className="flex items-center">
+            <svg className="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            {t('booking.processing')}
+          </span>
+        ) : (
+          t('booking.bookNow')
+        )}
+      </Button>
     </div>
   );
 }

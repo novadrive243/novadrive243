@@ -12,6 +12,7 @@ interface BookingStepTwoVehicleProps {
   handleContinue: () => void;
   handlePrevious: () => void;
   renderStars: (rating: number) => JSX.Element[];
+  durationType: 'hourly' | 'daily' | 'monthly';
 }
 
 export const BookingStepTwoVehicle = ({
@@ -20,8 +21,34 @@ export const BookingStepTwoVehicle = ({
   setSelectedVehicle,
   handleContinue,
   handlePrevious,
-  renderStars
+  renderStars,
+  durationType
 }: BookingStepTwoVehicleProps) => {
+  
+  // Get price label based on duration type
+  const getPriceLabel = () => {
+    switch (durationType) {
+      case 'hourly': 
+        return language === 'fr' ? 'par heure' : 'per hour';
+      case 'daily': 
+        return language === 'fr' ? 'par jour' : 'per day';
+      case 'monthly': 
+        return language === 'fr' ? 'par mois' : 'per month';
+      default: 
+        return language === 'fr' ? 'par heure' : 'per hour';
+    }
+  };
+  
+  // Get price based on duration type
+  const getPrice = (vehicle: typeof vehicles[0]) => {
+    switch (durationType) {
+      case 'hourly': return vehicle.price.hourly;
+      case 'daily': return vehicle.price.daily;
+      case 'monthly': return vehicle.price.daily * 30; // Monthly price based on daily rate × 30
+      default: return vehicle.price.hourly;
+    }
+  };
+
   return (
     <div className="max-w-2xl mx-auto">
       <Button 
@@ -69,9 +96,9 @@ export const BookingStepTwoVehicle = ({
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-nova-gold font-bold">${vehicle.price.hourly}</p>
+                    <p className="text-nova-gold font-bold">${getPrice(vehicle)}</p>
                     <p className="text-nova-white/70 text-xs">
-                      {language === 'fr' ? 'par heure' : 'per hour'}
+                      {getPriceLabel()}
                     </p>
                     {selectedVehicle === vehicle.id && (
                       <CheckCircle className="h-5 w-5 text-nova-gold ml-auto mt-2" />
