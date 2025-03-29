@@ -24,6 +24,7 @@ import { fr, enUS } from "date-fns/locale";
 import { Star, MapPin, Calendar as CalendarIcon, Clock, CreditCard, Banknote, ArrowRight, CheckCircle, Home, UserRound } from "lucide-react";
 import { Link } from 'react-router-dom';
 import { cn } from "@/lib/utils";
+import { vehicles } from "@/data/vehicles";
 
 // Add CarIcon component to replace the missing Car icon reference
 const CarIcon = () => {
@@ -57,37 +58,6 @@ const BookingPage = () => {
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
   const [bookingStep, setBookingStep] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
-  
-  // Mock vehicles data
-  const vehicles = [
-    {
-      id: "v1",
-      name: "Toyota Fortuner",
-      type: "SUV",
-      comfort: 3.5,
-      capacity: 5,
-      price: 50, // per hour
-      image: "/lovable-uploads/your-image.png" // would be a proper image path in a real app
-    },
-    {
-      id: "v2",
-      name: "Mercedes-Benz E-Class",
-      type: "Sedan",
-      comfort: 4.5,
-      capacity: 4,
-      price: 70, // per hour
-      image: "/lovable-uploads/your-image.png"
-    },
-    {
-      id: "v3",
-      name: "Lexus LX 570",
-      type: "Luxury SUV",
-      comfort: 5,
-      capacity: 7,
-      price: 90, // per hour
-      image: "/lovable-uploads/your-image.png"
-    }
-  ];
   
   // Payment methods
   const paymentMethods = [
@@ -125,14 +95,17 @@ const BookingPage = () => {
     const vehicle = getSelectedVehicle();
     if (!vehicle) return 0;
     
-    let total = vehicle.price * duration;
+    // Utilisons le prix horaire ou journalier en fonction de la durée
+    let total = (duration >= 24) 
+      ? vehicle.price.daily * Math.floor(duration / 24) 
+      : vehicle.price.hourly * duration;
     
     // Apply 5% discount for online payment
     if (paymentMethod && paymentMethod !== 'cash') {
       total = total * 0.95;
     }
     
-    return total;
+    return total.toFixed(2);
   };
   
   const renderStars = (rating: number) => {
@@ -332,12 +305,15 @@ const BookingPage = () => {
                         onClick={() => handleVehicleSelect(vehicle.id)}
                       >
                         <div className="flex items-center">
-                          <div className="mr-4 h-16 w-16 bg-nova-gray rounded-md flex items-center justify-center">
-                            <CarIcon />
+                          <div className="mr-4 h-16 w-16 bg-nova-black/50 rounded-md overflow-hidden">
+                            <img 
+                              src={vehicle.image}
+                              alt={vehicle.name}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
                           <div className="flex-grow">
                             <h3 className="text-nova-white font-medium">{vehicle.name}</h3>
-                            <p className="text-nova-white/70 text-sm">{vehicle.type}</p>
                             <div className="flex items-center mt-1">
                               <div className="flex mr-4">
                                 {renderStars(vehicle.comfort)}
@@ -348,9 +324,13 @@ const BookingPage = () => {
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="text-nova-gold font-bold">${vehicle.price}</p>
+                            <p className="text-nova-gold font-bold">${vehicle.price.hourly}</p>
                             <p className="text-nova-white/70 text-xs">
                               {language === 'fr' ? 'par heure' : 'per hour'}
+                            </p>
+                            <p className="text-nova-gold font-bold mt-1">${vehicle.price.daily}</p>
+                            <p className="text-nova-white/70 text-xs">
+                              {language === 'fr' ? 'par jour' : 'per day'}
                             </p>
                             {selectedVehicle === vehicle.id && (
                               <CheckCircle className="h-5 w-5 text-nova-gold ml-auto mt-2" />
