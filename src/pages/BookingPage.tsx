@@ -2,20 +2,18 @@
 import React from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
-import { HeroSection } from '@/components/home/hero-section';
-import { VehiclesSection } from '@/components/home/vehicles-section';
+import { BookingForm } from '@/components/booking/booking-form';
 
-const Index = () => {
+const BookingPage = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-grow">
-        <HeroSection />
-        <VehiclesSection />
+      <main className="flex-grow pt-28 pb-16 px-4">
+        <BookingForm />
       </main>
       <Footer />
     </div>
   );
 };
 
-export default Index;
+export default BookingPage;
