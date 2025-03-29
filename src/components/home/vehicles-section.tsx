@@ -77,7 +77,7 @@ export function VehiclesSection() {
       name: 'Nissan X-Terra',
       image: '/lovable-uploads/6a588e4a-4639-4bb2-800c-1d4ca6adb059.png',
       comfort: 4,
-      capacity: 5
+      capacity: 6
     },
     {
       id: 'toyota-fortuner',
