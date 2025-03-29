@@ -23,8 +23,8 @@ export const calculateVehiclePrice = (
       // Direct calculation using daily rate
       return vehicle.price.daily * days;
     case 'monthly': 
-      // Convert monthly rate to a daily rate (monthly price ÷ 30 days × number of months × days)
-      return (vehicle.price.daily * days * months);
+      // Monthly calculation based on daily rate (daily price × days per month × number of months)
+      return vehicle.price.daily * 30 * months;
     default: 
       return vehicle.price.hourly * duration;
   }

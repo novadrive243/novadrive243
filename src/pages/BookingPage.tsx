@@ -72,8 +72,8 @@ const BookingPage = () => {
         total = vehicle.price.daily * days;
         break;
       case 'monthly':
-        // Calculate monthly price based on daily rate
-        total = vehicle.price.daily * days * months;
+        // Calculate monthly price using daily rate × 30 days per month
+        total = vehicle.price.daily * 30 * months;
         break;
       default:
         total = vehicle.price.hourly * hours;
