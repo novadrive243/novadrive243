@@ -7,7 +7,7 @@ import { VehiclesSection } from '@/components/home/vehicles-section';
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-nova-black text-nova-white">
       <Header />
       <main className="flex-grow">
         <HeroSection />

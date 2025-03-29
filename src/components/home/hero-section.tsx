@@ -9,7 +9,7 @@ export function HeroSection() {
   const { t } = useLanguage();
   
   return (
-    <section className="relative min-h-screen flex items-center pt-16 overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background gradient overlay */}
       <div className="absolute inset-0 bg-nova-black z-0 opacity-70"></div>
       
@@ -22,21 +22,21 @@ export function HeroSection() {
       ></div>
       
       {/* Content */}
-      <div className="container mx-auto px-4 z-10">
-        <div className="max-w-3xl">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 animate-slide-down">
+      <div className="container mx-auto px-4 z-10 text-center py-16">
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-in">
             <span className="bg-gold-gradient text-transparent bg-clip-text">NovaDrive</span>
           </h1>
-          <h2 className="text-3xl md:text-4xl font-medium mb-6 animate-slide-down" style={{ animationDelay: '0.1s' }}>
+          <h2 className="text-3xl md:text-4xl font-medium mb-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
             {t('hero.title')}
           </h2>
-          <p className="text-xl md:text-2xl text-nova-white/90 mb-8 animate-slide-down" style={{ animationDelay: '0.2s' }}>
+          <p className="text-xl md:text-2xl text-nova-white/90 mb-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
             {t('hero.subtitle')}
           </p>
           <Button 
             asChild 
             size="lg" 
-            className="gold-btn text-lg px-8 py-6 rounded-full animate-slide-down"
+            className="gold-btn text-lg px-8 py-6 rounded-full animate-fade-in"
             style={{ animationDelay: '0.3s' }}
           >
             <Link to="/book">
@@ -48,7 +48,7 @@ export function HeroSection() {
       </div>
       
       {/* Gold bar at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gold-gradient"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-2 bg-gold-gradient"></div>
     </section>
   );
 }
