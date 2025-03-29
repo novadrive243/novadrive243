@@ -112,7 +112,7 @@ const AboutPage = () => {
                 </div>
                 <div className="aspect-[4/3] rounded-lg overflow-hidden">
                   <img 
-                    src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+                    src="/lovable-uploads/6a588e4a-4639-4bb2-800c-1d4ca6adb059.png" 
                     alt="Nissan X-Terra" 
                     className="w-full h-full object-cover"
                   />
