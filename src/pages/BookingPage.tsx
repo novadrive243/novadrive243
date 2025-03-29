@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -78,7 +77,6 @@ const BookingPage = () => {
         total = vehicle.price.hourly * hours;
     }
     
-    // Apply 5% discount for online payment
     if (paymentMethod && paymentMethod !== 'cash') {
       total = total * 0.95;
     }
@@ -89,11 +87,9 @@ const BookingPage = () => {
   const handleConfirmBooking = () => {
     setIsProcessing(true);
     
-    // Simulate payment processing
     setTimeout(() => {
       setIsProcessing(false);
       
-      // Create booking object for sending to backend (would be used in a real implementation)
       const bookingDetails = {
         date: date ? format(date, "yyyy-MM-dd") : '',
         time,
@@ -109,7 +105,6 @@ const BookingPage = () => {
       
       console.log('Booking confirmed:', bookingDetails);
       
-      // Show success toast
       toast({
         title: language === 'fr' ? 'Réservation confirmée !' : 'Booking confirmed!',
         description: language === 'fr' 
@@ -118,7 +113,6 @@ const BookingPage = () => {
         variant: "default",
       });
       
-      // Reset the form and go back to step 1 for a new booking
       setBookingStep(1);
       setPickup('');
       setSelectedVehicle(null);
