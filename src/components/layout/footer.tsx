@@ -40,7 +40,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           <div>
             <Link to="/" className="inline-block mb-4">
-              <span className="font-sfpro text-2xl font-bold gold-gradient-text">NovaDrive</span>
+              <span className="font-sfpro text-2xl font-bold bg-gold-gradient text-transparent bg-clip-text">NovaDrive</span>
             </Link>
             <p className="text-nova-white/70 max-w-xs">
               {t('footer.slogan')}
