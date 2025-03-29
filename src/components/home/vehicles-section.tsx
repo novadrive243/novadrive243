@@ -4,16 +4,22 @@ import { useLanguage } from "@/contexts/language-context";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
+import { vehicles } from "@/data/vehicles";
+import { useNavigate } from "react-router-dom";
 
 interface VehicleCardProps {
   name: string;
   image: string;
   comfort: number;
   capacity: number;
+  price: {
+    hourly: number;
+    daily: number;
+  };
   onClick: () => void;
 }
 
-function VehicleCard({ name, image, comfort, capacity, onClick }: VehicleCardProps) {
+function VehicleCard({ name, image, comfort, capacity, price, onClick }: VehicleCardProps) {
   const { t } = useLanguage();
   
   return (
@@ -49,6 +55,17 @@ function VehicleCard({ name, image, comfort, capacity, onClick }: VehicleCardPro
             </div>
           </div>
           
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <p className="text-sm text-nova-white/70">{t('vehicles.hourlyRate')}</p>
+              <p className="text-nova-gold font-semibold">${price.hourly}/h</p>
+            </div>
+            <div>
+              <p className="text-sm text-nova-white/70">{t('vehicles.dailyRate')}</p>
+              <p className="text-nova-gold font-semibold">${price.daily}/day</p>
+            </div>
+          </div>
+          
           <Button 
             onClick={onClick} 
             className="gold-btn w-full"
@@ -63,34 +80,11 @@ function VehicleCard({ name, image, comfort, capacity, onClick }: VehicleCardPro
 
 export function VehiclesSection() {
   const { t } = useLanguage();
-  
-  const vehicles = [
-    {
-      id: 'chevrolet-tahoe',
-      name: 'Chevrolet Tahoe',
-      image: '/lovable-uploads/a564e144-c5d6-4636-8cba-43b5410310a6.png',
-      comfort: 5,
-      capacity: 6
-    },
-    {
-      id: 'nissan-xterra',
-      name: 'Nissan X-Terra',
-      image: '/lovable-uploads/6a588e4a-4639-4bb2-800c-1d4ca6adb059.png',
-      comfort: 4,
-      capacity: 6
-    },
-    {
-      id: 'toyota-fortuner',
-      name: 'Toyota Fortuner',
-      image: '/lovable-uploads/d46547d7-848f-40e6-8df3-826987faa8ef.png',
-      comfort: 5,
-      capacity: 6
-    }
-  ];
+  const navigate = useNavigate();
   
   const handleVehicleSelect = (id: string) => {
     console.log(`Vehicle selected: ${id}`);
-    // Would typically navigate to booking page with this vehicle pre-selected
+    navigate(`/book?vehicle=${id}`);
   };
   
   return (
@@ -113,6 +107,7 @@ export function VehiclesSection() {
               image={vehicle.image}
               comfort={vehicle.comfort}
               capacity={vehicle.capacity}
+              price={vehicle.price}
               onClick={() => handleVehicleSelect(vehicle.id)}
             />
           ))}

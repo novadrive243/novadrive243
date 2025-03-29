@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/language-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +9,8 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
 import { CalendarIcon, Clock, Car } from 'lucide-react';
+import { vehicles } from '@/data/vehicles';
+import { useSearchParams } from 'react-router-dom';
 
 export function BookingForm() {
   const { t } = useLanguage();
@@ -20,27 +21,15 @@ export function BookingForm() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [time, setTime] = useState('12:00');
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
   
-  const vehicles = [
-    {
-      id: 'chevrolet-tahoe',
-      name: 'Chevrolet Tahoe',
-      price: 75,
-      image: '/lovable-uploads/a564e144-c5d6-4636-8cba-43b5410310a6.png',
-    },
-    {
-      id: 'nissan-xterra',
-      name: 'Nissan X-Terra',
-      price: 60,
-      image: '/lovable-uploads/6a588e4a-4639-4bb2-800c-1d4ca6adb059.png',
-    },
-    {
-      id: 'toyota-fortuner',
-      name: 'Toyota Fortuner',
-      price: 80,
-      image: '/lovable-uploads/8337e561-5a74-4d76-8fac-6fb00b629bad.png',
-    },
-  ];
+  useEffect(() => {
+    const vehicleId = searchParams.get('vehicle');
+    if (vehicleId && vehicles.some(v => v.id === vehicleId)) {
+      setSelectedVehicle(vehicleId);
+      setBookingStep(2);
+    }
+  }, [searchParams]);
   
   const handleContinue = () => {
     if (fromAddress && toAddress) {
@@ -65,7 +54,7 @@ export function BookingForm() {
   
   const getSelectedVehiclePrice = () => {
     const vehicle = vehicles.find(v => v.id === selectedVehicle);
-    return vehicle ? vehicle.price : 0;
+    return vehicle ? vehicle.price.hourly : 0;
   };
   
   return (
@@ -76,8 +65,8 @@ export function BookingForm() {
         </CardTitle>
         <CardDescription>
           {bookingStep === 1 
-            ? "Enter your trip details" 
-            : "Select your preferred vehicle"}
+            ? t('booking.enterDetails') || "Enter your trip details" 
+            : t('booking.selectVehicle') || "Select your preferred vehicle"}
         </CardDescription>
       </CardHeader>
       
@@ -198,10 +187,15 @@ export function BookingForm() {
                       <Car className="w-4 h-4 mr-1 text-nova-gold" />
                       <span className="text-sm text-nova-white/70">Premium</span>
                     </div>
+                    <div className="mt-2">
+                      <span className="text-sm text-nova-white/70">Capacity: {vehicle.capacity} persons</span>
+                    </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-nova-gold font-bold">${vehicle.price}</span>
-                    <p className="text-xs text-nova-white/70">Estimated</p>
+                    <span className="text-nova-gold font-bold">${vehicle.price.hourly}</span>
+                    <p className="text-xs text-nova-white/70">{t('booking.perHour') || 'per hour'}</p>
+                    <p className="text-nova-gold font-bold mt-1">${vehicle.price.daily}</p>
+                    <p className="text-xs text-nova-white/70">{t('booking.perDay') || 'per day'}</p>
                   </div>
                 </div>
               ))}
@@ -210,7 +204,7 @@ export function BookingForm() {
             {selectedVehicle && (
               <div className="mt-6 p-4 border border-nova-gold/30 rounded-lg bg-nova-gold/10">
                 <div className="flex justify-between items-center">
-                  <span className="text-lg">{t('booking.estimatedPrice')}</span>
+                  <span className="text-lg">{t('booking.estimatedHourlyPrice') || 'Estimated hourly price'}</span>
                   <span className="text-2xl font-bold text-nova-gold">${getSelectedVehiclePrice()}</span>
                 </div>
               </div>
@@ -242,7 +236,7 @@ export function BookingForm() {
               onClick={() => setBookingStep(1)}
               className="w-full border-nova-gold/50 text-nova-white hover:bg-nova-black"
             >
-              Back
+              {t('booking.back') || 'Back'}
             </Button>
           </div>
         )}
