@@ -5,6 +5,7 @@ import { Star } from 'lucide-react';
 
 /**
  * Calculate the price based on the selected vehicle and duration
+ * All calculations are now based on daily rates for consistency
  */
 export const calculateVehiclePrice = (
   vehicle: Vehicle | undefined,
@@ -16,10 +17,16 @@ export const calculateVehiclePrice = (
   if (!vehicle) return 0;
   
   switch (durationType) {
-    case 'hourly': return vehicle.price.hourly * duration;
-    case 'daily': return vehicle.price.daily * days;
-    case 'monthly': return vehicle.price.monthly * months;
-    default: return vehicle.price.hourly * duration;
+    case 'hourly': 
+      return vehicle.price.hourly * duration;
+    case 'daily': 
+      // Direct calculation using daily rate
+      return vehicle.price.daily * days;
+    case 'monthly': 
+      // Convert monthly rate to a daily rate (monthly price ÷ 30 days × number of months × days)
+      return (vehicle.price.daily * days * months);
+    default: 
+      return vehicle.price.hourly * duration;
   }
 };
 

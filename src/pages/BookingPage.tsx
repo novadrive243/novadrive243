@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -71,14 +72,15 @@ const BookingPage = () => {
         total = vehicle.price.daily * days;
         break;
       case 'monthly':
-        total = vehicle.price.monthly * months;
+        // Calculate monthly price based on daily rate
+        total = vehicle.price.daily * days * months;
         break;
       default:
         total = vehicle.price.hourly * hours;
     }
     
     if (paymentMethod && paymentMethod !== 'cash') {
-      total = total * 0.95;
+      total = total * 0.95; // 5% discount for non-cash payments
     }
     
     return total.toFixed(2);
