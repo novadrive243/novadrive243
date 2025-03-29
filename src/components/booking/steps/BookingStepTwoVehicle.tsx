@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Star, CheckCircle } from 'lucide-react';
+import { Star, CheckCircle, Info } from 'lucide-react';
 import { vehicles } from '@/data/vehicles';
 import { calculateEffectiveDailyRate } from '../utils/booking-utils';
 
@@ -65,6 +65,17 @@ export const BookingStepTwoVehicle = ({
           <h2 className="text-xl font-semibold mb-4 text-nova-white">
             {language === 'fr' ? 'Sélectionner un véhicule' : 'Select a vehicle'}
           </h2>
+          
+          {durationType === 'daily' && (
+            <div className="mb-4 p-3 rounded-md bg-nova-gold/10 border border-nova-gold/30 flex items-start">
+              <Info className="h-5 w-5 text-nova-gold mr-2 mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-nova-white">
+                {language === 'fr' 
+                  ? 'Des tarifs réduits sont disponibles pour les réservations de 10 jours ou plus.'
+                  : 'Discounted rates are available for bookings of 10 days or more.'}
+              </p>
+            </div>
+          )}
           
           <div className="space-y-4">
             {vehicles.map((vehicle) => (

@@ -28,23 +28,59 @@ export const calculateVehiclePrice = (
       console.log('Vehicle price structure:', vehicle.price);
       
       if (days >= 30) {
-        // If days >= 30, use monthly rate
+        // If days >= 30, use monthly rate (flat fee)
         console.log(`Using monthly rate: ${vehicle.price.monthly}`);
         return vehicle.price.monthly;
-      } else if (days >= 25 && days <= 29) {
-        // 25-29 days: use daily rate from 25-day package
-        const dailyRate = vehicle.price.twentyFiveDayPackage / 25;
-        console.log(`Using 25-day package daily rate: ${dailyRate} × ${days} days = ${dailyRate * days}`);
+      } else if (days >= 25) {
+        // 25-29 days: specific daily rate × number of days
+        let dailyRate;
+        
+        if (vehicle.id === 'toyota-fortuner') {
+          dailyRate = 126; // $126 per day
+        } else if (vehicle.id === 'nissan-xterra') {
+          dailyRate = 168; // $168 per day
+        } else if (vehicle.id === 'chevrolet-tahoe') {
+          dailyRate = 340; // $340 per day
+        } else {
+          // Fallback using package calculation
+          dailyRate = vehicle.price.twentyFiveDayPackage / 25;
+        }
+        
+        console.log(`Using 25-29 day tier rate: ${dailyRate} × ${days} days = ${dailyRate * days}`);
         return dailyRate * days;
-      } else if (days >= 15 && days <= 24) {
-        // 15-24 days: use daily rate from 15-day package
-        const dailyRate = vehicle.price.fifteenDayPackage / 15;
-        console.log(`Using 15-day package daily rate: ${dailyRate} × ${days} days = ${dailyRate * days}`);
+      } else if (days >= 15) {
+        // 15-24 days: specific daily rate × number of days
+        let dailyRate;
+        
+        if (vehicle.id === 'toyota-fortuner') {
+          dailyRate = 130; // $130 per day
+        } else if (vehicle.id === 'nissan-xterra') {
+          dailyRate = 176; // $176 per day
+        } else if (vehicle.id === 'chevrolet-tahoe') {
+          dailyRate = 350; // $350 per day (no discount)
+        } else {
+          // Fallback using package calculation
+          dailyRate = vehicle.price.fifteenDayPackage / 15;
+        }
+        
+        console.log(`Using 15-24 day tier rate: ${dailyRate} × ${days} days = ${dailyRate * days}`);
         return dailyRate * days;
-      } else if (days >= 10 && days <= 14) {
-        // 10-14 days: use daily rate from 10-day package
-        const dailyRate = vehicle.price.tenDayPackage / 10;
-        console.log(`Using 10-day package daily rate: ${dailyRate} × ${days} days = ${dailyRate * days}`);
+      } else if (days >= 10) {
+        // 10-14 days: specific daily rate × number of days
+        let dailyRate;
+        
+        if (vehicle.id === 'toyota-fortuner') {
+          dailyRate = 135; // $135 per day
+        } else if (vehicle.id === 'nissan-xterra') {
+          dailyRate = 180; // $180 per day
+        } else if (vehicle.id === 'chevrolet-tahoe') {
+          dailyRate = 276.92; // $276.92 per day
+        } else {
+          // Fallback using package calculation
+          dailyRate = vehicle.price.tenDayPackage / 10;
+        }
+        
+        console.log(`Using 10-14 day tier rate: ${dailyRate} × ${days} days = ${dailyRate * days}`);
         return dailyRate * days;
       } else {
         // 1-9 days: use standard daily rate
@@ -72,12 +108,40 @@ export const calculateEffectiveDailyRate = (
     // For monthly rates, we show the monthly price divided by 30
     return vehicle.price.monthly / 30;
   } else if (days >= 25) {
-    return vehicle.price.twentyFiveDayPackage / 25;
+    // 25-29 days tier
+    if (vehicle.id === 'toyota-fortuner') {
+      return 126; // $126 per day
+    } else if (vehicle.id === 'nissan-xterra') {
+      return 168; // $168 per day
+    } else if (vehicle.id === 'chevrolet-tahoe') {
+      return 340; // $340 per day
+    } else {
+      return vehicle.price.twentyFiveDayPackage / 25;
+    }
   } else if (days >= 15) {
-    return vehicle.price.fifteenDayPackage / 15;
+    // 15-24 days tier
+    if (vehicle.id === 'toyota-fortuner') {
+      return 130; // $130 per day
+    } else if (vehicle.id === 'nissan-xterra') {
+      return 176; // $176 per day
+    } else if (vehicle.id === 'chevrolet-tahoe') {
+      return 350; // $350 per day (no discount)
+    } else {
+      return vehicle.price.fifteenDayPackage / 15;
+    }
   } else if (days >= 10) {
-    return vehicle.price.tenDayPackage / 10;
+    // 10-14 days tier
+    if (vehicle.id === 'toyota-fortuner') {
+      return 135; // $135 per day
+    } else if (vehicle.id === 'nissan-xterra') {
+      return 180; // $180 per day
+    } else if (vehicle.id === 'chevrolet-tahoe') {
+      return 276.92; // $276.92 per day
+    } else {
+      return vehicle.price.tenDayPackage / 10;
+    }
   } else {
+    // 1-9 days: standard daily rate
     return vehicle.price.daily;
   }
 };
