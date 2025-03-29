@@ -40,7 +40,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           <div>
             <Link to="/" className="inline-block mb-4">
-              <span className="font-sfpro text-2xl font-bold gold-gradient-text">NovaDrive</span>
+              <span className="font-sfpro text-2xl font-bold gold-gradient-text">Novakin</span>
             </Link>
             <p className="text-nova-white/70 max-w-xs">
               {t('footer.slogan')}
@@ -69,7 +69,7 @@ export function Footer() {
         <div className="border-t border-nova-gold/20 pt-6 mt-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-nova-white/50 text-sm">
-              &copy; {currentYear} NovaDrive. {t('footer.rights')}
+              &copy; {currentYear} Novakin. {t('footer.rights')}
             </p>
             <div className="flex space-x-4 mt-4 md:mt-0">
               <a href="#" className="text-nova-white/70 hover:text-nova-gold">
