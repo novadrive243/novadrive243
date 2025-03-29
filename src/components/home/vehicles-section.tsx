@@ -68,7 +68,7 @@ export function VehiclesSection() {
     {
       id: 'chevrolet-tahoe',
       name: 'Chevrolet Tahoe',
-      image: 'https://images.unsplash.com/photo-1571127236794-81c0bbfe1ce3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
+      image: '/lovable-uploads/a564e144-c5d6-4636-8cba-43b5410310a6.png',
       comfort: 5,
       capacity: 7
     },

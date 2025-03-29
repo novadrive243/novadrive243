@@ -105,7 +105,7 @@ const AboutPage = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="aspect-[4/3] rounded-lg overflow-hidden">
                   <img 
-                    src="https://images.unsplash.com/photo-1571127236794-81c0bbfe1ce3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" 
+                    src="/lovable-uploads/a564e144-c5d6-4636-8cba-43b5410310a6.png" 
                     alt="Chevrolet Tahoe" 
                     className="w-full h-full object-cover"
                   />
