@@ -17,7 +17,7 @@ export function HeroSection() {
       <div 
         className="absolute inset-0 bg-cover bg-center z-[-1]"
         style={{ 
-          backgroundImage: "url('https://images.unsplash.com/photo-1546614042-7df3c24c9e5d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1780&q=80')"
+          backgroundImage: "url('/lovable-uploads/65d17b10-d820-4eba-b913-99b9b12e7c35.png')"
         }}
       ></div>
       
