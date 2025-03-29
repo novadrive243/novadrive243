@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -27,7 +26,6 @@ import { cn } from "@/lib/utils";
 import { vehicles } from "@/data/vehicles";
 import { useToast } from "@/hooks/use-toast";
 
-// Add CarIcon component to replace the missing Car icon reference
 const CarIcon = () => {
   return (
     <svg
@@ -55,14 +53,16 @@ const BookingPage = () => {
   const { toast } = useToast();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [time, setTime] = useState("12:00");
-  const [duration, setDuration] = useState(3); // in hours
+  const [durationType, setDurationType] = useState<'hourly' | 'daily' | 'monthly'>('hourly');
+  const [hours, setHours] = useState(3); // in hours
+  const [days, setDays] = useState(1); // in days
+  const [months, setMonths] = useState(1); // in months
   const [pickup, setPickup] = useState("");
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
   const [bookingStep, setBookingStep] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   
-  // Payment methods
   const paymentMethods = [
     { id: "visa", name: "Visa", icon: "💳" },
     { id: "mastercard", name: "Mastercard", icon: "💳" },
@@ -98,10 +98,20 @@ const BookingPage = () => {
     const vehicle = getSelectedVehicle();
     if (!vehicle) return 0;
     
-    // Utilisons le prix horaire ou journalier en fonction de la durée
-    let total = (duration >= 24) 
-      ? vehicle.price.daily * Math.floor(duration / 24) 
-      : vehicle.price.hourly * duration;
+    let total = 0;
+    switch (durationType) {
+      case 'hourly':
+        total = vehicle.price.hourly * hours;
+        break;
+      case 'daily':
+        total = vehicle.price.daily * days;
+        break;
+      case 'monthly':
+        total = vehicle.price.monthly * months;
+        break;
+      default:
+        total = vehicle.price.hourly * hours;
+    }
     
     // Apply 5% discount for online payment
     if (paymentMethod && paymentMethod !== 'cash') {
@@ -122,7 +132,8 @@ const BookingPage = () => {
       const bookingDetails = {
         date: date ? format(date, "yyyy-MM-dd") : '',
         time,
-        duration,
+        durationType,
+        duration: durationType === 'hourly' ? hours : durationType === 'daily' ? days : months,
         pickup,
         vehicleId: selectedVehicle,
         vehicleName: getSelectedVehicle()?.name,
@@ -149,7 +160,10 @@ const BookingPage = () => {
       setPaymentMethod(null);
       setDate(new Date());
       setTime('12:00');
-      setDuration(3);
+      setDurationType('hourly');
+      setHours(3);
+      setDays(1);
+      setMonths(1);
     }, 2000);
   };
   
@@ -178,6 +192,28 @@ const BookingPage = () => {
     
     return stars;
   };
+
+  const getDurationValue = () => {
+    switch (durationType) {
+      case 'hourly': return hours;
+      case 'daily': return days;
+      case 'monthly': return months;
+      default: return hours;
+    }
+  };
+
+  const getDurationLabel = () => {
+    switch (durationType) {
+      case 'hourly': 
+        return `${hours} ${language === 'fr' ? 'heure(s)' : 'hour(s)'}`;
+      case 'daily': 
+        return `${days} ${language === 'fr' ? 'jour(s)' : 'day(s)'}`;
+      case 'monthly': 
+        return `${months} ${language === 'fr' ? 'mois' : 'month(s)'}`;
+      default: 
+        return `${hours} ${language === 'fr' ? 'heure(s)' : 'hour(s)'}`;
+    }
+  };
   
   return (
     <div className="min-h-screen flex flex-col bg-nova-black">
@@ -191,7 +227,6 @@ const BookingPage = () => {
             </span>
           </h1>
           
-          {/* Booking Steps */}
           <div className="flex justify-center mb-8">
             <div className="flex items-center">
               <div className={`rounded-full h-8 w-8 flex items-center justify-center ${bookingStep >= 1 ? 'bg-nova-gold text-nova-black' : 'bg-nova-gray text-nova-white/50'}`}>
@@ -208,7 +243,6 @@ const BookingPage = () => {
             </div>
           </div>
           
-          {/* Step 1: Date, Time, Location */}
           {bookingStep === 1 && (
             <div className="max-w-lg mx-auto">
               <Card className="bg-nova-gray/30 border border-nova-gold/30">
@@ -217,7 +251,6 @@ const BookingPage = () => {
                     {language === 'fr' ? 'Détails de la réservation' : 'Booking Details'}
                   </h2>
                   
-                  {/* Date Picker */}
                   <div className="mb-6">
                     <Label htmlFor="date" className="text-nova-white mb-2 block">
                       {language === 'fr' ? 'Date' : 'Date'}
@@ -251,7 +284,6 @@ const BookingPage = () => {
                     </Popover>
                   </div>
                   
-                  {/* Time Picker */}
                   <div className="mb-6">
                     <Label htmlFor="time" className="text-nova-white mb-2 block">
                       {language === 'fr' ? 'Heure' : 'Time'}
@@ -273,26 +305,91 @@ const BookingPage = () => {
                     </div>
                   </div>
                   
-                  {/* Duration */}
-                  <div className="mb-6">
-                    <Label htmlFor="duration" className="text-nova-white mb-2 block">
-                      {language === 'fr' ? 'Durée (heures)' : 'Duration (hours)'}
+                  <div className="mb-4">
+                    <Label className="text-nova-white mb-2 block">
+                      {language === 'fr' ? 'Type de durée' : 'Duration Type'}
                     </Label>
-                    <select
-                      id="duration"
-                      value={duration}
-                      onChange={(e) => setDuration(Number(e.target.value))}
-                      className="flex h-10 w-full rounded-md border border-nova-gold/50 bg-nova-black px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-nova-white"
-                    >
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 12, 24].map((hours) => (
-                        <option key={hours} value={hours}>
-                          {hours} {language === 'fr' ? 'heure(s)' : 'hour(s)'}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="grid grid-cols-3 gap-2">
+                      <Button
+                        type="button"
+                        variant={durationType === 'hourly' ? 'default' : 'outline'}
+                        className={durationType === 'hourly' ? 'bg-nova-gold text-nova-black' : 'border-nova-gold/30 text-nova-white'}
+                        onClick={() => setDurationType('hourly')}
+                      >
+                        {language === 'fr' ? 'Par heure' : 'Hourly'}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={durationType === 'daily' ? 'default' : 'outline'}
+                        className={durationType === 'daily' ? 'bg-nova-gold text-nova-black' : 'border-nova-gold/30 text-nova-white'}
+                        onClick={() => setDurationType('daily')}
+                      >
+                        {language === 'fr' ? 'Par jour' : 'Daily'}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={durationType === 'monthly' ? 'default' : 'outline'}
+                        className={durationType === 'monthly' ? 'bg-nova-gold text-nova-black' : 'border-nova-gold/30 text-nova-white'}
+                        onClick={() => setDurationType('monthly')}
+                      >
+                        {language === 'fr' ? 'Par mois' : 'Monthly'}
+                      </Button>
+                    </div>
                   </div>
                   
-                  {/* Pickup Location */}
+                  <div className="mb-6">
+                    <Label htmlFor="duration" className="text-nova-white mb-2 block">
+                      {durationType === 'hourly' && (language === 'fr' ? 'Durée (heures)' : 'Duration (hours)')}
+                      {durationType === 'daily' && (language === 'fr' ? 'Durée (jours)' : 'Duration (days)')}
+                      {durationType === 'monthly' && (language === 'fr' ? 'Durée (mois)' : 'Duration (months)')}
+                    </Label>
+                    
+                    {durationType === 'hourly' && (
+                      <select
+                        id="duration-hours"
+                        value={hours}
+                        onChange={(e) => setHours(Number(e.target.value))}
+                        className="flex h-10 w-full rounded-md border border-nova-gold/50 bg-nova-black px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-nova-white"
+                      >
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 12, 24].map((value) => (
+                          <option key={value} value={value}>
+                            {value} {language === 'fr' ? 'heure(s)' : 'hour(s)'}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                    
+                    {durationType === 'daily' && (
+                      <select
+                        id="duration-days"
+                        value={days}
+                        onChange={(e) => setDays(Number(e.target.value))}
+                        className="flex h-10 w-full rounded-md border border-nova-gold/50 bg-nova-black px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-nova-white"
+                      >
+                        {[1, 2, 3, 4, 5, 6, 7, 14, 21, 30].map((value) => (
+                          <option key={value} value={value}>
+                            {value} {language === 'fr' ? 'jour(s)' : 'day(s)'}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                    
+                    {durationType === 'monthly' && (
+                      <select
+                        id="duration-months"
+                        value={months}
+                        onChange={(e) => setMonths(Number(e.target.value))}
+                        className="flex h-10 w-full rounded-md border border-nova-gold/50 bg-nova-black px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-nova-white"
+                      >
+                        {[1, 2, 3, 6, 12].map((value) => (
+                          <option key={value} value={value}>
+                            {value} {language === 'fr' ? 'mois' : 'month(s)'}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                  
                   <div className="mb-6">
                     <Label htmlFor="pickup" className="text-nova-white mb-2 block">
                       {language === 'fr' ? 'Lieu de prise en charge' : 'Pickup Location'}
@@ -321,7 +418,6 @@ const BookingPage = () => {
             </div>
           )}
           
-          {/* Step 2: Vehicle Selection */}
           {bookingStep === 2 && (
             <div className="max-w-2xl mx-auto">
               <Button 
@@ -369,14 +465,30 @@ const BookingPage = () => {
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="text-nova-gold font-bold">${vehicle.price.hourly}</p>
-                            <p className="text-nova-white/70 text-xs">
-                              {language === 'fr' ? 'par heure' : 'per hour'}
-                            </p>
-                            <p className="text-nova-gold font-bold mt-1">${vehicle.price.daily}</p>
-                            <p className="text-nova-white/70 text-xs">
-                              {language === 'fr' ? 'par jour' : 'per day'}
-                            </p>
+                            {durationType === 'hourly' && (
+                              <>
+                                <p className="text-nova-gold font-bold">${vehicle.price.hourly}</p>
+                                <p className="text-nova-white/70 text-xs">
+                                  {language === 'fr' ? 'par heure' : 'per hour'}
+                                </p>
+                              </>
+                            )}
+                            {durationType === 'daily' && (
+                              <>
+                                <p className="text-nova-gold font-bold">${vehicle.price.daily}</p>
+                                <p className="text-nova-white/70 text-xs">
+                                  {language === 'fr' ? 'par jour' : 'per day'}
+                                </p>
+                              </>
+                            )}
+                            {durationType === 'monthly' && (
+                              <>
+                                <p className="text-nova-gold font-bold">${vehicle.price.monthly}</p>
+                                <p className="text-nova-white/70 text-xs">
+                                  {language === 'fr' ? 'par mois' : 'per month'}
+                                </p>
+                              </>
+                            )}
                             {selectedVehicle === vehicle.id && (
                               <CheckCircle className="h-5 w-5 text-nova-gold ml-auto mt-2" />
                             )}
@@ -398,7 +510,6 @@ const BookingPage = () => {
             </div>
           )}
           
-          {/* Step 3: Payment */}
           {bookingStep === 3 && (
             <div className="max-w-2xl mx-auto">
               <Button 
@@ -415,7 +526,6 @@ const BookingPage = () => {
                     {language === 'fr' ? 'Paiement' : 'Payment'}
                   </h2>
                   
-                  {/* Booking Summary */}
                   <div className="bg-nova-black/50 rounded-lg p-4 mb-6">
                     <h3 className="text-nova-white font-medium mb-2">
                       {language === 'fr' ? 'Résumé de la réservation' : 'Booking Summary'}
@@ -440,7 +550,7 @@ const BookingPage = () => {
                           {language === 'fr' ? 'Durée:' : 'Duration:'}
                         </span>
                         <span className="text-nova-white">
-                          {duration} {language === 'fr' ? 'heure(s)' : 'hour(s)'}
+                          {getDurationLabel()}
                         </span>
                       </div>
                       <div className="flex justify-between">
@@ -469,7 +579,6 @@ const BookingPage = () => {
                     </div>
                   </div>
                   
-                  {/* Payment Methods */}
                   <div className="mb-6">
                     <h3 className="text-nova-white font-medium mb-3">
                       {language === 'fr' ? 'Méthode de paiement' : 'Payment Method'}
@@ -568,7 +677,6 @@ const BookingPage = () => {
         </div>
       </main>
       
-      {/* Tab Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-nova-black border-t border-nova-gold/20 p-2">
         <div className="flex justify-around items-center">
           <Link to="/home" className="flex flex-col items-center p-2 text-nova-white/70">
