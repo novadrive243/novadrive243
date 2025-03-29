@@ -112,7 +112,7 @@ const PricingPage = () => {
               <CardContent className="p-0">
                 <div className="aspect-[16/9] relative overflow-hidden">
                   <img 
-                    src="/lovable-uploads/8337e561-5a74-4d76-8fac-6fb00b629bad.png" 
+                    src="/lovable-uploads/d46547d7-848f-40e6-8df3-826987faa8ef.png" 
                     alt="Toyota Fortuner" 
                     className="w-full h-full object-cover"
                   />
