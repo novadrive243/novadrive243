@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { vehicles } from "@/data/vehicles";
-import { useToast } from "@/hooks/use-toast";
 
 interface VehicleCardProps {
   name: string;

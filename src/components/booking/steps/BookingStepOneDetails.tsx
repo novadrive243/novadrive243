@@ -8,6 +8,8 @@ import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { CalendarIcon, Clock, MapPin } from 'lucide-react';
+import { Card, CardContent } from "@/components/ui/card";
+import { DurationSelector } from '../form-parts/DurationSelector';
 
 interface BookingStepOneDetailsProps {
   language: string;
@@ -165,6 +167,3 @@ export const BookingStepOneDetails = ({
     </div>
   );
 };
-
-import { Card, CardContent } from "@/components/ui/card";
-import { DurationSelector } from "../form-parts/DurationSelector";

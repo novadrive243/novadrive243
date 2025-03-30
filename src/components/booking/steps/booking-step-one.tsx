@@ -9,9 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { format } from 'date-fns';
 import { CalendarIcon, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SelectGroup, SelectItem } from '@/components/ui/select';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { DurationSelector } from '../form-parts/duration-selector';
+import { DurationSelector } from '../form-parts/DurationSelector';
 
 interface BookingStepOneProps {
   fromAddress: string;
@@ -58,7 +56,7 @@ export function BookingStepOne({
   handleContinue,
   selectedVehicle
 }: BookingStepOneProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   return (
     <div className="space-y-6">
@@ -96,7 +94,7 @@ export function BookingStepOne({
         
         <TabsContent value="now">
           <div className="p-4 text-center text-nova-white/70">
-            Your driver will arrive as soon as possible.
+            {t('booking.arriveAsSoonAsPossible') || "Your driver will arrive as soon as possible."}
           </div>
         </TabsContent>
         
@@ -104,7 +102,7 @@ export function BookingStepOne({
           <div className="p-4 space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Date</Label>
+                <Label>{t('booking.date') || "Date"}</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -112,7 +110,7 @@ export function BookingStepOne({
                       className="w-full justify-start text-left font-normal bg-nova-gray/30 border-nova-gold/30"
                     >
                       <CalendarIcon className="mr-2 h-4 w-4 text-nova-gold" />
-                      {date ? format(date, 'PPP') : <span>Pick a date</span>}
+                      {date ? format(date, 'PPP') : <span>{t('booking.pickDate') || "Pick a date"}</span>}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0 bg-nova-gray/95 border-nova-gold/30">
@@ -128,7 +126,7 @@ export function BookingStepOne({
               </div>
               
               <div>
-                <Label>Time</Label>
+                <Label>{t('booking.time') || "Time"}</Label>
                 <div className="flex">
                   <Button
                     variant="outline"
@@ -148,7 +146,7 @@ export function BookingStepOne({
             
             {/* Duration Type - Hourly or Daily */}
             <div className="mt-4">
-              <Label className="mb-2 block">Duration Type</Label>
+              <Label className="mb-2 block">{t('booking.durationType') || "Duration Type"}</Label>
               <div className="grid grid-cols-2 gap-2">
                 <Button
                   type="button"
@@ -178,6 +176,8 @@ export function BookingStepOne({
               setDays={setDays}
               hourOptions={hourOptions}
               dayOptions={dayOptions}
+              language={language}
+              selectedVehicle={selectedVehicle}
             />
           </div>
         </TabsContent>
