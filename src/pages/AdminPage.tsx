@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -7,7 +6,7 @@ import { useLanguage } from "@/contexts/language-context";
 import { Button } from '@/components/ui/button';
 import { vehicles as frontendVehicles } from '@/data/vehicles';
 import { useToast } from '@/hooks/use-toast';
-import { LogOut, Menu, ArrowLeft } from 'lucide-react';
+import { LogOut, Menu } from 'lucide-react';
 
 // Admin Components
 import { Dashboard } from '@/components/admin/Dashboard';
@@ -66,10 +65,6 @@ const AdminPage = () => {
     });
     navigate('/login');
   };
-
-  const handleReturn = () => {
-    navigate('/home');
-  };
   
   if (!isAuthorized) {
     return null; // Don't render anything while checking authorization
@@ -104,16 +99,6 @@ const AdminPage = () => {
       <Header />
       
       <div className="flex-grow pt-20 pb-0">
-        {/* Return button */}
-        <Button 
-          variant="outline" 
-          className="fixed z-40 top-24 right-4 border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10"
-          onClick={handleReturn}
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          {language === 'fr' ? 'Retour' : 'Return'}
-        </Button>
-
         {/* Sidebar */}
         <AdminSidebar 
           activeTab={activeTab} 
