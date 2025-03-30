@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Card, CardContent } from "@/components/ui/card";
@@ -89,7 +90,7 @@ export function VehiclesSection() {
     <section className="py-20 bg-nova-black">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-3 text-nova-white">
+          <h2 className="inline-block text-3xl md:text-4xl font-bold mb-3 text-nova-white px-6 py-2 border-2 border-nova-gold rounded-lg">
             {language === 'fr' ? 'Notre Flotte de Véhicules' : 'Our Vehicle Fleet'}
           </h2>
           <p className="text-nova-white/70 max-w-2xl mx-auto">
