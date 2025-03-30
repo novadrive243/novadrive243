@@ -7,7 +7,9 @@ import {
   Users,
   BarChart3,
   Users2,
-  Tag
+  Tag,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -15,13 +17,15 @@ interface AdminSidebarProps {
   setActiveTab: (tab: string) => void;
   language: string;
   collapsed: boolean;
+  toggleSidebar: () => void;
 }
 
 export const AdminSidebar = ({ 
   activeTab, 
   setActiveTab, 
   language, 
-  collapsed
+  collapsed, 
+  toggleSidebar 
 }: AdminSidebarProps) => {
   // Admin menu items
   const menuItems = [
@@ -79,6 +83,16 @@ export const AdminSidebar = ({
             {language === 'fr' ? 'Administration' : 'Admin Panel'}
           </h2>
         )}
+        
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={toggleSidebar}
+            className="p-1 rounded-full bg-nova-gold/10 text-nova-gold hover:bg-nova-gold/20 transition-colors"
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+          </button>
+        </div>
         
         <nav>
           <ul className="space-y-2">
