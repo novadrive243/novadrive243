@@ -102,7 +102,7 @@ export const AdminSidebar = ({
 
   return (
     <aside 
-      className={`fixed left-0 bg-nova-black border-r border-nova-gold/20 overflow-y-auto z-20 transition-all duration-300 ${
+      className={`fixed left-0 bg-[#1A1F2C] border-r border-[#9b87f5]/20 overflow-y-auto z-20 transition-all duration-300 ${
         collapsed ? 'w-16' : 'w-64'
       }`}
       style={{ 
@@ -112,17 +112,17 @@ export const AdminSidebar = ({
       }}
     >
       <div className="flex flex-col h-full">
-        <div className="p-4">
+        <div className="p-4 border-b border-[#9b87f5]/20">
           {!collapsed && (
-            <h2 className="text-lg font-semibold text-nova-gold mb-6">
+            <h2 className="text-lg font-semibold text-[#9b87f5] mb-4">
               {language === 'fr' ? 'Administration' : 'Admin Panel'}
             </h2>
           )}
           
-          <div className="flex justify-end mb-4">
+          <div className="flex justify-end">
             <button
               onClick={toggleSidebar}
-              className="p-1 rounded-full bg-nova-gold/10 text-nova-gold hover:bg-nova-gold/20 transition-colors"
+              className="p-1 rounded-full bg-[#9b87f5]/10 text-[#9b87f5] hover:bg-[#9b87f5]/20 transition-colors"
               aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
@@ -130,11 +130,11 @@ export const AdminSidebar = ({
           </div>
         </div>
         
-        <nav className="flex-1 overflow-y-auto px-3 py-2">
+        <nav className="flex-1 overflow-y-auto p-3">
           {menuGroups.map((group) => (
             <div key={group.id} className="mb-6">
               {!collapsed && (
-                <h3 className="text-xs uppercase tracking-wider text-nova-gold/70 font-medium mb-2 px-2">
+                <h3 className="text-xs uppercase tracking-wider text-[#8E9196] font-medium mb-3 px-2">
                   {group.title}
                 </h3>
               )}
@@ -146,14 +146,14 @@ export const AdminSidebar = ({
                       className={cn(
                         "w-full flex items-center px-3 py-2 text-sm rounded-md transition-colors",
                         activeTab === item.id
-                          ? "bg-nova-gold/20 text-nova-white"
-                          : "text-nova-white/80 hover:bg-nova-gold/10"
+                          ? "bg-[#9b87f5]/20 text-white"
+                          : "text-[#F1F1F1] hover:bg-[#9b87f5]/10"
                       )}
                       title={collapsed ? item.title : undefined}
                       aria-label={item.title}
                     >
                       <item.icon className={cn(
-                        "h-5 w-5 text-nova-gold",
+                        "h-5 w-5 text-[#9b87f5]",
                         collapsed ? "mx-auto" : "mr-3"
                       )} />
                       {!collapsed && <span>{item.title}</span>}
@@ -165,9 +165,9 @@ export const AdminSidebar = ({
           ))}
         </nav>
         
-        <div className="p-4 mt-auto border-t border-nova-gold/10">
+        <div className="p-4 mt-auto border-t border-[#9b87f5]/20">
           {!collapsed && (
-            <div className="text-xs text-nova-white/50 text-center">
+            <div className="text-xs text-[#8E9196] text-center">
               NovaDrive Admin v1.0
             </div>
           )}

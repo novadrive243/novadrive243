@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -37,6 +36,14 @@
     --ring: 47 70% 52%;
 
     --radius: 0.5rem;
+    
+    /* Admin purple theme */
+    --admin-primary: 255 98% 75%;
+    --admin-secondary: 262 36% 54%;
+    --admin-tertiary: 266 36% 50%;
+    --admin-dark: 222 25% 14%;
+    --admin-light: 267 71% 86%;
+    --admin-neutral: 217 5% 58%;
   }
 }
 
@@ -70,6 +77,15 @@
   
   ::-webkit-scrollbar-thumb:hover {
     background: rgba(232, 191, 82, 0.8);
+  }
+  
+  /* Admin theme scrollbar */
+  .admin-theme::-webkit-scrollbar-thumb {
+    background: rgba(155, 135, 245, 0.5);
+  }
+  
+  .admin-theme::-webkit-scrollbar-thumb:hover {
+    background: rgba(155, 135, 245, 0.8);
   }
 }
 
@@ -115,6 +131,19 @@
   
   .tab-item.inactive {
     @apply text-nova-white/70 hover:text-nova-white;
+  }
+  
+  /* Admin panel styling */
+  .admin-header {
+    @apply bg-[#1A1F2C] text-white border-b border-[#9b87f5]/20;
+  }
+  
+  .admin-card {
+    @apply bg-white dark:bg-[#1A1F2C] border border-[#9b87f5]/30 shadow-sm rounded-lg p-6;
+  }
+  
+  .admin-gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#9b87f5] to-[#7E69AB];
   }
 }
 
@@ -170,5 +199,30 @@
   @keyframes slideUp {
     from { transform: translateY(20px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
+  }
+  
+  /* Admin theme colors */
+  .bg-admin-dark {
+    background-color: #1A1F2C;
+  }
+  
+  .bg-admin-primary {
+    background-color: #9b87f5;
+  }
+  
+  .bg-admin-secondary {
+    background-color: #7E69AB;
+  }
+  
+  .text-admin-primary {
+    color: #9b87f5;
+  }
+  
+  .text-admin-secondary {
+    color: #7E69AB;
+  }
+  
+  .border-admin-primary {
+    border-color: #9b87f5;
   }
 }

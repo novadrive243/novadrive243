@@ -90,7 +90,7 @@ const AdminPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-nova-black text-nova-white">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-[#0A0A0A] text-gray-900 dark:text-white">
       <Header />
       
       <div className="flex-grow pt-20 pb-16">
@@ -105,18 +105,18 @@ const AdminPage = () => {
         
         {/* Main content */}
         <div 
-          className={`transition-all duration-300 px-6 ${
+          className={`transition-all duration-300 px-6 py-4 ${
             sidebarCollapsed ? 'ml-16' : 'ml-64'
           }`}
         >
-          <div className="container mx-auto">
-            <div className="flex justify-between items-center mb-6 mt-4">
-              <h1 className="text-xl sm:text-2xl font-bold gold-gradient-text">
+          <div className="w-full max-w-[1500px] mx-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#9b87f5] to-[#7E69AB]">
                 {language === 'fr' ? 'Tableau de Bord Admin' : 'Admin Dashboard'}
               </h1>
               <Button 
                 variant="outline" 
-                className="border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10"
+                className="border-[#9b87f5]/50 text-[#9b87f5] hover:bg-[#9b87f5]/10"
                 onClick={handleLogout}
               >
                 <LogOut className="h-4 w-4 mr-2" />
