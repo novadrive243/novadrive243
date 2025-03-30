@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -12,15 +11,15 @@ const blogPosts = [
     title: "Kinshasa's New Road Infrastructure Project Set to Transform Urban Transport",
     excerpt: "Learn about the major infrastructure developments happening across Kinshasa that will improve traffic flow and transportation in the city.",
     author: "Jean Mutombo",
-    date: "2024-06-10",
+    date: "2025-06-10",
     image: "/lovable-uploads/d46547d7-848f-40e6-8df3-826987faa8ef.png"
   },
   {
     id: 2,
-    title: "Luxury Travel Trends in Central Africa for 2024",
+    title: "Luxury Travel Trends in Central Africa for 2025",
     excerpt: "Discover how luxury travel is evolving in Central Africa with new expectations from business executives and diplomats visiting the region.",
     author: "Marie Nzuzi",
-    date: "2024-05-22",
+    date: "2025-05-22",
     image: "/lovable-uploads/a564e144-c5d6-4636-8cba-43b5410310a6.png"
   },
   {
@@ -28,7 +27,7 @@ const blogPosts = [
     title: "Electric Vehicles Making Inroads in the DRC Market",
     excerpt: "The future of transportation in DRC is changing with new electric vehicle options becoming increasingly available for premium transportation services.",
     author: "Philippe Lumumba",
-    date: "2024-05-05",
+    date: "2025-05-05",
     image: "/lovable-uploads/8337e561-5a74-4d76-8fac-6fb00b629bad.png"
   }
 ];
@@ -39,15 +38,15 @@ const blogPostsFr = [
     title: "Le Nouveau Projet d'Infrastructure Routière de Kinshasa Transformera le Transport Urbain",
     excerpt: "Découvrez les grands développements d'infrastructure en cours à Kinshasa qui amélioreront la fluidité du trafic et le transport dans la ville.",
     author: "Jean Mutombo",
-    date: "2024-06-10",
+    date: "2025-06-10",
     image: "/lovable-uploads/d46547d7-848f-40e6-8df3-826987faa8ef.png"
   },
   {
     id: 2,
-    title: "Tendances du Voyage de Luxe en Afrique Centrale pour 2024",
+    title: "Tendances du Voyage de Luxe en Afrique Centrale pour 2025",
     excerpt: "Découvrez comment le voyage de luxe évolue en Afrique centrale avec de nouvelles attentes des cadres d'entreprise et des diplomates visitant la région.",
     author: "Marie Nzuzi",
-    date: "2024-05-22",
+    date: "2025-05-22",
     image: "/lovable-uploads/a564e144-c5d6-4636-8cba-43b5410310a6.png"
   },
   {
@@ -55,7 +54,7 @@ const blogPostsFr = [
     title: "Les Véhicules Électriques Font leur Entrée sur le Marché Congolais",
     excerpt: "L'avenir du transport en RDC évolue avec de nouvelles options de véhicules électriques de plus en plus disponibles pour les services de transport haut de gamme.",
     author: "Philippe Lumumba",
-    date: "2024-05-05",
+    date: "2025-05-05",
     image: "/lovable-uploads/8337e561-5a74-4d76-8fac-6fb00b629bad.png"
   }
 ];

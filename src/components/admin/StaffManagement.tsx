@@ -28,7 +28,7 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
       email: 'emma.r@novadrive.com',
       phone: '+1 (514) 555-1234',
       role: 'manager',
-      joinDate: '2022-04-15',
+      joinDate: '2023-04-15',
       avatar: 'https://randomuser.me/api/portraits/women/33.jpg',
       rating: 4.9
     },
@@ -38,7 +38,7 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
       email: 'james.w@novadrive.com',
       phone: '+1 (514) 555-2345',
       role: 'assistant',
-      joinDate: '2022-06-22',
+      joinDate: '2023-06-22',
       avatar: 'https://randomuser.me/api/portraits/men/44.jpg',
       rating: 4.7
     },
@@ -48,7 +48,7 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
       email: 'sophia.c@novadrive.com',
       phone: '+1 (514) 555-3456',
       role: 'driver',
-      joinDate: '2023-01-10',
+      joinDate: '2024-01-10',
       avatar: 'https://randomuser.me/api/portraits/women/17.jpg',
       rating: 4.8
     },
@@ -58,7 +58,7 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
       email: 'michael.r@novadrive.com',
       phone: '+1 (514) 555-4567',
       role: 'mechanic',
-      joinDate: '2023-03-05',
+      joinDate: '2024-03-05',
       avatar: 'https://randomuser.me/api/portraits/men/22.jpg',
       rating: 4.6
     },
@@ -68,7 +68,7 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
       email: 'olivia.j@novadrive.com',
       phone: '+1 (514) 555-5678',
       role: 'driver',
-      joinDate: '2023-07-18',
+      joinDate: '2024-07-18',
       avatar: 'https://randomuser.me/api/portraits/women/29.jpg',
       rating: 4.5
     }

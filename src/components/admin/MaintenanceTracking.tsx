@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,9 +28,9 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
       vehicleName: vehicles[0]?.name || 'Tesla Model S',
       type: 'routine',
       status: 'completed',
-      date: '2024-05-10',
+      date: '2025-05-10',
       notes: 'Routine oil change and tire rotation completed.',
-      nextDate: '2024-08-10',
+      nextDate: '2025-08-10',
     },
     {
       id: 2,
@@ -37,9 +38,9 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
       vehicleName: vehicles[1]?.name || 'BMW M5',
       type: 'repair',
       status: 'pending',
-      date: '2024-05-15',
+      date: '2025-05-15',
       notes: 'Brake pads replacement and brake fluid flush.',
-      nextDate: '2024-07-15',
+      nextDate: '2025-07-15',
     },
     {
       id: 3,
@@ -47,9 +48,9 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
       vehicleName: vehicles[2]?.name || 'Audi R8',
       type: 'inspection',
       status: 'scheduled',
-      date: '2024-05-22',
+      date: '2025-05-22',
       notes: 'Annual inspection and diagnostic check.',
-      nextDate: '2025-05-22',
+      nextDate: '2026-05-22',
     },
     {
       id: 4,
@@ -57,7 +58,7 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
       vehicleName: vehicles[3]?.name || 'Mercedes S-Class',
       type: 'emergency',
       status: 'inProgress',
-      date: '2024-05-08',
+      date: '2025-05-08',
       notes: 'Engine check light on. Diagnostic testing needed.',
       nextDate: '',
     },
