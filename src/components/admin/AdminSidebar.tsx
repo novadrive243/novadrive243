@@ -72,11 +72,15 @@ export const AdminSidebar = ({
   ];
 
   return (
-    <div 
-      className={`fixed top-20 left-0 h-screen bg-nova-black border-r border-nova-gold/20 overflow-y-auto z-10 transition-all duration-300 ${
+    <aside 
+      className={`fixed left-0 bg-nova-black border-r border-nova-gold/20 overflow-y-auto z-20 transition-all duration-300 ${
         collapsed ? 'w-16' : 'w-64'
       }`}
-      style={{ height: 'calc(100vh - 5rem)' }}
+      style={{ 
+        top: '5rem', // Fixed position below header
+        bottom: 0,
+        height: 'calc(100vh - 5rem)' // Exact height calculation
+      }}
     >
       <div className="p-4">
         {!collapsed && (
@@ -95,7 +99,7 @@ export const AdminSidebar = ({
           </button>
         </div>
         
-        <nav>
+        <nav className="sticky">
           <ul className="space-y-2">
             {menuItems.map((item) => (
               <li key={item.id}>
@@ -117,6 +121,6 @@ export const AdminSidebar = ({
           </ul>
         </nav>
       </div>
-    </div>
+    </aside>
   );
 };

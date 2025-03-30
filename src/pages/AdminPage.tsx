@@ -23,7 +23,6 @@ const AdminPage = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("bookings");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [sidebarHidden, setSidebarHidden] = useState(false);
   
   // Load admin data with the custom hook
   const { 
@@ -51,11 +50,6 @@ const AdminPage = () => {
   // Function to toggle sidebar collapse state
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
-  };
-
-  // Function to toggle sidebar visibility
-  const toggleSidebarVisibility = () => {
-    setSidebarHidden(!sidebarHidden);
   };
 
   const handleLogout = () => {
@@ -98,7 +92,7 @@ const AdminPage = () => {
     <div className="min-h-screen flex flex-col bg-nova-black text-nova-white">
       <Header />
       
-      <div className="flex-grow pt-20 pb-16 relative">
+      <div className="flex-grow pt-20 pb-16">
         {/* Sidebar */}
         <AdminSidebar 
           activeTab={activeTab} 
@@ -108,18 +102,9 @@ const AdminPage = () => {
           toggleSidebar={toggleSidebar} 
         />
         
-        {/* Mobile sidebar toggle button */}
-        <button 
-          className="fixed top-24 left-4 z-20 p-2 rounded-md bg-nova-gold/20 text-nova-gold md:hidden"
-          onClick={toggleSidebarVisibility}
-          aria-label="Toggle Sidebar"
-        >
-          <MenuIcon size={20} />
-        </button>
-        
         {/* Main content */}
         <div 
-          className={`transition-all duration-300 pl-4 pr-4 ${
+          className={`transition-all duration-300 px-4 ${
             sidebarCollapsed ? 'ml-16' : 'ml-64'
           }`}
         >
