@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -123,7 +122,7 @@ const AdminPage = () => {
         <div className="transition-all duration-300 px-6 pb-16">
           <div className="container mx-auto">
             <div className="flex justify-between items-center mb-6 mt-4">
-              <h1 className="text-xl sm:text-2xl font-bold text-black">
+              <h1 className="text-xl sm:text-2xl font-bold text-nova-white">
                 {language === 'fr' ? 'Tableau de Bord Admin' : 'Admin Dashboard'}
               </h1>
               <Button 
