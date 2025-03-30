@@ -44,8 +44,7 @@ serve(async (req) => {
     
     // Store booking details in database if payment was successful
     if (paymentResult.success) {
-      // Fix: Ensure we're using the correct column names for bookings table
-      // Instead of 'date', we need to use 'start_date' and 'end_date'
+      // Ensure we're using the correct column names for bookings table
       const bookingData = {
         ...bookingDetails,
         payment_method: paymentMethod,
@@ -53,7 +52,7 @@ serve(async (req) => {
         payment_reference: paymentResult.reference || '',
       };
       
-      // Make sure required fields exist
+      // Map date field to start_date/end_date if needed
       if (!bookingData.start_date && bookingDetails.date) {
         bookingData.start_date = bookingDetails.date;
       }
@@ -63,9 +62,12 @@ serve(async (req) => {
         bookingData.end_date = bookingDetails.date;
       }
       
+      // Remove any fields that don't exist in the bookings table
+      const { date, ...validBookingData } = bookingData;
+      
       const { error: bookingError } = await supabaseClient
         .from('bookings')
-        .insert(bookingData);
+        .insert(validBookingData);
         
       if (bookingError) {
         console.error('Error storing booking:', bookingError);

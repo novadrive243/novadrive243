@@ -177,6 +177,47 @@ export type Database = {
         }
         Relationships: []
       }
+      vehicle_ratings: {
+        Row: {
+          booking_id: string | null
+          comment: string | null
+          created_at: string
+          driver_rating: number
+          id: string
+          service_rating: number
+          updated_at: string
+          vehicle_rating: number
+        }
+        Insert: {
+          booking_id?: string | null
+          comment?: string | null
+          created_at?: string
+          driver_rating: number
+          id?: string
+          service_rating: number
+          updated_at?: string
+          vehicle_rating: number
+        }
+        Update: {
+          booking_id?: string | null
+          comment?: string | null
+          created_at?: string
+          driver_rating?: number
+          id?: string
+          service_rating?: number
+          updated_at?: string
+          vehicle_rating?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_ratings_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vehicles: {
         Row: {
           available: boolean | null
