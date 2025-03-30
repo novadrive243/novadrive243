@@ -24,19 +24,16 @@ interface BookingStepOneProps {
   setDate: (date: Date | undefined) => void;
   time: string;
   setTime: (time: string) => void;
-  durationType: 'hourly' | 'daily' | 'monthly';
-  setDurationType: (type: 'hourly' | 'daily' | 'monthly') => void;
+  durationType: 'hourly' | 'daily';
+  setDurationType: (type: 'hourly' | 'daily') => void;
   duration: number;
   setDuration: (duration: number) => void;
   days: number;
   setDays: (days: number) => void;
-  months: number;
-  setMonths: (months: number) => void;
   hourOptions: number[];
   dayOptions: number[];
-  monthOptions: number[];
   handleContinue: () => void;
-  selectedVehicle: string | null; // Add the missing prop
+  selectedVehicle: string | null;
 }
 
 export function BookingStepOne({
@@ -56,13 +53,10 @@ export function BookingStepOne({
   setDuration,
   days,
   setDays,
-  months,
-  setMonths,
   hourOptions,
   dayOptions,
-  monthOptions,
   handleContinue,
-  selectedVehicle // Add the parameter to destructuring
+  selectedVehicle
 }: BookingStepOneProps) {
   const { t } = useLanguage();
   
@@ -152,10 +146,10 @@ export function BookingStepOne({
               </div>
             </div>
             
-            {/* Duration Type - Hourly, Daily or Monthly */}
+            {/* Duration Type - Hourly or Daily */}
             <div className="mt-4">
               <Label className="mb-2 block">Duration Type</Label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 <Button
                   type="button"
                   variant={durationType === 'hourly' ? 'default' : 'outline'}
@@ -172,14 +166,6 @@ export function BookingStepOne({
                 >
                   {t('booking.daily') || 'Daily'}
                 </Button>
-                <Button
-                  type="button"
-                  variant={durationType === 'monthly' ? 'default' : 'outline'}
-                  className={durationType === 'monthly' ? 'bg-nova-gold text-nova-black' : 'border-nova-gold/30'}
-                  onClick={() => setDurationType('monthly')}
-                >
-                  {t('booking.monthly') || 'Monthly'}
-                </Button>
               </div>
             </div>
             
@@ -190,11 +176,8 @@ export function BookingStepOne({
               setDuration={setDuration}
               days={days}
               setDays={setDays}
-              months={months}
-              setMonths={setMonths}
               hourOptions={hourOptions}
               dayOptions={dayOptions}
-              monthOptions={monthOptions}
             />
           </div>
         </TabsContent>

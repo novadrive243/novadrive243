@@ -15,14 +15,12 @@ interface BookingStepOneDetailsProps {
   setDate: (date: Date | undefined) => void;
   time: string;
   setTime: (time: string) => void;
-  durationType: 'hourly' | 'daily' | 'monthly';
-  setDurationType: (durationType: 'hourly' | 'daily' | 'monthly') => void;
+  durationType: 'hourly' | 'daily';
+  setDurationType: (durationType: 'hourly' | 'daily') => void;
   hours: number;
   setHours: (hours: number) => void;
   days: number;
   setDays: (days: number) => void;
-  months: number;
-  setMonths: (months: number) => void;
   pickup: string;
   setPickup: (pickup: string) => void;
   handleContinue: () => void;
@@ -40,8 +38,6 @@ export const BookingStepOneDetails = ({
   setHours,
   days,
   setDays,
-  months,
-  setMonths,
   pickup,
   setPickup,
   handleContinue
@@ -112,7 +108,7 @@ export const BookingStepOneDetails = ({
             <Label className="text-nova-white mb-2 block">
               {language === 'fr' ? 'Type de durée' : 'Duration Type'}
             </Label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               <Button
                 type="button"
                 variant={durationType === 'hourly' ? 'default' : 'outline'}
@@ -129,14 +125,6 @@ export const BookingStepOneDetails = ({
               >
                 {language === 'fr' ? 'Par jour' : 'Daily'}
               </Button>
-              <Button
-                type="button"
-                variant={durationType === 'monthly' ? 'default' : 'outline'}
-                className={durationType === 'monthly' ? 'bg-nova-gold text-nova-black' : 'border-nova-gold/30 text-nova-white'}
-                onClick={() => setDurationType('monthly')}
-              >
-                {language === 'fr' ? 'Par mois' : 'Monthly'}
-              </Button>
             </div>
           </div>
           
@@ -147,8 +135,6 @@ export const BookingStepOneDetails = ({
             setHours={setHours}
             days={days}
             setDays={setDays}
-            months={months}
-            setMonths={setMonths}
           />
           
           <div className="mb-6">

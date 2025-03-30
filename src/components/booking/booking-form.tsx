@@ -22,13 +22,12 @@ export function BookingForm() {
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [durationType, setDurationType] = useState<'hourly' | 'daily' | 'monthly'>('hourly');
+  const [durationType, setDurationType] = useState<'hourly' | 'daily'>('hourly');
   const [duration, setDuration] = useState<number>(1); // Default: 1 hour
   const [days, setDays] = useState<number>(1); // Default: 1 day
-  const [months, setMonths] = useState<number>(1); // Default: 1 month
   
   // Generate duration options
-  const { hourOptions, dayOptions, monthOptions } = generateDurationOptions();
+  const { hourOptions, dayOptions } = generateDurationOptions();
   
   useEffect(() => {
     const vehicleId = searchParams.get('vehicle');
@@ -82,7 +81,6 @@ export function BookingForm() {
         setDurationType('hourly');
         setDuration(1);
         setDays(1);
-        setMonths(1);
       }, 2000);
     }
   };
@@ -91,14 +89,13 @@ export function BookingForm() {
     switch (durationType) {
       case 'hourly': return duration;
       case 'daily': return days;
-      case 'monthly': return months;
       default: return duration;
     }
   };
   
   const getSelectedVehiclePrice = () => {
     const vehicle = vehicles.find(v => v.id === selectedVehicle);
-    return calculateVehiclePrice(vehicle, durationType, duration, days, months);
+    return calculateVehiclePrice(vehicle, durationType, duration, days, 0);
   };
 
   // Add a debug log to check the price calculation
@@ -139,11 +136,8 @@ export function BookingForm() {
             setDuration={setDuration}
             days={days}
             setDays={setDays}
-            months={months}
-            setMonths={setMonths}
             hourOptions={hourOptions}
             dayOptions={dayOptions}
-            monthOptions={monthOptions}
             handleContinue={handleContinue}
             selectedVehicle={selectedVehicle}
           />
@@ -155,7 +149,6 @@ export function BookingForm() {
             durationType={durationType}
             duration={duration}
             days={days}
-            months={months}
             getSelectedVehiclePrice={getSelectedVehiclePrice}
             handleBookNow={handleBookNow}
             isProcessing={isProcessing}

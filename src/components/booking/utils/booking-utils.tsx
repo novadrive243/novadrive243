@@ -1,4 +1,3 @@
-
 import { Vehicle } from '@/data/vehicles';
 import React from 'react';
 import { Star } from 'lucide-react';
@@ -9,10 +8,10 @@ import { Star } from 'lucide-react';
  */
 export const calculateVehiclePrice = (
   vehicle: Vehicle | undefined,
-  durationType: 'hourly' | 'daily' | 'monthly',
+  durationType: 'hourly' | 'daily',
   duration: number,
   days: number,
-  months: number
+  months: number = 0 // Keeping this param for backward compatibility
 ): number => {
   if (!vehicle) return 0;
   
@@ -87,9 +86,6 @@ export const calculateVehiclePrice = (
         console.log(`Using daily rate: ${vehicle.price.daily} × ${days} days = ${vehicle.price.daily * days}`);
         return vehicle.price.daily * days;
       }
-    case 'monthly': 
-      // Use fixed monthly price
-      return vehicle.price.monthly * months;
     default: 
       return vehicle.price.hourly * duration;
   }
@@ -156,10 +152,7 @@ export const generateDurationOptions = () => {
   // Create an array with all days of the month (1-31)
   const dayOptions = Array.from({ length: 31 }, (_, i) => i + 1);
   
-  // Create an array with all months of the year (1-12)
-  const monthOptions = Array.from({ length: 12 }, (_, i) => i + 1);
-  
-  return { hourOptions, dayOptions, monthOptions };
+  return { hourOptions, dayOptions };
 };
 
 /**

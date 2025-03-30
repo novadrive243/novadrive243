@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -18,10 +17,9 @@ const BookingPage = () => {
   const { toast } = useToast();
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [time, setTime] = useState("12:00");
-  const [durationType, setDurationType] = useState<'hourly' | 'daily' | 'monthly'>('hourly');
+  const [durationType, setDurationType] = useState<'hourly' | 'daily'>('hourly');
   const [hours, setHours] = useState(3); // in hours
   const [days, setDays] = useState(1); // in days
-  const [months, setMonths] = useState(1); // in months
   const [pickup, setPickup] = useState("");
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
   const [bookingStep, setBookingStep] = useState(1);
@@ -67,7 +65,7 @@ const BookingPage = () => {
     console.log('BookingPage - Duration Type:', durationType);
     console.log('BookingPage - Days:', days);
     
-    const total = calculateVehiclePrice(vehicle, durationType, hours, days, months);
+    const total = calculateVehiclePrice(vehicle, durationType, hours, days, 0);
     console.log('BookingPage - Calculated Base Price:', total);
     
     let finalPrice = total;
@@ -91,7 +89,7 @@ const BookingPage = () => {
         date: date ? format(date, "yyyy-MM-dd") : '',
         time,
         durationType,
-        duration: durationType === 'hourly' ? hours : durationType === 'daily' ? days : months,
+        duration: durationType === 'hourly' ? hours : days,
         pickup,
         vehicleId: selectedVehicle,
         vehicleName: getSelectedVehicle()?.name,
@@ -119,7 +117,6 @@ const BookingPage = () => {
       setDurationType('hourly');
       setHours(3);
       setDays(1);
-      setMonths(1);
     }, 2000);
   };
 
@@ -129,8 +126,6 @@ const BookingPage = () => {
         return `${hours} ${language === 'fr' ? 'heure(s)' : 'hour(s)'}`;
       case 'daily': 
         return `${days} ${language === 'fr' ? 'jour(s)' : 'day(s)'}`;
-      case 'monthly': 
-        return `${months} ${language === 'fr' ? 'mois' : 'month(s)'}`;
       default: 
         return `${hours} ${language === 'fr' ? 'heure(s)' : 'hour(s)'}`;
     }
@@ -157,8 +152,6 @@ const BookingPage = () => {
               setHours={setHours}
               days={days}
               setDays={setDays}
-              months={months}
-              setMonths={setMonths}
               pickup={pickup}
               setPickup={setPickup}
               handleContinue={handleContinue}
