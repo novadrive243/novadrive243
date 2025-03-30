@@ -94,8 +94,7 @@ export function VehiclesSection() {
         setLoading(true);
         const { data, error } = await supabase
           .from('vehicles')
-          .select('id, name, image_url, price_per_day')
-          .order('price_per_day', { ascending: false });
+          .select('id, name, image_url, price_per_day');
         
         if (error) throw error;
         
@@ -123,7 +122,6 @@ export function VehiclesSection() {
   }, [toast]);
   
   const handleVehicleSelect = (id: string) => {
-    console.log(`Vehicle selected: ${id}`);
     navigate(`/book?vehicle=${id}`);
   };
   
