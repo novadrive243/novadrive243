@@ -61,10 +61,10 @@ export function BookingStepOne({
   return (
     <div className="space-y-6">
       <div className="space-y-3">
-        <Label htmlFor="from">{t('booking.fromLabel')}</Label>
+        <Label htmlFor="from">{language === 'fr' ? 'Adresse de départ' : 'Pickup Address'}</Label>
         <Input 
           id="from" 
-          placeholder={t('booking.fromPlaceholder')}
+          placeholder={language === 'fr' ? 'Entrez votre adresse complète' : 'Enter your full address'}
           value={fromAddress}
           onChange={(e) => setFromAddress(e.target.value)}
           className="bg-nova-gray/30 border-nova-gold/30 placeholder:text-nova-white/50"
@@ -72,10 +72,10 @@ export function BookingStepOne({
       </div>
       
       <div className="space-y-3">
-        <Label htmlFor="to">{t('booking.toLabel')}</Label>
+        <Label htmlFor="to">{language === 'fr' ? 'Adresse de destination' : 'Destination Address'}</Label>
         <Input 
           id="to" 
-          placeholder={t('booking.toPlaceholder')}
+          placeholder={language === 'fr' ? 'Entrez votre adresse complète' : 'Enter your full address'}
           value={toAddress}
           onChange={(e) => setToAddress(e.target.value)}
           className="bg-nova-gray/30 border-nova-gold/30 placeholder:text-nova-white/50"

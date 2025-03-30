@@ -62,17 +62,17 @@ export const QuickBookingWidget = () => {
           
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              {/* Pickup Location */}
+              {/* Location Input (simplified) */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-nova-white/80 flex items-center">
                   <MapPin className="mr-2 h-4 w-4 text-nova-gold" />
-                  {language === 'fr' ? 'Lieu de Prise en Charge' : 'Pickup Location'}
+                  {language === 'fr' ? 'Adresse' : 'Address'}
                 </label>
                 <div className="relative">
                   <Input
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    placeholder={language === 'fr' ? 'Entrez une adresse' : 'Enter an address'}
+                    placeholder={language === 'fr' ? 'Entrez votre adresse complète' : 'Enter your full address'}
                     className="bg-nova-gray/20 border-nova-gold/30 text-nova-white"
                   />
                 </div>

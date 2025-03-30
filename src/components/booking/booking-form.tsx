@@ -35,6 +35,12 @@ export function BookingForm() {
       setSelectedVehicle(vehicleId);
       setBookingStep(2);
     }
+
+    // Get location from URL params if available
+    const locationParam = searchParams.get('location');
+    if (locationParam) {
+      setFromAddress(locationParam);
+    }
   }, [searchParams]);
   
   const handleContinue = () => {
@@ -153,11 +159,7 @@ export function BookingForm() {
       </CardContent>
       
       <CardFooter>
-        {bookingStep === 1 ? (
-          <div /> // Empty div to maintain layout when step one content includes the button
-        ) : (
-          <div /> // Empty div to maintain layout when step two content includes the buttons
-        )}
+        <div /> {/* Empty div to maintain layout */}
       </CardFooter>
     </Card>
   );
