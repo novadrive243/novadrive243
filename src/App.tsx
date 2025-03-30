@@ -1,4 +1,3 @@
-
 import { Route, Routes } from "react-router-dom";
 import { LanguageProvider } from "./contexts/language-context";
 import { lazy, Suspense } from "react";
@@ -26,11 +25,7 @@ const TermsPage = lazy(() => import("./pages/TermsPage"));
 const PageLayout = ({ children, showBackButton = true }: { children: React.ReactNode, showBackButton?: boolean }) => {
   return (
     <div className="relative">
-      {showBackButton && (
-        <div className="fixed top-20 left-4 z-50">
-          <BackButton />
-        </div>
-      )}
+      {showBackButton && <BackButton />}
       {children}
     </div>
   );

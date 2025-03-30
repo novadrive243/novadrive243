@@ -20,11 +20,11 @@ export function BackButton({ className = '' }: BackButtonProps) {
   return (
     <Button
       onClick={handleGoBack}
-      variant="outline"
+      variant="ghost"
       size="sm"
-      className={`border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10 ${className}`}
+      className={`text-nova-gold hover:bg-transparent hover:text-nova-gold/80 absolute top-4 left-4 px-2 py-1 ${className}`}
     >
-      <ChevronLeft className="mr-1 h-4 w-4" />
+      <ChevronLeft className="mr-1 h-5 w-5" />
       {language === 'fr' ? 'Retour' : 'Back'}
     </Button>
   );
