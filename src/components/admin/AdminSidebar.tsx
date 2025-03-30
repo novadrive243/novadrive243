@@ -73,10 +73,10 @@ export const AdminSidebar = ({ activeTab, setActiveTab, language }: AdminSidebar
   ];
 
   return (
-    <Sidebar variant="floating" collapsible="icon">
+    <Sidebar variant="floating" collapsible="icon" className="bg-nova-black border-r border-nova-gold/20">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>{language === 'fr' ? 'Administration' : 'Admin Panel'}</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-nova-gold">{language === 'fr' ? 'Administration' : 'Admin Panel'}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
@@ -85,8 +85,9 @@ export const AdminSidebar = ({ activeTab, setActiveTab, language }: AdminSidebar
                     isActive={activeTab === item.id}
                     onClick={() => setActiveTab(item.id)}
                     tooltip={item.title}
+                    className="text-nova-white hover:bg-nova-gold/10 data-[active=true]:bg-nova-gold/20"
                   >
-                    <item.icon />
+                    <item.icon className="text-nova-gold" />
                     <span>{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

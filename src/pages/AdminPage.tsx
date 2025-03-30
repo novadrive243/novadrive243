@@ -88,7 +88,7 @@ const AdminPage = () => {
       <Header />
       
       <SidebarProvider defaultOpen={true}>
-        <div className="flex w-full flex-grow pt-20 pb-10">
+        <div className="flex flex-grow pt-20 pb-10 w-full">
           <AdminSidebar 
             activeTab={activeTab} 
             setActiveTab={setActiveTab} 
