@@ -1,21 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { vehicles } from "@/data/vehicles";
 import { useToast } from "@/hooks/use-toast";
-
-interface Vehicle {
-  id: string;
-  name: string;
-  image_url: string;
-  comfort: number;
-  capacity: number;
-  price_per_day: number;
-}
 
 interface VehicleCardProps {
   name: string;
@@ -84,42 +75,7 @@ function VehicleCard({ name, image, comfort, capacity, price, onClick }: Vehicle
 export function VehiclesSection() {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [loading, setLoading] = useState(true);
-  
-  useEffect(() => {
-    async function fetchVehicles() {
-      try {
-        setLoading(true);
-        const { data, error } = await supabase
-          .from('vehicles')
-          .select('id, name, image_url, price_per_day');
-        
-        if (error) throw error;
-        
-        // Convert data and add default values for comfort and capacity
-        const formattedVehicles = data.map(vehicle => ({
-          ...vehicle,
-          comfort: 5, // Default comfort level
-          capacity: 5  // Default capacity
-        }));
-        
-        setVehicles(formattedVehicles);
-      } catch (error) {
-        console.error('Error fetching vehicles:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load vehicles. Please try again later.",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchVehicles();
-  }, [toast]);
+  const [loading, setLoading] = useState(false);
   
   const handleVehicleSelect = (id: string) => {
     navigate(`/book?vehicle=${id}`);
@@ -161,10 +117,10 @@ export function VehiclesSection() {
               <VehicleCard
                 key={vehicle.id}
                 name={vehicle.name}
-                image={vehicle.image_url || '/placeholder.svg'}
+                image={vehicle.image}
                 comfort={vehicle.comfort}
                 capacity={vehicle.capacity}
-                price={vehicle.price_per_day}
+                price={vehicle.price.daily}
                 onClick={() => handleVehicleSelect(vehicle.id)}
               />
             ))}
