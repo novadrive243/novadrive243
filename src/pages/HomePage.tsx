@@ -9,7 +9,6 @@ import { TestimonialsSection } from "@/components/home/testimonials-section";
 import { PromotionsBanner } from "@/components/home/promotions-banner";
 import { QuickBookingWidget } from "@/components/home/quick-booking-widget";
 import { FaqSection } from "@/components/home/faq-section";
-import { BlogNewsSection } from "@/components/home/blog-news-section";
 import { SocialMediaIntegration } from "@/components/home/social-media-integration";
 
 const HomePage = () => {
@@ -24,7 +23,6 @@ const HomePage = () => {
         <QuickBookingWidget />
         <TestimonialsSection />
         <FaqSection />
-        <BlogNewsSection />
         <SocialMediaIntegration />
       </main>
       <Footer />
