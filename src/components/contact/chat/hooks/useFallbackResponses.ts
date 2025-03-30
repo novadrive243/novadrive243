@@ -16,52 +16,52 @@ export const useFallbackResponses = (language: 'fr' | 'en') => {
     if (language === 'fr') {
       // Réponses concernant les réservations
       if (lowercaseMessage.includes('réserv') || lowercaseMessage.includes('chauffeur') || lowercaseMessage.includes('book')) {
-        return 'Pour réserver un chauffeur, vous avez plusieurs options pratiques. Vous pouvez utiliser notre système de réservation en ligne sur notre site web, nous appeler au +243 999 999 999, ou utiliser notre application mobile. Nous vous demanderons votre adresse de départ et d\'arrivée, l\'heure souhaitée, et vos préférences concernant le véhicule. Nos chauffeurs sont disponibles 24h/24 et 7j/7.';
+        return 'Pour réserver un chauffeur, utilisez notre site web, appelez au +243 999 999 999, ou notre application mobile. Nos chauffeurs sont disponibles 24h/24 et 7j/7.';
       } 
       // Réponses concernant les tarifs
       else if (lowercaseMessage.includes('tarif') || lowercaseMessage.includes('prix') || lowercaseMessage.includes('cost') || lowercaseMessage.includes('coût')) {
-        return 'Nos tarifs sont transparents et compétitifs. Pour un véhicule standard, comptez environ 50$ par jour ou 10$ par heure. Nos véhicules premium commencent à 80$ par jour, tandis que nos services VIP débutent à 120$ par jour. Des forfaits sont disponibles pour les réservations régulières ou de longue durée. N\'hésitez pas à demander un devis personnalisé pour votre trajet spécifique.';
+        return 'Nos tarifs: véhicule standard 50$ par jour ou 10$ par heure. Premium 80$ par jour. VIP 120$ par jour. Contactez-nous pour un devis personnalisé.';
       } 
       // Réponses concernant les zones de service
       else if (lowercaseMessage.includes('zone') || lowercaseMessage.includes('région') || lowercaseMessage.includes('area') || lowercaseMessage.includes('quartier')) {
-        return 'Notre service couvre l\'ensemble de Kinshasa et ses environs, y compris tous les quartiers résidentiels et commerciaux. Nous desservons également l\'aéroport international de N\'Djili. Pour les trajets en dehors de la ville ou les excursions vers des destinations comme Kisantu ou Zongo, veuillez réserver à l\'avance. Nous pouvons également organiser des services dans d\'autres villes principales de la RDC sur demande spéciale.';
+        return 'Nous couvrons toute la ville de Kinshasa et ses environs, y compris l\'aéroport de N\'Djili. Pour les trajets hors ville, réservez à l\'avance.';
       }
       // Réponses concernant les véhicules
       else if (lowercaseMessage.includes('voiture') || lowercaseMessage.includes('véhicule') || lowercaseMessage.includes('auto') || lowercaseMessage.includes('car')) {
-        return 'Notre flotte comprend une variété de véhicules pour répondre à tous vos besoins. Nous proposons des berlines confortables comme la Toyota Corolla, des SUV spacieux comme le Toyota RAV4 et le Mitsubishi Pajero, ainsi que des véhicules de luxe comme la Mercedes Classe E. Tous nos véhicules sont récents (moins de 3 ans), climatisés, et entretenus régulièrement pour garantir votre confort et votre sécurité.';
+        return 'Notre flotte: berlines (Toyota Corolla), SUV (RAV4, Pajero) et véhicules de luxe (Mercedes). Tous climatisés et récents.';
       }
       // Réponses concernant les chauffeurs
       else if (lowercaseMessage.includes('driver') || lowercaseMessage.includes('conducteur') || lowercaseMessage.includes('chauffeur')) {
-        return 'Nos chauffeurs sont des professionnels expérimentés, recrutés selon un processus rigoureux. Ils parlent français et anglais, connaissent parfaitement la ville, et ont suivi une formation en service client. Ils sont toujours ponctuels, courtois et habillés en tenue professionnelle. Votre sécurité et votre confort sont leur priorité absolue.';
+        return 'Nos chauffeurs sont professionnels, bilingues (français/anglais), et connaissent parfaitement la ville. Votre sécurité est notre priorité.';
       }
       // Réponse par défaut
       else {
-        return 'Merci pour votre message. Je suis l\'assistant virtuel de NovaDrive, à votre service pour répondre à toutes vos questions concernant nos services de chauffeur à Kinshasa. Que souhaitez-vous savoir sur nos véhicules, nos tarifs, ou le processus de réservation? Vous pouvez aussi nous contacter directement par téléphone au +243 999 999 999 ou par email à contact@novadrive.com pour une assistance personnalisée.';
+        return 'Bonjour! Je suis l\'assistant NovaDrive. Comment puis-je vous aider concernant nos services de chauffeur à Kinshasa? Pour une assistance directe, appelez le +243 999 999 999.';
       }
     } else {
       // Booking responses
       if (lowercaseMessage.includes('book') || lowercaseMessage.includes('driver') || lowercaseMessage.includes('reserve')) {
-        return 'To book a driver, you have several convenient options. You can use our online booking system on our website, call us at +243 999 999 999, or use our mobile app. We\'ll need your pickup and drop-off addresses, preferred time, and vehicle preferences. Our drivers are available 24/7 to serve you.';
+        return 'To book a driver, use our website, call +243 999 999 999, or use our mobile app. Our drivers are available 24/7.';
       } 
       // Pricing responses
       else if (lowercaseMessage.includes('rate') || lowercaseMessage.includes('price') || lowercaseMessage.includes('cost') || lowercaseMessage.includes('fee')) {
-        return 'Our rates are transparent and competitive. For a standard vehicle, expect about $50 per day or $10 per hour. Our premium vehicles start at $80 per day, while our VIP services begin at $120 per day. Packages are available for regular or long-term bookings. Feel free to ask for a personalized quote for your specific journey.';
+        return 'Our rates: standard vehicle $50/day or $10/hour. Premium $80/day. VIP $120/day. Contact us for a personalized quote.';
       } 
       // Service area responses
       else if (lowercaseMessage.includes('area') || lowercaseMessage.includes('region') || lowercaseMessage.includes('zone') || lowercaseMessage.includes('neighborhood')) {
-        return 'Our service covers the entire city of Kinshasa and its surroundings, including all residential and commercial areas. We also service N\'Djili International Airport. For trips outside the city or excursions to destinations like Kisantu or Zongo, please book in advance. We can also arrange services in other major cities in the DRC upon special request.';
+        return 'We cover all of Kinshasa and surroundings, including N\'Djili Airport. For trips outside the city, please book in advance.';
       }
       // Vehicle responses
       else if (lowercaseMessage.includes('car') || lowercaseMessage.includes('vehicle') || lowercaseMessage.includes('auto')) {
-        return 'Our fleet includes a variety of vehicles to meet all your needs. We offer comfortable sedans like the Toyota Corolla, spacious SUVs like the Toyota RAV4 and Mitsubishi Pajero, as well as luxury vehicles like the Mercedes E-Class. All our vehicles are recent models (less than 3 years old), air-conditioned, and regularly maintained to ensure your comfort and safety.';
+        return 'Our fleet: sedans (Toyota Corolla), SUVs (RAV4, Pajero) and luxury vehicles (Mercedes). All air-conditioned and recent models.';
       }
       // Driver responses
       else if (lowercaseMessage.includes('driver') || lowercaseMessage.includes('chauffeur')) {
-        return 'Our drivers are experienced professionals, recruited through a rigorous process. They speak French and English, know the city perfectly, and have undergone customer service training. They are always punctual, courteous, and dressed in professional attire. Your safety and comfort are their absolute priority.';
+        return 'Our drivers are professionals, bilingual (French/English), and know the city perfectly. Your safety is our priority.';
       }
       // Default response
       else {
-        return 'Thank you for your message. I am NovaDrive\'s virtual assistant, at your service to answer all your questions about our chauffeur services in Kinshasa. What would you like to know about our vehicles, rates, or booking process? You can also contact us directly by phone at +243 999 999 999 or by email at contact@novadrive.com for personalized assistance.';
+        return 'Hello! I\'m NovaDrive\'s assistant. How can I help you with our chauffeur services in Kinshasa? For direct assistance, call +243 999 999 999.';
       }
     }
   }, [language]);
