@@ -190,15 +190,15 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
         </h2>
         
         <Dialog>
-          {(onClose) => (
-            <>
-              <DialogTrigger asChild>
-                <Button className="gold-btn">
-                  <UserPlus className="mr-2 h-4 w-4" />
-                  {language === 'fr' ? 'Ajouter du Personnel' : 'Add Staff'}
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="bg-nova-gray text-nova-white border-nova-gold/30 max-w-md">
+          <DialogTrigger asChild>
+            <Button className="gold-btn">
+              <UserPlus className="mr-2 h-4 w-4" />
+              {language === 'fr' ? 'Ajouter du Personnel' : 'Add Staff'}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="bg-nova-gray text-nova-white border-nova-gold/30 max-w-md">
+            {(onClose) => (
+              <>
                 <DialogHeader>
                   <DialogTitle>
                     {language === 'fr' ? 'Ajouter un Membre du Personnel' : 'Add Staff Member'}
@@ -332,9 +332,9 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
                     </Button>
                   </DialogFooter>
                 </form>
-              </DialogContent>
-            </>
-          )}
+              </>
+            )}
+          </DialogContent>
         </Dialog>
       </div>
       

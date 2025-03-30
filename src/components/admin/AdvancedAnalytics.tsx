@@ -3,7 +3,7 @@ import React from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PieChart, Pie, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, AlertTriangle, Activity, BarChart3 } from "lucide-react";
 
@@ -190,7 +190,7 @@ export const AdvancedAnalytics = ({
                       label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                     >
                       {vehicleCategoryData.map((entry, index) => (
-                        <Cells key={`cell-${index}`} fill={['#D4AF37', '#B8860B', '#F5DEB3', '#E6C200', '#CFB53B'][index % 5]} />
+                        <Cell key={`cell-${index}`} fill={['#D4AF37', '#B8860B', '#F5DEB3', '#E6C200', '#CFB53B'][index % 5]} />
                       ))}
                     </Pie>
                     <Tooltip content={<CustomTooltip />} />

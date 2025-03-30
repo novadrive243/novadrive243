@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -20,10 +19,28 @@ interface PromotionManagerProps {
   formatCurrency: (amount: number) => string;
 }
 
+interface Promotion {
+  id: number;
+  code: string;
+  type: string;
+  value: number;
+  description: string;
+  descriptionFr: string;
+  startDate: string;
+  endDate: string;
+  minRental: number;
+  maxDiscount: number | null;
+  usageLimit: number;
+  usageCount: number;
+  active: boolean;
+  categories: string[];
+  createdAt: string;
+}
+
 export const PromotionManager = ({ language, formatDate, formatCurrency }: PromotionManagerProps) => {
   const { toast } = useToast();
   
-  const [promotions, setPromotions] = useState([
+  const [promotions, setPromotions] = useState<Promotion[]>([
     {
       id: 1,
       code: 'WELCOME25',
@@ -120,7 +137,7 @@ export const PromotionManager = ({ language, formatDate, formatCurrency }: Promo
     startDate: new Date().toISOString().split('T')[0],
     endDate: '',
     minRental: 1,
-    maxDiscount: null,
+    maxDiscount: null as number | null,
     usageLimit: 100,
     active: true,
     categories: ['All']
@@ -147,10 +164,21 @@ export const PromotionManager = ({ language, formatDate, formatCurrency }: Promo
   const handleAddPromotion = (e: React.FormEvent, onClose: () => void) => {
     e.preventDefault();
     
-    const promotion = {
-      ...newPromotion,
+    const promotion: Promotion = {
       id: promotions.length + 1,
+      code: newPromotion.code,
+      type: newPromotion.type,
+      value: newPromotion.value,
+      description: newPromotion.description,
+      descriptionFr: newPromotion.descriptionFr,
+      startDate: newPromotion.startDate,
+      endDate: newPromotion.endDate,
+      minRental: newPromotion.minRental,
+      maxDiscount: newPromotion.maxDiscount,
+      usageLimit: newPromotion.usageLimit,
       usageCount: 0,
+      active: newPromotion.active,
+      categories: newPromotion.categories,
       createdAt: new Date().toISOString().split('T')[0]
     };
     
@@ -223,15 +251,15 @@ export const PromotionManager = ({ language, formatDate, formatCurrency }: Promo
         </h2>
         
         <Dialog>
-          {(onClose) => (
-            <>
-              <DialogTrigger asChild>
-                <Button className="gold-btn">
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  {language === 'fr' ? 'Nouvelle Promotion' : 'New Promotion'}
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="bg-nova-gray text-nova-white border-nova-gold/30 max-w-2xl">
+          <DialogTrigger asChild>
+            <Button className="gold-btn">
+              <PlusCircle className="mr-2 h-4 w-4" />
+              {language === 'fr' ? 'Nouvelle Promotion' : 'New Promotion'}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="bg-nova-gray text-nova-white border-nova-gold/30 max-w-2xl">
+            {(onClose) => (
+              <>
                 <DialogHeader>
                   <DialogTitle>
                     {language === 'fr' ? 'Créer une Nouvelle Promotion' : 'Create New Promotion'}
@@ -460,9 +488,9 @@ export const PromotionManager = ({ language, formatDate, formatCurrency }: Promo
                     </Button>
                   </DialogFooter>
                 </form>
-              </DialogContent>
-            </>
-          )}
+              </>
+            )}
+          </DialogContent>
         </Dialog>
       </div>
       

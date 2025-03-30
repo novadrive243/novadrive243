@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -18,6 +17,37 @@ interface InventoryManagerProps {
   formatCurrency: (amount: number) => string;
 }
 
+interface VehicleInventory {
+  status: string;
+  location: string;
+  lastServiced: string;
+  fuelLevel: string;
+  mileage: number;
+  accessories: string[];
+}
+
+interface EnhancedVehicle {
+  id: string;
+  name: string;
+  category?: string;
+  price_per_day: number;
+  description?: string;
+  image_url?: string;
+  available?: boolean;
+  created_at?: string;
+  updated_at?: string;
+  inventory: VehicleInventory;
+}
+
+interface NewVehicle {
+  name: string;
+  category: string;
+  price_per_day: number;
+  description: string;
+  image_url: string;
+  inventory: VehicleInventory;
+}
+
 export const InventoryManager = ({ vehicles: initialVehicles, language, formatCurrency }: InventoryManagerProps) => {
   const { toast } = useToast();
   
@@ -34,13 +64,13 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
     }
   }));
   
-  const [vehicles, setVehicles] = useState(enhancedVehicles);
+  const [vehicles, setVehicles] = useState<EnhancedVehicle[]>(enhancedVehicles);
   const [activeTab, setActiveTab] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
   
-  const [newVehicle, setNewVehicle] = useState({
+  const [newVehicle, setNewVehicle] = useState<NewVehicle>({
     name: '',
     category: '',
     price_per_day: 0,
@@ -122,13 +152,18 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
     
     if (name.includes('.')) {
       const [parent, child] = name.split('.');
-      setNewVehicle(prev => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent as keyof typeof prev],
-          [child]: value
+      setNewVehicle(prev => {
+        if (parent === 'inventory') {
+          return {
+            ...prev,
+            inventory: {
+              ...prev.inventory,
+              [child]: value
+            }
+          };
         }
-      }));
+        return { ...prev, [name]: value };
+      });
     } else {
       setNewVehicle(prev => ({ ...prev, [name]: value }));
     }
@@ -137,13 +172,18 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
   const handleSelectChange = (name: string, value: string) => {
     if (name.includes('.')) {
       const [parent, child] = name.split('.');
-      setNewVehicle(prev => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent as keyof typeof prev],
-          [child]: value
+      setNewVehicle(prev => {
+        if (parent === 'inventory') {
+          return {
+            ...prev,
+            inventory: {
+              ...prev.inventory,
+              [child]: value
+            }
+          };
         }
-      }));
+        return { ...prev, [name]: value };
+      });
     } else {
       setNewVehicle(prev => ({ ...prev, [name]: value }));
     }
@@ -152,13 +192,17 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
   const handleAddVehicle = (e: React.FormEvent, onClose: () => void) => {
     e.preventDefault();
     
-    const vehicle = {
-      ...newVehicle,
+    const vehicle: EnhancedVehicle = {
       id: `new-${Date.now()}`,
+      name: newVehicle.name,
+      category: newVehicle.category,
+      description: newVehicle.description,
+      image_url: newVehicle.image_url,
       available: newVehicle.inventory.status === 'in-stock',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      price_per_day: parseFloat(newVehicle.price_per_day.toString())
+      price_per_day: parseFloat(newVehicle.price_per_day.toString()),
+      inventory: { ...newVehicle.inventory }
     };
     
     setVehicles([...vehicles, vehicle]);
@@ -233,15 +277,15 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
         </h2>
         
         <Dialog>
-          {(onClose) => (
-            <>
-              <DialogTrigger asChild>
-                <Button className="gold-btn">
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  {language === 'fr' ? 'Ajouter un Véhicule' : 'Add Vehicle'}
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="bg-nova-gray text-nova-white border-nova-gold/30 max-w-lg">
+          <DialogTrigger asChild>
+            <Button className="gold-btn">
+              <PlusCircle className="mr-2 h-4 w-4" />
+              {language === 'fr' ? 'Ajouter un Véhicule' : 'Add Vehicle'}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="bg-nova-gray text-nova-white border-nova-gold/30 max-w-lg">
+            {(onClose) => (
+              <>
                 <DialogHeader>
                   <DialogTitle>
                     {language === 'fr' ? 'Ajouter un Nouveau Véhicule' : 'Add New Vehicle'}
@@ -331,7 +375,7 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
                       <Input
                         id="description"
                         name="description"
-                        value={newVehicle.description as string}
+                        value={newVehicle.description}
                         onChange={handleInputChange}
                         className="bg-nova-black border-nova-gold/30 text-nova-white"
                       />
@@ -428,9 +472,9 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
                     </Button>
                   </DialogFooter>
                 </form>
-              </DialogContent>
-            </>
-          )}
+              </>
+            )}
+          </DialogContent>
         </Dialog>
       </div>
       

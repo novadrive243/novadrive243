@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusCircle, Tool, AlertTriangle, Wrench, Check, CalendarRange, SquarePen, Cog } from "lucide-react";
+import { PlusCircle, AlertTriangle, Wrench, Check, CalendarRange, SquarePen, Cog, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface MaintenanceTrackingProps {
@@ -98,7 +98,7 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
       case 'inProgress':
         return (
           <Badge className="bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 border-none">
-            <Tool className="mr-1 h-4 w-4" />
+            <Settings className="mr-1 h-4 w-4" />
             {language === 'fr' ? 'En cours' : 'In Progress'}
           </Badge>
         );
@@ -202,20 +202,20 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold gold-gradient-text flex items-center">
-          <Tool className="mr-2 h-6 w-6 text-nova-gold" />
+          <Settings className="mr-2 h-6 w-6 text-nova-gold" />
           {language === 'fr' ? 'Suivi de Maintenance' : 'Maintenance Tracking'}
         </h2>
         
         <Dialog>
-          {(onClose) => (
-            <>
-              <DialogTrigger asChild>
-                <Button className="gold-btn">
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  {language === 'fr' ? 'Ajouter' : 'Add Record'}
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="bg-nova-gray text-nova-white border-nova-gold/30 max-w-md">
+          <DialogTrigger asChild>
+            <Button className="gold-btn">
+              <PlusCircle className="mr-2 h-4 w-4" />
+              {language === 'fr' ? 'Ajouter' : 'Add Record'}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="bg-nova-gray text-nova-white border-nova-gold/30 max-w-md">
+            {(onClose) => (
+              <>
                 <DialogHeader>
                   <DialogTitle>
                     {language === 'fr' ? 'Ajouter un Enregistrement de Maintenance' : 'Add Maintenance Record'}
@@ -333,9 +333,9 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
                     </Button>
                   </DialogFooter>
                 </form>
-              </DialogContent>
-            </>
-          )}
+              </>
+            )}
+          </DialogContent>
         </Dialog>
       </div>
       
