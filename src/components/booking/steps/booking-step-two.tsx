@@ -10,10 +10,9 @@ interface BookingStepTwoProps {
   vehicles: typeof vehicles;
   selectedVehicle: string | null;
   setSelectedVehicle: (id: string | null) => void;
-  durationType: 'hourly' | 'daily' | 'monthly';
+  durationType: 'hourly' | 'daily';
   duration: number;
   days: number;
-  months: number;
   getSelectedVehiclePrice: () => number;
   handleBookNow: () => void;
   isProcessing: boolean;
@@ -27,7 +26,6 @@ export function BookingStepTwo({
   durationType,
   duration,
   days,
-  months,
   getSelectedVehiclePrice,
   handleBookNow,
   isProcessing,
@@ -40,7 +38,6 @@ export function BookingStepTwo({
     switch (durationType) {
       case 'hourly': return t('booking.perHour') || 'per hour';
       case 'daily': return t('booking.perDay') || 'per day';
-      case 'monthly': return t('booking.perMonth') || 'per month';
       default: return t('booking.perHour') || 'per hour';
     }
   };
@@ -50,7 +47,6 @@ export function BookingStepTwo({
     switch (durationType) {
       case 'hourly': return vehicle.price.hourly;
       case 'daily': return vehicle.price.daily;
-      case 'monthly': return vehicle.price.daily * 30; // Monthly price based on daily rate
       default: return vehicle.price.hourly;
     }
   };
@@ -112,7 +108,6 @@ export function BookingStepTwo({
             <span>
               {durationType === 'hourly' && `${duration} ${t('booking.hours')}`}
               {durationType === 'daily' && `${days} ${t('booking.days')}`}
-              {durationType === 'monthly' && `${months} ${t('booking.months')}`}
             </span>
           </div>
           <div className="flex justify-between font-medium mt-2 pt-2 border-t border-nova-white/10">
