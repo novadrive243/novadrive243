@@ -1,3 +1,4 @@
+
 import { Route, Routes } from "react-router-dom";
 import { LanguageProvider } from "./contexts/language-context";
 import { lazy, Suspense } from "react";
@@ -20,6 +21,7 @@ const AccountPage = lazy(() => import("./pages/AccountPage"));
 const AdminPage = lazy(() => import("./pages/AdminPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const TermsPage = lazy(() => import("./pages/TermsPage"));
+const DriversPage = lazy(() => import("./pages/DriversPage"));
 
 // Layout component to add back button
 const PageLayout = ({ children, showBackButton = true }: { children: React.ReactNode, showBackButton?: boolean }) => {
@@ -51,6 +53,7 @@ function App() {
           <Route path="/account" element={<PageLayout><AccountPage /></PageLayout>} />
           <Route path="/admin" element={<PageLayout><AdminPage /></PageLayout>} />
           <Route path="/terms" element={<PageLayout><TermsPage /></PageLayout>} />
+          <Route path="/drivers" element={<PageLayout><DriversPage /></PageLayout>} />
           <Route path="*" element={<PageLayout><NotFound /></PageLayout>} />
         </Routes>
         <Toaster />
