@@ -32,9 +32,6 @@ const LoginPage = () => {
         </div>
         
         <div className="text-center mt-6">
-          <p className="text-nova-white/50 text-sm mb-2">
-            {t('login.newUser') || 'New to NovaDrive?'}
-          </p>
           <Button 
             onClick={() => navigate('/register')}
             variant="outline" 
