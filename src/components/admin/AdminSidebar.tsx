@@ -108,7 +108,7 @@ export const AdminSidebar = ({
       style={{ 
         top: '5rem', // Fixed position below header
         bottom: 0,
-        height: 'calc(100vh - 5rem)' // Exact height calculation
+        height: 'calc(100vh - 5rem)' // Full height minus header height
       }}
     >
       <div className="flex flex-col h-full">

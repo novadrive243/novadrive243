@@ -93,7 +93,7 @@ const AdminPage = () => {
     <div className="min-h-screen flex flex-col bg-nova-black text-nova-white">
       <Header />
       
-      <div className="flex-grow pt-20 pb-16">
+      <div className="flex-grow pt-20 pb-0">
         {/* Sidebar */}
         <AdminSidebar 
           activeTab={activeTab} 
@@ -105,7 +105,7 @@ const AdminPage = () => {
         
         {/* Main content */}
         <div 
-          className={`transition-all duration-300 px-6 ${
+          className={`transition-all duration-300 px-6 pb-16 ${
             sidebarCollapsed ? 'ml-16' : 'ml-64'
           }`}
         >
