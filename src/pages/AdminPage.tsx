@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -9,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { vehicles as frontendVehicles } from '@/data/vehicles';
 import {
   Table,
   TableBody,
@@ -171,10 +171,25 @@ const AdminPage = () => {
       const { data: vehiclesData, error: vehiclesError } = await supabase
         .from('vehicles')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('name', { ascending: true });
       
       if (vehiclesError) throw vehiclesError;
-      setVehicles(vehiclesData);
+      
+      // Match Supabase vehicles with frontend vehicles for consistency
+      const mappedVehicles = vehiclesData.map(dbVehicle => {
+        // Find matching frontend vehicle for additional data
+        const frontendMatch = frontendVehicles.find(v => v.name === dbVehicle.name);
+        
+        return {
+          ...dbVehicle,
+          // Use frontend image if database image_url is not available
+          image_url: dbVehicle.image_url || (frontendMatch ? frontendMatch.image : ''),
+          // Ensure we have category data
+          category: dbVehicle.category || 'SUV'
+        };
+      });
+      
+      setVehicles(mappedVehicles);
       
       // Fetch profiles
       const { data: profilesData, error: profilesError } = await supabase
@@ -260,6 +275,11 @@ const AdminPage = () => {
 
   const formatCurrency = (amount: number) => {
     return `$${amount.toFixed(2)}`;
+  };
+
+  const getVehicleDailyPrice = (vehicleName: string) => {
+    const frontendVehicle = frontendVehicles.find(v => v.name === vehicleName);
+    return frontendVehicle ? frontendVehicle.price.daily : 0;
   };
 
   return (
@@ -417,6 +437,7 @@ const AdminPage = () => {
                         <Table>
                           <TableHeader className="border-b border-nova-gold/30">
                             <TableRow>
+                              <TableHead className="text-nova-gold">{language === 'fr' ? 'Image' : 'Image'}</TableHead>
                               <TableHead className="text-nova-gold">{language === 'fr' ? 'Nom' : 'Name'}</TableHead>
                               <TableHead className="text-nova-gold">{language === 'fr' ? 'Catégorie' : 'Category'}</TableHead>
                               <TableHead className="text-nova-gold">{language === 'fr' ? 'Prix par jour' : 'Price per day'}</TableHead>
@@ -426,9 +447,20 @@ const AdminPage = () => {
                           <TableBody>
                             {vehicles.map((vehicle) => (
                               <TableRow key={vehicle.id} className="border-b border-nova-gold/10 hover:bg-nova-gold/5">
+                                <TableCell>
+                                  <div className="h-12 w-16 rounded overflow-hidden">
+                                    <img 
+                                      src={vehicle.image_url} 
+                                      alt={vehicle.name}
+                                      className="h-full w-full object-cover"
+                                    />
+                                  </div>
+                                </TableCell>
                                 <TableCell className="text-nova-white">{vehicle.name}</TableCell>
                                 <TableCell className="text-nova-white">{vehicle.category}</TableCell>
-                                <TableCell className="text-nova-white">{formatCurrency(Number(vehicle.price_per_day))}</TableCell>
+                                <TableCell className="text-nova-white">
+                                  {formatCurrency(getVehicleDailyPrice(vehicle.name) || Number(vehicle.price_per_day))}
+                                </TableCell>
                                 <TableCell>
                                   <span className={`px-2 py-1 rounded-full text-xs ${
                                     vehicle.available ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'
