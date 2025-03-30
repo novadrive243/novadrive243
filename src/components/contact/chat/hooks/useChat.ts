@@ -96,7 +96,7 @@ export const useChat = (language: 'fr' | 'en') => {
     }
     
     // If we're in fallback mode, return a fallback response directly
-    if (useFallback || !threadIdRef.current || !ASSISTANT_ID || ASSISTANT_ID === "asst_YOUR_ASSISTANT_ID_HERE") {
+    if (useFallback || !threadIdRef.current || !ASSISTANT_ID || ASSISTANT_ID === "") {
       const fallback = getFallbackResponse(userMessage);
       cachedResponsesRef.current.set(userMessage, fallback);
       return fallback;
