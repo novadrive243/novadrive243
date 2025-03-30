@@ -21,5 +21,9 @@ export const QUICK_REPLIES = [
   {
     fr: "Quelles zones desservez-vous?",
     en: "What areas do you serve?"
+  },
+  {
+    fr: "Types de véhicules disponibles?",
+    en: "What vehicles do you offer?"
   }
 ];

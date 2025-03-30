@@ -1,3 +1,4 @@
+
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { toast } from "@/hooks/use-toast";
 import { Message } from '../types';
@@ -89,6 +90,7 @@ export const useChat = (language: 'fr' | 'en') => {
       return cachedResponse;
     }
     
+    // Fix for TypeScript error - checking if ASSISTANT_ID exists
     if (useFallback || !threadIdRef.current || !ASSISTANT_ID) {
       const fallback = getFallbackResponse(userMessage);
       cachedResponsesRef.current.set(userMessage, fallback);
