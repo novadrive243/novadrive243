@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -88,6 +87,8 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
     joinDate: new Date().toISOString().split('T')[0],
   });
   
+  const [open, setOpen] = useState(false);
+  
   const getRoleBadge = (role: string) => {
     switch (role) {
       case 'manager':
@@ -144,7 +145,7 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
     setNewStaff(prev => ({ ...prev, [name]: value }));
   };
   
-  const handleAddStaff = (e: React.FormEvent, onClose: () => void) => {
+  const handleAddStaff = (e: React.FormEvent) => {
     e.preventDefault();
     
     const staff = {
@@ -161,7 +162,6 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
     
     setStaffMembers([...staffMembers, staff]);
     
-    // Reset form
     setNewStaff({
       name: '',
       email: '',
@@ -178,7 +178,7 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
         : `${staff.name} has been successfully added to the team`,
     });
     
-    onClose();
+    setOpen(false);
   };
   
   return (
@@ -189,7 +189,7 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
           {language === 'fr' ? 'Gestion du Personnel' : 'Staff Management'}
         </h2>
         
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button className="gold-btn">
               <UserPlus className="mr-2 h-4 w-4" />
@@ -197,143 +197,139 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
             </Button>
           </DialogTrigger>
           <DialogContent className="bg-nova-gray text-nova-white border-nova-gold/30 max-w-md">
-            {(onClose) => (
-              <>
-                <DialogHeader>
-                  <DialogTitle>
-                    {language === 'fr' ? 'Ajouter un Membre du Personnel' : 'Add Staff Member'}
-                  </DialogTitle>
-                  <DialogDescription className="text-nova-white/60">
-                    {language === 'fr' 
-                      ? 'Complétez le formulaire pour ajouter un nouveau membre' 
-                      : 'Complete the form to add a new staff member'}
-                  </DialogDescription>
-                </DialogHeader>
+            <DialogHeader>
+              <DialogTitle>
+                {language === 'fr' ? 'Ajouter un Membre du Personnel' : 'Add Staff Member'}
+              </DialogTitle>
+              <DialogDescription className="text-nova-white/60">
+                {language === 'fr' 
+                  ? 'Complétez le formulaire pour ajouter un nouveau membre' 
+                  : 'Complete the form to add a new staff member'}
+              </DialogDescription>
+            </DialogHeader>
+            
+            <form onSubmit={handleAddStaff}>
+              <div className="space-y-4 py-2">
+                <div>
+                  <Label htmlFor="name" className="text-nova-white">
+                    {language === 'fr' ? 'Nom Complet' : 'Full Name'}
+                  </Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={newStaff.name}
+                    onChange={handleInputChange}
+                    className="bg-nova-black border-nova-gold/30 text-nova-white"
+                    required
+                  />
+                </div>
                 
-                <form onSubmit={(e) => handleAddStaff(e, onClose)}>
-                  <div className="space-y-4 py-2">
-                    <div>
-                      <Label htmlFor="name" className="text-nova-white">
-                        {language === 'fr' ? 'Nom Complet' : 'Full Name'}
-                      </Label>
-                      <Input
-                        id="name"
-                        name="name"
-                        value={newStaff.name}
-                        onChange={handleInputChange}
-                        className="bg-nova-black border-nova-gold/30 text-nova-white"
-                        required
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="email" className="text-nova-white">
-                        {language === 'fr' ? 'Email' : 'Email'}
-                      </Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={newStaff.email}
-                        onChange={handleInputChange}
-                        className="bg-nova-black border-nova-gold/30 text-nova-white"
-                        required
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="phone" className="text-nova-white">
-                        {language === 'fr' ? 'Téléphone' : 'Phone'}
-                      </Label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        value={newStaff.phone}
-                        onChange={handleInputChange}
-                        className="bg-nova-black border-nova-gold/30 text-nova-white"
-                        required
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="role" className="text-nova-white">
-                        {language === 'fr' ? 'Rôle' : 'Role'}
-                      </Label>
-                      <Select 
-                        value={newStaff.role} 
-                        onValueChange={(value) => handleSelectChange('role', value)}
-                        required
-                      >
-                        <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-nova-gray border-nova-gold/30">
-                          <SelectItem value="manager" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'Gestionnaire' : 'Manager'}
-                          </SelectItem>
-                          <SelectItem value="assistant" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'Assistant(e)' : 'Assistant'}
-                          </SelectItem>
-                          <SelectItem value="driver" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'Chauffeur' : 'Driver'}
-                          </SelectItem>
-                          <SelectItem value="mechanic" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'Mécanicien' : 'Mechanic'}
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="location" className="text-nova-white">
-                        {language === 'fr' ? 'Emplacement' : 'Location'}
-                      </Label>
-                      <Select 
-                        value={newStaff.location} 
-                        onValueChange={(value) => handleSelectChange('location', value)}
-                        required
-                      >
-                        <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-nova-gray border-nova-gold/30">
-                          <SelectItem value="Downtown" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'Centre-Ville' : 'Downtown'}
-                          </SelectItem>
-                          <SelectItem value="Airport" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'Aéroport' : 'Airport'}
-                          </SelectItem>
-                          <SelectItem value="Business District" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'Quartier des Affaires' : 'Business District'}
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="joinDate" className="text-nova-white">
-                        {language === 'fr' ? 'Date d\'Embauche' : 'Join Date'}
-                      </Label>
-                      <Input
-                        id="joinDate"
-                        name="joinDate"
-                        type="date"
-                        value={newStaff.joinDate}
-                        onChange={handleInputChange}
-                        className="bg-nova-black border-nova-gold/30 text-nova-white"
-                        required
-                      />
-                    </div>
-                  </div>
-                  
-                  <DialogFooter className="mt-4">
-                    <Button type="submit" className="gold-btn">
-                      {language === 'fr' ? 'Enregistrer' : 'Save'}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </>
-            )}
+                <div>
+                  <Label htmlFor="email" className="text-nova-white">
+                    {language === 'fr' ? 'Email' : 'Email'}
+                  </Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={newStaff.email}
+                    onChange={handleInputChange}
+                    className="bg-nova-black border-nova-gold/30 text-nova-white"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="phone" className="text-nova-white">
+                    {language === 'fr' ? 'Téléphone' : 'Phone'}
+                  </Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    value={newStaff.phone}
+                    onChange={handleInputChange}
+                    className="bg-nova-black border-nova-gold/30 text-nova-white"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="role" className="text-nova-white">
+                    {language === 'fr' ? 'Rôle' : 'Role'}
+                  </Label>
+                  <Select 
+                    value={newStaff.role} 
+                    onValueChange={(value) => handleSelectChange('role', value)}
+                    required
+                  >
+                    <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-nova-gray border-nova-gold/30">
+                      <SelectItem value="manager" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Gestionnaire' : 'Manager'}
+                      </SelectItem>
+                      <SelectItem value="assistant" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Assistant(e)' : 'Assistant'}
+                      </SelectItem>
+                      <SelectItem value="driver" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Chauffeur' : 'Driver'}
+                      </SelectItem>
+                      <SelectItem value="mechanic" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Mécanicien' : 'Mechanic'}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="location" className="text-nova-white">
+                    {language === 'fr' ? 'Emplacement' : 'Location'}
+                  </Label>
+                  <Select 
+                    value={newStaff.location} 
+                    onValueChange={(value) => handleSelectChange('location', value)}
+                    required
+                  >
+                    <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-nova-gray border-nova-gold/30">
+                      <SelectItem value="Downtown" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Centre-Ville' : 'Downtown'}
+                      </SelectItem>
+                      <SelectItem value="Airport" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Aéroport' : 'Airport'}
+                      </SelectItem>
+                      <SelectItem value="Business District" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Quartier des Affaires' : 'Business District'}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="joinDate" className="text-nova-white">
+                    {language === 'fr' ? 'Date d\'Embauche' : 'Join Date'}
+                  </Label>
+                  <Input
+                    id="joinDate"
+                    name="joinDate"
+                    type="date"
+                    value={newStaff.joinDate}
+                    onChange={handleInputChange}
+                    className="bg-nova-black border-nova-gold/30 text-nova-white"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <DialogFooter className="mt-4">
+                <Button type="submit" className="gold-btn">
+                  {language === 'fr' ? 'Enregistrer' : 'Save'}
+                </Button>
+              </DialogFooter>
+            </form>
           </DialogContent>
         </Dialog>
       </div>

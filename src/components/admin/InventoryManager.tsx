@@ -39,19 +39,18 @@ interface EnhancedVehicle {
   inventory: VehicleInventory;
 }
 
-interface NewVehicle {
+type NewVehicle = {
   name: string;
   category: string;
   price_per_day: number;
   description: string;
   image_url: string;
   inventory: VehicleInventory;
-}
+};
 
 export const InventoryManager = ({ vehicles: initialVehicles, language, formatCurrency }: InventoryManagerProps) => {
   const { toast } = useToast();
   
-  // Add more detailed inventory information to the vehicles
   const enhancedVehicles = initialVehicles.map(vehicle => ({
     ...vehicle,
     inventory: {
@@ -69,6 +68,7 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
+  const [open, setOpen] = useState(false);
   
   const [newVehicle, setNewVehicle] = useState<NewVehicle>({
     name: '',
@@ -189,7 +189,7 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
     }
   };
   
-  const handleAddVehicle = (e: React.FormEvent, onClose: () => void) => {
+  const handleAddVehicle = (e: React.FormEvent) => {
     e.preventDefault();
     
     const vehicle: EnhancedVehicle = {
@@ -214,7 +214,7 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
         : `${vehicle.name} has been added to inventory`,
     });
     
-    onClose();
+    setOpen(false);
   };
   
   const handleSort = (key: string) => {
@@ -228,14 +228,12 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
   
   const filteredVehicles = vehicles
     .filter(vehicle => {
-      // Filter by tab
       if (activeTab !== 'all') {
         return vehicle.inventory.status === activeTab;
       }
       return true;
     })
     .filter(vehicle => {
-      // Filter by search term
       if (searchTerm) {
         return (
           vehicle.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -246,11 +244,9 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
       return true;
     })
     .sort((a, b) => {
-      // Sort vehicles
       let compareA: any = a[sortBy as keyof typeof a];
       let compareB: any = b[sortBy as keyof typeof b];
       
-      // Handle nested properties
       if (sortBy === 'status') {
         compareA = a.inventory.status;
         compareB = b.inventory.status;
@@ -276,7 +272,7 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
           {language === 'fr' ? 'Gestion d\'Inventaire' : 'Inventory Management'}
         </h2>
         
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button className="gold-btn">
               <PlusCircle className="mr-2 h-4 w-4" />
@@ -284,196 +280,192 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
             </Button>
           </DialogTrigger>
           <DialogContent className="bg-nova-gray text-nova-white border-nova-gold/30 max-w-lg">
-            {(onClose) => (
-              <>
-                <DialogHeader>
-                  <DialogTitle>
-                    {language === 'fr' ? 'Ajouter un Nouveau Véhicule' : 'Add New Vehicle'}
-                  </DialogTitle>
-                  <DialogDescription className="text-nova-white/60">
-                    {language === 'fr' 
-                      ? 'Complétez le formulaire pour ajouter un véhicule à l\'inventaire' 
-                      : 'Complete the form to add a vehicle to inventory'}
-                  </DialogDescription>
-                </DialogHeader>
+            <DialogHeader>
+              <DialogTitle>
+                {language === 'fr' ? 'Ajouter un Nouveau Véhicule' : 'Add New Vehicle'}
+              </DialogTitle>
+              <DialogDescription className="text-nova-white/60">
+                {language === 'fr' 
+                  ? 'Complétez le formulaire pour ajouter un véhicule à l\'inventaire' 
+                  : 'Complete the form to add a vehicle to inventory'}
+              </DialogDescription>
+            </DialogHeader>
+            
+            <form onSubmit={handleAddVehicle}>
+              <div className="grid grid-cols-2 gap-4 py-2">
+                <div className="col-span-2">
+                  <Label htmlFor="name" className="text-nova-white">
+                    {language === 'fr' ? 'Nom du Véhicule' : 'Vehicle Name'}
+                  </Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={newVehicle.name}
+                    onChange={handleInputChange}
+                    className="bg-nova-black border-nova-gold/30 text-nova-white"
+                    required
+                  />
+                </div>
                 
-                <form onSubmit={(e) => handleAddVehicle(e, onClose)}>
-                  <div className="grid grid-cols-2 gap-4 py-2">
-                    <div className="col-span-2">
-                      <Label htmlFor="name" className="text-nova-white">
-                        {language === 'fr' ? 'Nom du Véhicule' : 'Vehicle Name'}
-                      </Label>
-                      <Input
-                        id="name"
-                        name="name"
-                        value={newVehicle.name}
-                        onChange={handleInputChange}
-                        className="bg-nova-black border-nova-gold/30 text-nova-white"
-                        required
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="category" className="text-nova-white">
-                        {language === 'fr' ? 'Catégorie' : 'Category'}
-                      </Label>
-                      <Select 
-                        value={newVehicle.category} 
-                        onValueChange={(value) => handleSelectChange('category', value)}
-                        required
-                      >
-                        <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
-                          <SelectValue placeholder={language === 'fr' ? 'Sélectionner' : 'Select'} />
-                        </SelectTrigger>
-                        <SelectContent className="bg-nova-gray border-nova-gold/30">
-                          <SelectItem value="SUV" className="text-nova-white hover:bg-nova-gold/20">SUV</SelectItem>
-                          <SelectItem value="Sedan" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'Berline' : 'Sedan'}
-                          </SelectItem>
-                          <SelectItem value="Sports" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'Sport' : 'Sports'}
-                          </SelectItem>
-                          <SelectItem value="Electric" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'Électrique' : 'Electric'}
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="price_per_day" className="text-nova-white">
-                        {language === 'fr' ? 'Prix par Jour' : 'Price per Day'}
-                      </Label>
-                      <Input
-                        id="price_per_day"
-                        name="price_per_day"
-                        type="number"
-                        value={newVehicle.price_per_day}
-                        onChange={handleInputChange}
-                        className="bg-nova-black border-nova-gold/30 text-nova-white"
-                        required
-                      />
-                    </div>
-                    
-                    <div className="col-span-2">
-                      <Label htmlFor="image_url" className="text-nova-white">
-                        {language === 'fr' ? 'URL de l\'Image' : 'Image URL'}
-                      </Label>
-                      <Input
-                        id="image_url"
-                        name="image_url"
-                        value={newVehicle.image_url}
-                        onChange={handleInputChange}
-                        className="bg-nova-black border-nova-gold/30 text-nova-white"
-                      />
-                    </div>
-                    
-                    <div className="col-span-2">
-                      <Label htmlFor="description" className="text-nova-white">
-                        {language === 'fr' ? 'Description' : 'Description'}
-                      </Label>
-                      <Input
-                        id="description"
-                        name="description"
-                        value={newVehicle.description}
-                        onChange={handleInputChange}
-                        className="bg-nova-black border-nova-gold/30 text-nova-white"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="inventory.status" className="text-nova-white">
-                        {language === 'fr' ? 'Statut' : 'Status'}
-                      </Label>
-                      <Select 
-                        value={newVehicle.inventory.status} 
-                        onValueChange={(value) => handleSelectChange('inventory.status', value)}
-                        required
-                      >
-                        <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-nova-gray border-nova-gold/30">
-                          <SelectItem value="in-stock" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'En Stock' : 'In Stock'}
-                          </SelectItem>
-                          <SelectItem value="maintenance" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'En Maintenance' : 'Maintenance'}
-                          </SelectItem>
-                          <SelectItem value="reserved" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'Réservé' : 'Reserved'}
-                          </SelectItem>
-                          <SelectItem value="in-use" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'En Utilisation' : 'In Use'}
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="inventory.location" className="text-nova-white">
-                        {language === 'fr' ? 'Emplacement' : 'Location'}
-                      </Label>
-                      <Select 
-                        value={newVehicle.inventory.location} 
-                        onValueChange={(value) => handleSelectChange('inventory.location', value)}
-                        required
-                      >
-                        <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-nova-gray border-nova-gold/30">
-                          <SelectItem value="Downtown" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'Centre-Ville' : 'Downtown'}
-                          </SelectItem>
-                          <SelectItem value="Airport" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'Aéroport' : 'Airport'}
-                          </SelectItem>
-                          <SelectItem value="Business District" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'Quartier des Affaires' : 'Business District'}
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="inventory.mileage" className="text-nova-white">
-                        {language === 'fr' ? 'Kilométrage' : 'Mileage'}
-                      </Label>
-                      <Input
-                        id="inventory.mileage"
-                        name="inventory.mileage"
-                        type="number"
-                        value={newVehicle.inventory.mileage}
-                        onChange={handleInputChange}
-                        className="bg-nova-black border-nova-gold/30 text-nova-white"
-                        required
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="inventory.fuelLevel" className="text-nova-white">
-                        {language === 'fr' ? 'Niveau de Carburant' : 'Fuel Level'}
-                      </Label>
-                      <Input
-                        id="inventory.fuelLevel"
-                        name="inventory.fuelLevel"
-                        value={newVehicle.inventory.fuelLevel}
-                        onChange={handleInputChange}
-                        className="bg-nova-black border-nova-gold/30 text-nova-white"
-                        required
-                      />
-                    </div>
-                  </div>
-                  
-                  <DialogFooter className="mt-6">
-                    <Button type="submit" className="gold-btn">
-                      {language === 'fr' ? 'Ajouter à l\'Inventaire' : 'Add to Inventory'}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </>
-            )}
+                <div>
+                  <Label htmlFor="category" className="text-nova-white">
+                    {language === 'fr' ? 'Catégorie' : 'Category'}
+                  </Label>
+                  <Select 
+                    value={newVehicle.category} 
+                    onValueChange={(value) => handleSelectChange('category', value)}
+                    required
+                  >
+                    <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
+                      <SelectValue placeholder={language === 'fr' ? 'Sélectionner' : 'Select'} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-nova-gray border-nova-gold/30">
+                      <SelectItem value="SUV" className="text-nova-white hover:bg-nova-gold/20">SUV</SelectItem>
+                      <SelectItem value="Sedan" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Berline' : 'Sedan'}
+                      </SelectItem>
+                      <SelectItem value="Sports" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Sport' : 'Sports'}
+                      </SelectItem>
+                      <SelectItem value="Electric" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Électrique' : 'Electric'}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="price_per_day" className="text-nova-white">
+                    {language === 'fr' ? 'Prix par Jour' : 'Price per Day'}
+                  </Label>
+                  <Input
+                    id="price_per_day"
+                    name="price_per_day"
+                    type="number"
+                    value={newVehicle.price_per_day}
+                    onChange={handleInputChange}
+                    className="bg-nova-black border-nova-gold/30 text-nova-white"
+                    required
+                  />
+                </div>
+                
+                <div className="col-span-2">
+                  <Label htmlFor="image_url" className="text-nova-white">
+                    {language === 'fr' ? 'URL de l\'Image' : 'Image URL'}
+                  </Label>
+                  <Input
+                    id="image_url"
+                    name="image_url"
+                    value={newVehicle.image_url}
+                    onChange={handleInputChange}
+                    className="bg-nova-black border-nova-gold/30 text-nova-white"
+                  />
+                </div>
+                
+                <div className="col-span-2">
+                  <Label htmlFor="description" className="text-nova-white">
+                    {language === 'fr' ? 'Description' : 'Description'}
+                  </Label>
+                  <Input
+                    id="description"
+                    name="description"
+                    value={newVehicle.description}
+                    onChange={handleInputChange}
+                    className="bg-nova-black border-nova-gold/30 text-nova-white"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="inventory.status" className="text-nova-white">
+                    {language === 'fr' ? 'Statut' : 'Status'}
+                  </Label>
+                  <Select 
+                    value={newVehicle.inventory.status} 
+                    onValueChange={(value) => handleSelectChange('inventory.status', value)}
+                    required
+                  >
+                    <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-nova-gray border-nova-gold/30">
+                      <SelectItem value="in-stock" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'En Stock' : 'In Stock'}
+                      </SelectItem>
+                      <SelectItem value="maintenance" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'En Maintenance' : 'Maintenance'}
+                      </SelectItem>
+                      <SelectItem value="reserved" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Réservé' : 'Reserved'}
+                      </SelectItem>
+                      <SelectItem value="in-use" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'En Utilisation' : 'In Use'}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="inventory.location" className="text-nova-white">
+                    {language === 'fr' ? 'Emplacement' : 'Location'}
+                  </Label>
+                  <Select 
+                    value={newVehicle.inventory.location} 
+                    onValueChange={(value) => handleSelectChange('inventory.location', value)}
+                    required
+                  >
+                    <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-nova-gray border-nova-gold/30">
+                      <SelectItem value="Downtown" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Centre-Ville' : 'Downtown'}
+                      </SelectItem>
+                      <SelectItem value="Airport" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Aéroport' : 'Airport'}
+                      </SelectItem>
+                      <SelectItem value="Business District" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Quartier des Affaires' : 'Business District'}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="inventory.mileage" className="text-nova-white">
+                    {language === 'fr' ? 'Kilométrage' : 'Mileage'}
+                  </Label>
+                  <Input
+                    id="inventory.mileage"
+                    name="inventory.mileage"
+                    type="number"
+                    value={newVehicle.inventory.mileage}
+                    onChange={handleInputChange}
+                    className="bg-nova-black border-nova-gold/30 text-nova-white"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="inventory.fuelLevel" className="text-nova-white">
+                    {language === 'fr' ? 'Niveau de Carburant' : 'Fuel Level'}
+                  </Label>
+                  <Input
+                    id="inventory.fuelLevel"
+                    name="inventory.fuelLevel"
+                    value={newVehicle.inventory.fuelLevel}
+                    onChange={handleInputChange}
+                    className="bg-nova-black border-nova-gold/30 text-nova-white"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <DialogFooter className="mt-6">
+                <Button type="submit" className="gold-btn">
+                  {language === 'fr' ? 'Ajouter à l\'Inventaire' : 'Add to Inventory'}
+                </Button>
+              </DialogFooter>
+            </form>
           </DialogContent>
         </Dialog>
       </div>

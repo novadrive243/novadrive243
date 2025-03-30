@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -71,6 +70,8 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
     notes: '',
     nextDate: '',
   });
+  
+  const [open, setOpen] = useState(false);
   
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -159,7 +160,7 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
     setNewRecord(prev => ({ ...prev, [name]: value }));
   };
   
-  const handleAddRecord = (e: React.FormEvent, onClose: () => void) => {
+  const handleAddRecord = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Find vehicle name based on ID
@@ -195,7 +196,7 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
         : 'New maintenance record added successfully',
     });
     
-    onClose();
+    setOpen(false);
   };
   
   return (
@@ -206,7 +207,7 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
           {language === 'fr' ? 'Suivi de Maintenance' : 'Maintenance Tracking'}
         </h2>
         
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button className="gold-btn">
               <PlusCircle className="mr-2 h-4 w-4" />
@@ -214,127 +215,123 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
             </Button>
           </DialogTrigger>
           <DialogContent className="bg-nova-gray text-nova-white border-nova-gold/30 max-w-md">
-            {(onClose) => (
-              <>
-                <DialogHeader>
-                  <DialogTitle>
-                    {language === 'fr' ? 'Ajouter un Enregistrement de Maintenance' : 'Add Maintenance Record'}
-                  </DialogTitle>
-                  <DialogDescription className="text-nova-white/60">
-                    {language === 'fr' 
-                      ? 'Complétez le formulaire pour ajouter un nouvel enregistrement' 
-                      : 'Complete the form to add a new maintenance record'}
-                  </DialogDescription>
-                </DialogHeader>
+            <DialogHeader>
+              <DialogTitle>
+                {language === 'fr' ? 'Ajouter un Enregistrement de Maintenance' : 'Add Maintenance Record'}
+              </DialogTitle>
+              <DialogDescription className="text-nova-white/60">
+                {language === 'fr' 
+                  ? 'Complétez le formulaire pour ajouter un nouvel enregistrement' 
+                  : 'Complete the form to add a new maintenance record'}
+              </DialogDescription>
+            </DialogHeader>
+            
+            <form onSubmit={handleAddRecord}>
+              <div className="space-y-4 py-2">
+                <div>
+                  <Label htmlFor="vehicleId" className="text-nova-white">
+                    {language === 'fr' ? 'Véhicule' : 'Vehicle'}
+                  </Label>
+                  <Select 
+                    value={newRecord.vehicleId} 
+                    onValueChange={(value) => handleSelectChange('vehicleId', value)}
+                    required
+                  >
+                    <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
+                      <SelectValue placeholder={language === 'fr' ? 'Sélectionner un véhicule' : 'Select vehicle'} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-nova-gray border-nova-gold/30">
+                      {vehicles.map((vehicle) => (
+                        <SelectItem 
+                          key={vehicle.id} 
+                          value={vehicle.id}
+                          className="text-nova-white hover:bg-nova-gold/20"
+                        >
+                          {vehicle.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
                 
-                <form onSubmit={(e) => handleAddRecord(e, onClose)}>
-                  <div className="space-y-4 py-2">
-                    <div>
-                      <Label htmlFor="vehicleId" className="text-nova-white">
-                        {language === 'fr' ? 'Véhicule' : 'Vehicle'}
-                      </Label>
-                      <Select 
-                        value={newRecord.vehicleId} 
-                        onValueChange={(value) => handleSelectChange('vehicleId', value)}
-                        required
-                      >
-                        <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
-                          <SelectValue placeholder={language === 'fr' ? 'Sélectionner un véhicule' : 'Select vehicle'} />
-                        </SelectTrigger>
-                        <SelectContent className="bg-nova-gray border-nova-gold/30">
-                          {vehicles.map((vehicle) => (
-                            <SelectItem 
-                              key={vehicle.id} 
-                              value={vehicle.id}
-                              className="text-nova-white hover:bg-nova-gold/20"
-                            >
-                              {vehicle.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="type" className="text-nova-white">
-                        {language === 'fr' ? 'Type' : 'Type'}
-                      </Label>
-                      <Select 
-                        value={newRecord.type} 
-                        onValueChange={(value) => handleSelectChange('type', value)}
-                        required
-                      >
-                        <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-nova-gray border-nova-gold/30">
-                          <SelectItem value="routine" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'Routine' : 'Routine'}
-                          </SelectItem>
-                          <SelectItem value="repair" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'Réparation' : 'Repair'}
-                          </SelectItem>
-                          <SelectItem value="inspection" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'Inspection' : 'Inspection'}
-                          </SelectItem>
-                          <SelectItem value="emergency" className="text-nova-white hover:bg-nova-gold/20">
-                            {language === 'fr' ? 'Urgence' : 'Emergency'}
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="date" className="text-nova-white">
-                        {language === 'fr' ? 'Date' : 'Date'}
-                      </Label>
-                      <Input
-                        id="date"
-                        name="date"
-                        type="date"
-                        value={newRecord.date}
-                        onChange={handleInputChange}
-                        className="bg-nova-black border-nova-gold/30 text-nova-white"
-                        required
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="nextDate" className="text-nova-white">
-                        {language === 'fr' ? 'Prochaine Date' : 'Next Date'}
-                      </Label>
-                      <Input
-                        id="nextDate"
-                        name="nextDate"
-                        type="date"
-                        value={newRecord.nextDate}
-                        onChange={handleInputChange}
-                        className="bg-nova-black border-nova-gold/30 text-nova-white"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="notes" className="text-nova-white">
-                        {language === 'fr' ? 'Notes' : 'Notes'}
-                      </Label>
-                      <Textarea
-                        id="notes"
-                        name="notes"
-                        value={newRecord.notes}
-                        onChange={handleInputChange}
-                        className="bg-nova-black border-nova-gold/30 text-nova-white min-h-[80px]"
-                      />
-                    </div>
-                  </div>
-                  
-                  <DialogFooter className="mt-4">
-                    <Button type="submit" className="gold-btn">
-                      {language === 'fr' ? 'Enregistrer' : 'Save'}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </>
-            )}
+                <div>
+                  <Label htmlFor="type" className="text-nova-white">
+                    {language === 'fr' ? 'Type' : 'Type'}
+                  </Label>
+                  <Select 
+                    value={newRecord.type} 
+                    onValueChange={(value) => handleSelectChange('type', value)}
+                    required
+                  >
+                    <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-nova-gray border-nova-gold/30">
+                      <SelectItem value="routine" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Routine' : 'Routine'}
+                      </SelectItem>
+                      <SelectItem value="repair" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Réparation' : 'Repair'}
+                      </SelectItem>
+                      <SelectItem value="inspection" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Inspection' : 'Inspection'}
+                      </SelectItem>
+                      <SelectItem value="emergency" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Urgence' : 'Emergency'}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="date" className="text-nova-white">
+                    {language === 'fr' ? 'Date' : 'Date'}
+                  </Label>
+                  <Input
+                    id="date"
+                    name="date"
+                    type="date"
+                    value={newRecord.date}
+                    onChange={handleInputChange}
+                    className="bg-nova-black border-nova-gold/30 text-nova-white"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="nextDate" className="text-nova-white">
+                    {language === 'fr' ? 'Prochaine Date' : 'Next Date'}
+                  </Label>
+                  <Input
+                    id="nextDate"
+                    name="nextDate"
+                    type="date"
+                    value={newRecord.nextDate}
+                    onChange={handleInputChange}
+                    className="bg-nova-black border-nova-gold/30 text-nova-white"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="notes" className="text-nova-white">
+                    {language === 'fr' ? 'Notes' : 'Notes'}
+                  </Label>
+                  <Textarea
+                    id="notes"
+                    name="notes"
+                    value={newRecord.notes}
+                    onChange={handleInputChange}
+                    className="bg-nova-black border-nova-gold/30 text-nova-white min-h-[80px]"
+                  />
+                </div>
+              </div>
+              
+              <DialogFooter className="mt-4">
+                <Button type="submit" className="gold-btn">
+                  {language === 'fr' ? 'Enregistrer' : 'Save'}
+                </Button>
+              </DialogFooter>
+            </form>
           </DialogContent>
         </Dialog>
       </div>
