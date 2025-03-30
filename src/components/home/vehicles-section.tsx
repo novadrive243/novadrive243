@@ -55,7 +55,7 @@ function VehicleCard({ name, image, comfort, capacity, price, onClick }: Vehicle
           
           <div className="flex justify-between items-center mb-4">
             <div>
-              <p className="text-sm text-nova-white/70">{t('vehicles.dailyRate')}</p>
+              <p className="text-sm text-nova-white/70">{t('vehicles.dailyRate') || 'Daily rate'}</p>
               <p className="text-nova-gold font-semibold">${price}/day</p>
             </div>
           </div>

@@ -95,14 +95,9 @@ export function BookingForm() {
   
   const getSelectedVehiclePrice = () => {
     const vehicle = vehicles.find(v => v.id === selectedVehicle);
+    if (!vehicle) return 0;
     return calculateVehiclePrice(vehicle, durationType, duration, days, 0);
   };
-
-  // Add a debug log to check the price calculation
-  console.log('Selected vehicle:', selectedVehicle);
-  console.log('Duration type:', durationType);
-  console.log('Days:', days);
-  console.log('Calculated price:', getSelectedVehiclePrice());
 
   return (
     <Card className="nova-card max-w-3xl mx-auto">
