@@ -25,6 +25,7 @@ const BookingPage = () => {
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
   const [bookingStep, setBookingStep] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
+  const [depositPaymentMethod, setDepositPaymentMethod] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   
   const paymentMethods = [
@@ -52,6 +53,18 @@ const BookingPage = () => {
   
   const handlePaymentMethodSelect = (methodId: string) => {
     setPaymentMethod(methodId);
+    
+    // If not cash, set the deposit payment method to the same method
+    if (methodId !== 'cash') {
+      setDepositPaymentMethod(methodId);
+    } else {
+      // Clear deposit payment method when selecting cash
+      setDepositPaymentMethod(null);
+    }
+  };
+  
+  const handleDepositPaymentMethodSelect = (methodId: string) => {
+    setDepositPaymentMethod(methodId);
   };
   
   const getSelectedVehicle = () => {
@@ -79,6 +92,18 @@ const BookingPage = () => {
   };
 
   const handleConfirmBooking = () => {
+    // Validation: For cash payments, require deposit payment method
+    if (paymentMethod === 'cash' && !depositPaymentMethod) {
+      toast({
+        title: language === 'fr' ? 'Erreur de paiement' : 'Payment Error',
+        description: language === 'fr' 
+          ? 'Veuillez sélectionner une méthode de paiement pour le dépôt.' 
+          : 'Please select a payment method for the deposit.',
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsProcessing(true);
     
     setTimeout(() => {
@@ -93,6 +118,7 @@ const BookingPage = () => {
         vehicleId: selectedVehicle,
         vehicleName: getSelectedVehicle()?.name,
         paymentMethod,
+        depositPaymentMethod: paymentMethod === 'cash' ? depositPaymentMethod : paymentMethod,
         totalPrice: calculateTotalPrice(),
         depositAmount: calculateDepositAmount(),
         createdAt: new Date().toISOString()
@@ -112,6 +138,7 @@ const BookingPage = () => {
       setPickup('');
       setSelectedVehicle(null);
       setPaymentMethod(null);
+      setDepositPaymentMethod(null);
       setDate(new Date());
       setTime('12:00');
       setDurationType('hourly');

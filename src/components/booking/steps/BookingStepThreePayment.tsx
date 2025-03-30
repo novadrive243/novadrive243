@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -40,6 +40,27 @@ export const BookingStepThreePayment = ({
   handleConfirmBooking,
   isProcessing
 }: BookingStepThreePaymentProps) => {
+  const [depositPaymentMethod, setDepositPaymentMethod] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>('online');
+
+  // Filter out cash method for deposit payments
+  const onlinePaymentMethods = paymentMethods.filter(m => m.id !== 'cash');
+  
+  const handleDepositMethodSelect = (methodId: string) => {
+    setDepositPaymentMethod(methodId);
+  };
+  
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+  };
+  
+  const canConfirmBooking = () => {
+    if (paymentMethod === 'cash') {
+      return !!depositPaymentMethod; // Require deposit payment method for cash
+    }
+    return !!paymentMethod; // For online payments, just require payment method
+  };
+
   return (
     <div className="max-w-2xl mx-auto">
       <Button 
@@ -124,7 +145,7 @@ export const BookingStepThreePayment = ({
               {language === 'fr' ? 'Méthode de paiement' : 'Payment Method'}
             </h3>
             
-            <Tabs defaultValue="online">
+            <Tabs defaultValue="online" onValueChange={handleTabChange}>
               <TabsList className="grid grid-cols-2 w-full bg-nova-gray">
                 <TabsTrigger value="online" className="flex items-center gap-2">
                   <CreditCard className="h-4 w-4" />
@@ -138,7 +159,7 @@ export const BookingStepThreePayment = ({
               
               <TabsContent value="online" className="mt-4">
                 <div className="grid grid-cols-2 gap-2">
-                  {paymentMethods.filter(m => m.id !== 'cash').map((method) => (
+                  {onlinePaymentMethods.map((method) => (
                     <div 
                       key={method.id}
                       className={`p-3 rounded border cursor-pointer transition-all flex items-center ${
@@ -195,23 +216,53 @@ export const BookingStepThreePayment = ({
                     <CheckCircle className="h-4 w-4 text-nova-gold ml-auto" />
                   )}
                 </div>
-                <p className="text-xs text-nova-white/70 mt-2">
-                  {language === 'fr' 
-                    ? 'Un dépôt de 25% est requis pour les réservations en espèces' 
-                    : '25% deposit is required for cash bookings'}
-                </p>
+                
                 {paymentMethod === 'cash' && (
-                  <div className="mt-4 p-3 bg-nova-gold/10 border border-nova-gold/30 rounded-md">
-                    <p className="text-sm text-nova-white">
+                  <div className="mt-4">
+                    <div className="p-3 bg-nova-gold/10 border border-nova-gold/30 rounded-md mb-4">
+                      <p className="text-sm text-nova-white font-medium">
+                        {language === 'fr' 
+                          ? 'Un dépôt en ligne est requis pour les réservations en espèces' 
+                          : 'An online deposit is required for cash bookings'}
+                      </p>
+                      <p className="text-xs text-nova-white/70 mt-1">
+                        {language === 'fr' 
+                          ? `Veuillez sélectionner une méthode de paiement en ligne pour votre dépôt de $${calculateDepositAmount()}.` 
+                          : `Please select an online payment method for your deposit of $${calculateDepositAmount()}.`}
+                      </p>
+                    </div>
+                    
+                    <h4 className="text-sm font-medium text-nova-white mb-2">
                       {language === 'fr' 
-                        ? `Veuillez préparer un dépôt de $${calculateDepositAmount()} pour confirmer votre réservation.` 
-                        : `Please prepare a deposit of $${calculateDepositAmount()} to confirm your booking.`}
-                    </p>
-                    <p className="text-xs text-nova-white/70 mt-1">
+                        ? 'Méthode de paiement pour le dépôt:' 
+                        : 'Deposit payment method:'}
+                    </h4>
+                    
+                    <div className="grid grid-cols-2 gap-2">
+                      {onlinePaymentMethods.map((method) => (
+                        <div 
+                          key={method.id}
+                          className={`p-3 rounded border cursor-pointer transition-all flex items-center ${
+                            depositPaymentMethod === method.id 
+                              ? 'border-nova-gold bg-nova-gold/10' 
+                              : 'border-nova-gray/50 hover:border-nova-gold/50'
+                          }`}
+                          onClick={() => handleDepositMethodSelect(method.id)}
+                        >
+                          <span className="mr-2">{method.icon}</span>
+                          <span className="text-nova-white text-sm">{method.name}</span>
+                          {depositPaymentMethod === method.id && (
+                            <CheckCircle className="h-4 w-4 text-nova-gold ml-auto" />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <div className="mt-2 text-xs text-nova-white/70">
                       {language === 'fr' 
-                        ? 'Le solde restant sera payé à la livraison du véhicule.' 
-                        : 'The remaining balance will be paid upon vehicle delivery.'}
-                    </p>
+                        ? `Le solde restant de $${(parseFloat(calculateTotalPrice()) - parseFloat(calculateDepositAmount())).toFixed(2)} sera payé en espèces à la livraison.`
+                        : `The remaining balance of $${(parseFloat(calculateTotalPrice()) - parseFloat(calculateDepositAmount())).toFixed(2)} will be paid in cash upon delivery.`}
+                    </div>
                   </div>
                 )}
               </TabsContent>
@@ -220,7 +271,7 @@ export const BookingStepThreePayment = ({
           
           <Button 
             className="w-full gold-btn"
-            disabled={!paymentMethod || isProcessing}
+            disabled={!canConfirmBooking() || isProcessing}
             onClick={handleConfirmBooking}
           >
             {isProcessing ? (
