@@ -10,6 +10,7 @@ import { MaintenanceTracking } from './MaintenanceTracking';
 import { StaffManagement } from './StaffManagement';
 import { InventoryManager } from './InventoryManager';
 import { PromotionManager } from './PromotionManager';
+import { AdminAIAssistant } from './AdminAIAssistant';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 
@@ -131,6 +132,15 @@ export const AdminTabs = ({
             language={language}
             formatDate={formatDate}
             formatCurrency={formatCurrency}
+          />
+        )}
+        
+        {activeTab === "ai-assistant" && (
+          <AdminAIAssistant
+            language={language}
+            bookings={bookings}
+            vehicles={vehicles}
+            profiles={profiles}
           />
         )}
       </div>

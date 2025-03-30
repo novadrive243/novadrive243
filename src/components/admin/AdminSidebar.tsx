@@ -13,7 +13,8 @@ import {
   Car,
   ClipboardList,
   Wrench,
-  BadgePercent
+  BadgePercent,
+  Bot
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -97,6 +98,11 @@ export const AdminSidebar = ({
           id: "staff",
           title: language === 'fr' ? 'Personnel' : 'Staff',
           icon: Users2,
+        },
+        {
+          id: "ai-assistant",
+          title: language === 'fr' ? 'Assistant IA' : 'AI Assistant',
+          icon: Bot,
         },
       ]
     }
