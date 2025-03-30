@@ -95,7 +95,7 @@ const AdminPage = () => {
             language={language} 
           />
           
-          <SidebarInset className="px-4">
+          <SidebarInset className="px-4 w-full">
             <div className="container mx-auto">
               <div className="flex justify-between items-center mb-6">
                 <h1 className="text-xl sm:text-2xl font-bold gold-gradient-text">
