@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -5,7 +6,7 @@ import { useLanguage } from "@/contexts/language-context";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Wifi, Droplet, Battery, Clock, MapPin, Sparkles, Coffee, UserCheck, Shield, 
-         Check, Award, Plane, BookCheck, Phone, Users, Heart } from "lucide-react";
+         Check, Award, Plane, BookCheck, Phone, Users, Heart, AlertCircle } from "lucide-react";
 import { Link } from 'react-router-dom';
 
 const ServicesPage = () => {
@@ -16,10 +17,16 @@ const ServicesPage = () => {
     fr: {
       title: "Nos Services & Conforts à Bord",
       subtitle: "Avec NovaDrive, chaque trajet devient une expérience de confort, de sécurité et de distinction. Nous mettons à disposition des prestations soignées, pensées pour répondre aux besoins des passagers les plus exigeants.",
+      serviceNotice: {
+        standard: "Standard pour tous les véhicules",
+        premium: "Inclus uniquement pour la Chevrolet Tahoe",
+        vip: "Services payants disponibles pour tous les véhicules"
+      },
       sections: [
         {
           title: "Accommodations standards",
           icon: <Check className="h-8 w-8 text-nova-gold" />,
+          notice: "Standard pour tous les véhicules",
           items: [
             { text: "Connexion Wifi à bord pour rester connecté en tout temps", icon: <Wifi /> },
             { text: "Bouteille d'eau fraîche offerte", icon: <Droplet /> },
@@ -31,6 +38,7 @@ const ServicesPage = () => {
         {
           title: "Conforts Premium",
           icon: <Award className="h-8 w-8 text-nova-gold" />,
+          notice: "Inclus uniquement pour la Chevrolet Tahoe",
           items: [
             { text: "Serviettes rafraîchissantes", icon: <Heart /> },
             { text: "Collation sucrée ou salée offerte", icon: <Coffee /> },
@@ -41,6 +49,7 @@ const ServicesPage = () => {
         {
           title: "Services VIP",
           icon: <Shield className="h-8 w-8 text-nova-gold" />,
+          notice: "Services payants disponibles pour tous les véhicules",
           items: [
             { text: "Protocole aéroportuaire : prise en charge complète à l'aéroport, accueil personnalisé, assistance bagages", icon: <Plane /> },
             { text: "Check-in sans déplacement : nous effectuons votre enregistrement à l'aéroport à votre place, le jour de votre départ", icon: <BookCheck /> },
@@ -55,10 +64,16 @@ const ServicesPage = () => {
     en: {
       title: "Our Services & On-Board Comforts",
       subtitle: "With NovaDrive, every journey becomes an experience of comfort, security, and distinction. We provide carefully curated services designed to meet the needs of the most demanding passengers.",
+      serviceNotice: {
+        standard: "Standard for all vehicles",
+        premium: "Included only with Chevrolet Tahoe",
+        vip: "Paid services available for all vehicles"
+      },
       sections: [
         {
           title: "Standard Accommodations",
           icon: <Check className="h-8 w-8 text-nova-gold" />,
+          notice: "Standard for all vehicles",
           items: [
             { text: "On-board WiFi connection to stay connected at all times", icon: <Wifi /> },
             { text: "Complimentary fresh water bottle", icon: <Droplet /> },
@@ -70,6 +85,7 @@ const ServicesPage = () => {
         {
           title: "Premium Comforts",
           icon: <Award className="h-8 w-8 text-nova-gold" />,
+          notice: "Included only with Chevrolet Tahoe",
           items: [
             { text: "Refreshing towels", icon: <Heart /> },
             { text: "Sweet or savory snacks offered", icon: <Coffee /> },
@@ -80,6 +96,7 @@ const ServicesPage = () => {
         {
           title: "VIP Services",
           icon: <Shield className="h-8 w-8 text-nova-gold" />,
+          notice: "Paid services available for all vehicles",
           items: [
             { text: "Airport protocol: complete airport handling, personalized welcome, baggage assistance", icon: <Plane /> },
             { text: "Check-in without travel: we handle your airport check-in on your behalf on the day of your departure", icon: <BookCheck /> },
@@ -114,13 +131,19 @@ const ServicesPage = () => {
           {/* Services sections */}
           {sections.map((section, sectionIndex) => (
             <section key={sectionIndex} className="mb-16">
-              <div className="flex items-center mb-6">
+              <div className="flex items-center gap-2 mb-6">
                 <h2 className="text-2xl font-semibold text-nova-gold border-b-2 border-nova-gold pb-2">
                   {section.title}
                 </h2>
               </div>
               
               <div className="bg-nova-gray/20 border border-nova-gold/20 rounded-lg p-6">
+                {/* Service availability notice */}
+                <div className="mb-4 flex items-center gap-2 text-nova-gold">
+                  <AlertCircle className="h-5 w-5" />
+                  <p className="text-sm italic">{section.notice}</p>
+                </div>
+                
                 <ul className="space-y-4">
                   {section.items.map((item, itemIndex) => (
                     <li key={itemIndex} className="flex items-start">
