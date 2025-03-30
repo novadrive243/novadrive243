@@ -103,6 +103,88 @@ const translations: Record<Language, TranslationData> = {
       privacy: 'Politique de confidentialité',
       slogan: 'NovaDrive offre des services de chauffeur privé de luxe à Kinshasa, avec une flotte de véhicules prestigieux.',
       rights: 'Tous droits réservés.'
+    },
+    loyalty: {
+      title: 'Programme de Fidélité',
+      points: 'Points',
+      level: 'Niveau',
+      rewards: 'Récompenses',
+      history: 'Historique',
+      earnedPoints: 'Points gagnés',
+      nextLevel: 'Prochain niveau',
+      bronze: 'Bronze',
+      silver: 'Argent',
+      gold: 'Or',
+      platinum: 'Platine'
+    },
+    drivers: {
+      title: 'Nos Chauffeurs',
+      experience: 'Expérience',
+      rating: 'Évaluation',
+      languages: 'Langues',
+      certifications: 'Certifications',
+      viewProfile: 'Voir profil',
+      contactDriver: 'Contacter'
+    },
+    notifications: {
+      title: 'Notifications',
+      all: 'Toutes',
+      unread: 'Non lues',
+      markAsRead: 'Marquer comme lu',
+      deleteAll: 'Supprimer tout',
+      booking: 'Réservation',
+      promotion: 'Promotion',
+      system: 'Système'
+    },
+    ratings: {
+      title: 'Évaluations',
+      rateExperience: 'Évaluez votre expérience',
+      leaveComment: 'Laissez un commentaire',
+      submit: 'Soumettre',
+      thankYou: 'Merci pour votre évaluation!',
+      serviceRating: 'Qualité du service',
+      driverRating: 'Performance du chauffeur',
+      vehicleRating: 'Condition du véhicule'
+    },
+    calendar: {
+      title: 'Calendrier',
+      sync: 'Synchroniser',
+      upcoming: 'À venir',
+      past: 'Passé',
+      addToCalendar: 'Ajouter au calendrier',
+      reminder: 'Rappel'
+    },
+    emergency: {
+      title: 'Contact d\'urgence',
+      call: 'Appeler',
+      message: 'Message',
+      emergencyServices: 'Services d\'urgence',
+      companySupport: 'Support NovaDrive',
+      police: 'Police',
+      ambulance: 'Ambulance',
+      roadside: 'Assistance routière'
+    },
+    account: {
+      title: 'Mon Compte',
+      profile: 'Profil',
+      userName: 'Utilisateur NovaDrive',
+      member: 'Membre depuis 2024',
+      favoriteVehicle: 'Favori: Toyota Fortuner',
+      logout: 'Déconnexion',
+      reservations: 'Réservations',
+      contact: 'Contact',
+      reservationHistory: 'Historique des réservations',
+      noReservations: 'Vous n\'avez pas d\'historique de réservation',
+      contactUs: 'Contactez-nous',
+      phone: 'Téléphone',
+      email: 'Email',
+      instagram: 'Instagram',
+      loyaltyProgram: 'Programme de Fidélité',
+      favoriteDrivers: 'Chauffeurs Favoris',
+      notifications: 'Notifications',
+      myRatings: 'Mes Évaluations',
+      emergencyContacts: 'Contacts d\'urgence',
+      calendarSync: 'Synchronisation du Calendrier'
     }
   },
   en: {
@@ -198,6 +280,88 @@ const translations: Record<Language, TranslationData> = {
       privacy: 'Privacy Policy',
       slogan: 'NovaDrive provides luxury private chauffeur services in Kinshasa, with a fleet of prestigious vehicles.',
       rights: 'All rights reserved.'
+    },
+    loyalty: {
+      title: 'Loyalty Program',
+      points: 'Points',
+      level: 'Level',
+      rewards: 'Rewards',
+      history: 'History',
+      earnedPoints: 'Earned points',
+      nextLevel: 'Next level',
+      bronze: 'Bronze',
+      silver: 'Silver',
+      gold: 'Gold',
+      platinum: 'Platinum'
+    },
+    drivers: {
+      title: 'Our Drivers',
+      experience: 'Experience',
+      rating: 'Rating',
+      languages: 'Languages',
+      certifications: 'Certifications',
+      viewProfile: 'View profile',
+      contactDriver: 'Contact'
+    },
+    notifications: {
+      title: 'Notifications',
+      all: 'All',
+      unread: 'Unread',
+      markAsRead: 'Mark as read',
+      deleteAll: 'Delete all',
+      booking: 'Booking',
+      promotion: 'Promotion',
+      system: 'System'
+    },
+    ratings: {
+      title: 'Ratings',
+      rateExperience: 'Rate your experience',
+      leaveComment: 'Leave a comment',
+      submit: 'Submit',
+      thankYou: 'Thank you for your rating!',
+      serviceRating: 'Service quality',
+      driverRating: 'Driver performance',
+      vehicleRating: 'Vehicle condition'
+    },
+    calendar: {
+      title: 'Calendar',
+      sync: 'Sync',
+      upcoming: 'Upcoming',
+      past: 'Past',
+      addToCalendar: 'Add to calendar',
+      reminder: 'Reminder'
+    },
+    emergency: {
+      title: 'Emergency Contact',
+      call: 'Call',
+      message: 'Message',
+      emergencyServices: 'Emergency services',
+      companySupport: 'NovaDrive support',
+      police: 'Police',
+      ambulance: 'Ambulance',
+      roadside: 'Roadside assistance'
+    },
+    account: {
+      title: 'My Account',
+      profile: 'Profile',
+      userName: 'NovaDrive User',
+      member: 'Member since 2024',
+      favoriteVehicle: 'Favorite: Toyota Fortuner',
+      logout: 'Logout',
+      reservations: 'Reservations',
+      contact: 'Contact',
+      reservationHistory: 'Reservation History',
+      noReservations: 'You have no reservation history',
+      contactUs: 'Contact Us',
+      phone: 'Phone',
+      email: 'Email',
+      instagram: 'Instagram',
+      loyaltyProgram: 'Loyalty Program',
+      favoriteDrivers: 'Favorite Drivers',
+      notifications: 'Notifications',
+      myRatings: 'My Ratings',
+      emergencyContacts: 'Emergency Contacts',
+      calendarSync: 'Calendar Sync'
     }
   }
 };
