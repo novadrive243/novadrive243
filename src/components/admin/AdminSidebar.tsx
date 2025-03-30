@@ -1,22 +1,11 @@
 
 import React from 'react';
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import {
   ListTodo,
   Settings,
   Calendar,
   Users,
   BarChart3,
-  Settings as Wrench,
   Users2,
   Tag
 } from 'lucide-react';
@@ -58,7 +47,7 @@ export const AdminSidebar = ({ activeTab, setActiveTab, language }: AdminSidebar
     {
       id: "maintenance",
       title: language === 'fr' ? 'Maintenance' : 'Maintenance',
-      icon: Wrench,
+      icon: Settings,
     },
     {
       id: "staff",
@@ -73,34 +62,32 @@ export const AdminSidebar = ({ activeTab, setActiveTab, language }: AdminSidebar
   ];
 
   return (
-    <Sidebar 
-      variant="floating" 
-      collapsible="icon" 
-      className="bg-nova-black border-r border-nova-gold/20 h-full"
-      side="left"
-    >
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-nova-gold">{language === 'fr' ? 'Administration' : 'Admin Panel'}</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton 
-                    isActive={activeTab === item.id}
-                    onClick={() => setActiveTab(item.id)}
-                    tooltip={item.title}
-                    className="text-nova-white hover:bg-nova-gold/10 data-[active=true]:bg-nova-gold/20"
-                  >
-                    <item.icon className="text-nova-gold" />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+    <div className="h-full bg-nova-black border-r border-nova-gold/20 overflow-y-auto">
+      <div className="p-4">
+        <h2 className="text-lg font-semibold text-nova-gold mb-6">
+          {language === 'fr' ? 'Administration' : 'Admin Panel'}
+        </h2>
+        
+        <nav>
+          <ul className="space-y-2">
+            {menuItems.map((item) => (
+              <li key={item.id}>
+                <button
+                  onClick={() => setActiveTab(item.id)}
+                  className={`w-full flex items-center px-4 py-2 text-sm rounded-md transition-colors ${
+                    activeTab === item.id
+                      ? 'bg-nova-gold/20 text-nova-white'
+                      : 'text-nova-white/80 hover:bg-nova-gold/10'
+                  }`}
+                >
+                  <item.icon className="mr-3 h-5 w-5 text-nova-gold" />
+                  <span>{item.title}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </div>
   );
 };

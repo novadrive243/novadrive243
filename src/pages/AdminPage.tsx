@@ -15,7 +15,6 @@ import { AdminTabs } from '@/components/admin/AdminTabs';
 import { LoadingState } from '@/components/admin/LoadingState';
 import { useAdminData } from '@/components/admin/useAdminData';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 
 const AdminPage = () => {
   const navigate = useNavigate();
@@ -88,64 +87,66 @@ const AdminPage = () => {
       <Header />
       
       <div className="flex-grow pt-20 pb-10">
-        <SidebarProvider defaultOpen={true}>
-          <div className="flex w-full h-full">
+        <div className="flex h-[calc(100vh-160px)]">
+          {/* Fixed sidebar */}
+          <div className="w-64 min-w-64 h-full">
             <AdminSidebar 
               activeTab={activeTab} 
               setActiveTab={setActiveTab} 
               language={language} 
             />
-            
-            <SidebarInset className="px-4 w-full">
-              <div className="container mx-auto">
-                <div className="flex justify-between items-center mb-6">
-                  <h1 className="text-xl sm:text-2xl font-bold gold-gradient-text">
-                    {language === 'fr' ? 'Tableau de Bord Admin' : 'Admin Dashboard'}
-                  </h1>
-                  <Button 
-                    variant="outline" 
-                    className="border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10"
-                    onClick={handleLogout}
-                  >
-                    <LogOut className="h-4 w-4 mr-2" />
-                    {language === 'fr' ? 'Déconnexion' : 'Logout'}
-                  </Button>
-                </div>
-                
-                {isLoading ? (
-                  <LoadingState language={language} />
-                ) : (
-                  <>
-                    <Dashboard 
-                      bookings={bookings}
-                      vehicles={vehicles}
-                      profiles={profiles}
-                      monthlyRevenue={monthlyRevenue}
-                      availableVehicles={availableVehicles}
-                      percentChange={percentChange}
-                      language={language}
-                      formatCurrency={formatCurrency}
-                    />
-                    
-                    <AdminTabs 
-                      activeTab={activeTab}
-                      bookings={bookings}
-                      vehicles={vehicles}
-                      profiles={profiles}
-                      language={language}
-                      formatDate={formatDate}
-                      formatCurrency={formatCurrency}
-                      getVehicleDailyPrice={getVehicleDailyPrice}
-                      isLoading={isLoading}
-                      monthlyRevenue={monthlyRevenue}
-                      refreshData={refreshData}
-                    />
-                  </>
-                )}
-              </div>
-            </SidebarInset>
           </div>
-        </SidebarProvider>
+          
+          {/* Main content */}
+          <div className="flex-1 px-4 overflow-y-auto">
+            <div className="container mx-auto">
+              <div className="flex justify-between items-center mb-6">
+                <h1 className="text-xl sm:text-2xl font-bold gold-gradient-text">
+                  {language === 'fr' ? 'Tableau de Bord Admin' : 'Admin Dashboard'}
+                </h1>
+                <Button 
+                  variant="outline" 
+                  className="border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  {language === 'fr' ? 'Déconnexion' : 'Logout'}
+                </Button>
+              </div>
+              
+              {isLoading ? (
+                <LoadingState language={language} />
+              ) : (
+                <>
+                  <Dashboard 
+                    bookings={bookings}
+                    vehicles={vehicles}
+                    profiles={profiles}
+                    monthlyRevenue={monthlyRevenue}
+                    availableVehicles={availableVehicles}
+                    percentChange={percentChange}
+                    language={language}
+                    formatCurrency={formatCurrency}
+                  />
+                  
+                  <AdminTabs 
+                    activeTab={activeTab}
+                    bookings={bookings}
+                    vehicles={vehicles}
+                    profiles={profiles}
+                    language={language}
+                    formatDate={formatDate}
+                    formatCurrency={formatCurrency}
+                    getVehicleDailyPrice={getVehicleDailyPrice}
+                    isLoading={isLoading}
+                    monthlyRevenue={monthlyRevenue}
+                    refreshData={refreshData}
+                  />
+                </>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
       
       <Footer />
