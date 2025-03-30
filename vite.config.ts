@@ -1,3 +1,4 @@
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -10,7 +11,9 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   plugins: [
-    react(),
+    react({
+      jsxImportSource: 'react',
+    }),
     mode === 'development' &&
     componentTagger(),
   ].filter(Boolean),
@@ -18,5 +21,25 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  build: {
+    sourcemap: true,
+    rollupOptions: {
+      // Make sure all dynamic imports are properly handled
+      output: {
+        manualChunks: {
+          // Split larger vendor packages into separate chunks
+          'vendor': ['react', 'react-dom', 'react-router-dom'],
+        }
+      }
+    }
+  },
+  optimizeDeps: {
+    // Force pre-bundling of problematic dependencies
+    include: ['react', 'react-dom', 'react-router-dom', 'lucide-react'],
+    esbuildOptions: {
+      // Improve compatibility
+      target: 'es2020',
+    }
   },
 }));
