@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -8,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusCircle, Package, Search, Filter, Car, DollarSign, Clock, ArrowUpDown } from "lucide-react";
+import { PlusCircle, Package, Search, Car, DollarSign, Clock, ArrowUpDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface InventoryManagerProps {
@@ -19,7 +20,6 @@ interface InventoryManagerProps {
 
 interface VehicleInventory {
   status: string;
-  location: string;
   lastServiced: string;
   fuelLevel: string;
   mileage: number;
@@ -55,7 +55,6 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
     ...vehicle,
     inventory: {
       status: ['in-stock', 'maintenance', 'reserved', 'in-use'][Math.floor(Math.random() * 4)],
-      location: ['Downtown', 'Airport', 'Business District'][Math.floor(Math.random() * 3)],
       lastServiced: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       fuelLevel: Math.floor(Math.random() * 100) + '%',
       mileage: Math.floor(Math.random() * 50000) + 10000,
@@ -78,7 +77,6 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
     image_url: '',
     inventory: {
       status: 'in-stock',
-      location: 'Downtown',
       lastServiced: new Date().toISOString().split('T')[0],
       fuelLevel: '100%',
       mileage: 0,
@@ -119,18 +117,6 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
           </Badge>
         );
     }
-  };
-  
-  const getLocationTranslation = (location: string) => {
-    if (language === 'fr') {
-      switch (location) {
-        case 'Downtown': return 'Centre-Ville';
-        case 'Airport': return 'Aéroport';
-        case 'Business District': return 'Quartier des Affaires';
-        default: return location;
-      }
-    }
-    return location;
   };
   
   const getAccessoryTranslation = (accessory: string) => {
@@ -250,9 +236,6 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
       if (sortBy === 'status') {
         compareA = a.inventory.status;
         compareB = b.inventory.status;
-      } else if (sortBy === 'location') {
-        compareA = a.inventory.location;
-        compareB = b.inventory.location;
       }
       
       if (compareA < compareB) {
@@ -405,32 +388,6 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
                 </div>
                 
                 <div>
-                  <Label htmlFor="inventory.location" className="text-nova-white">
-                    {language === 'fr' ? 'Emplacement' : 'Location'}
-                  </Label>
-                  <Select 
-                    value={newVehicle.inventory.location} 
-                    onValueChange={(value) => handleSelectChange('inventory.location', value)}
-                    required
-                  >
-                    <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-nova-gray border-nova-gold/30">
-                      <SelectItem value="Downtown" className="text-nova-white hover:bg-nova-gold/20">
-                        {language === 'fr' ? 'Centre-Ville' : 'Downtown'}
-                      </SelectItem>
-                      <SelectItem value="Airport" className="text-nova-white hover:bg-nova-gold/20">
-                        {language === 'fr' ? 'Aéroport' : 'Airport'}
-                      </SelectItem>
-                      <SelectItem value="Business District" className="text-nova-white hover:bg-nova-gold/20">
-                        {language === 'fr' ? 'Quartier des Affaires' : 'Business District'}
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div>
                   <Label htmlFor="inventory.mileage" className="text-nova-white">
                     {language === 'fr' ? 'Kilométrage' : 'Mileage'}
                   </Label>
@@ -530,10 +487,6 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
                   <div className="text-nova-gold font-bold flex items-center">
                     <DollarSign className="h-4 w-4" />
                     {formatCurrency(vehicle.price_per_day)}/day
-                  </div>
-                  <div className="text-sm text-nova-white/60 flex items-center justify-end mt-1">
-                    <Clock className="h-3 w-3 mr-1" />
-                    {getLocationTranslation(vehicle.inventory.location)}
                   </div>
                 </div>
               </div>

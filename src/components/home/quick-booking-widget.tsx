@@ -10,6 +10,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { Input } from "@/components/ui/input";
 
 export const QuickBookingWidget = () => {
   const { language } = useLanguage();
@@ -19,11 +20,6 @@ export const QuickBookingWidget = () => {
   const [returnDate, setReturnDate] = useState<Date>();
   const [location, setLocation] = useState("");
   const [selectedVehicle, setSelectedVehicle] = useState("");
-  
-  // Modified locations array - removed the three specific locations
-  const locations = [
-    { value: "custom", label: language === 'fr' ? 'Emplacement personnalisé' : 'Custom location' },
-  ];
   
   const vehicleCategories = [
     { value: "sedan", label: language === 'fr' ? 'Berline de Luxe' : 'Luxury Sedan' },
@@ -72,18 +68,14 @@ export const QuickBookingWidget = () => {
                   <MapPin className="mr-2 h-4 w-4 text-nova-gold" />
                   {language === 'fr' ? 'Lieu de Prise en Charge' : 'Pickup Location'}
                 </label>
-                <Select value={location} onValueChange={setLocation}>
-                  <SelectTrigger className="bg-nova-gray/20 border-nova-gold/30 text-nova-white">
-                    <SelectValue placeholder={language === 'fr' ? 'Sélectionner un lieu' : 'Select location'} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-nova-gray border-nova-gold/30">
-                    {locations.map((loc) => (
-                      <SelectItem key={loc.value} value={loc.value} className="text-nova-white hover:bg-nova-gold/20">
-                        {loc.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="relative">
+                  <Input
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder={language === 'fr' ? 'Entrez une adresse' : 'Enter an address'}
+                    className="bg-nova-gray/20 border-nova-gold/30 text-nova-white"
+                  />
+                </div>
               </div>
               
               {/* Vehicle Category */}

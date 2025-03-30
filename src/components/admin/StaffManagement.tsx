@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PlusCircle, UserPlus, Users, Mail, Phone, MapPin, CalendarClock, Pencil, Star } from "lucide-react";
+import { UserPlus, Users, Mail, Phone, CalendarClock, Pencil, Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface StaffManagementProps {
@@ -27,7 +28,6 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
       email: 'emma.r@novadrive.com',
       phone: '+1 (514) 555-1234',
       role: 'manager',
-      location: 'Downtown',
       joinDate: '2022-04-15',
       avatar: 'https://randomuser.me/api/portraits/women/33.jpg',
       rating: 4.9
@@ -38,7 +38,6 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
       email: 'james.w@novadrive.com',
       phone: '+1 (514) 555-2345',
       role: 'assistant',
-      location: 'Airport',
       joinDate: '2022-06-22',
       avatar: 'https://randomuser.me/api/portraits/men/44.jpg',
       rating: 4.7
@@ -49,7 +48,6 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
       email: 'sophia.c@novadrive.com',
       phone: '+1 (514) 555-3456',
       role: 'driver',
-      location: 'Downtown',
       joinDate: '2023-01-10',
       avatar: 'https://randomuser.me/api/portraits/women/17.jpg',
       rating: 4.8
@@ -60,7 +58,6 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
       email: 'michael.r@novadrive.com',
       phone: '+1 (514) 555-4567',
       role: 'mechanic',
-      location: 'Business District',
       joinDate: '2023-03-05',
       avatar: 'https://randomuser.me/api/portraits/men/22.jpg',
       rating: 4.6
@@ -71,7 +68,6 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
       email: 'olivia.j@novadrive.com',
       phone: '+1 (514) 555-5678',
       role: 'driver',
-      location: 'Airport',
       joinDate: '2023-07-18',
       avatar: 'https://randomuser.me/api/portraits/women/29.jpg',
       rating: 4.5
@@ -83,7 +79,6 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
     email: '',
     phone: '',
     role: 'driver',
-    location: 'Downtown',
     joinDate: new Date().toISOString().split('T')[0],
   });
   
@@ -124,18 +119,6 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
     }
   };
   
-  const getLocationTranslation = (location: string) => {
-    if (language === 'fr') {
-      switch (location) {
-        case 'Downtown': return 'Centre-Ville';
-        case 'Airport': return 'Aéroport';
-        case 'Business District': return 'Quartier des Affaires';
-        default: return location;
-      }
-    }
-    return location;
-  };
-  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setNewStaff(prev => ({ ...prev, [name]: value }));
@@ -154,7 +137,6 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
       email: newStaff.email,
       phone: newStaff.phone,
       role: newStaff.role,
-      location: newStaff.location,
       joinDate: newStaff.joinDate,
       avatar: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'women' : 'men'}/${Math.floor(Math.random() * 60) + 1}.jpg`,
       rating: 4.0
@@ -167,7 +149,6 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
       email: '',
       phone: '',
       role: 'driver',
-      location: 'Downtown',
       joinDate: new Date().toISOString().split('T')[0],
     });
     
@@ -283,32 +264,6 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
                 </div>
                 
                 <div>
-                  <Label htmlFor="location" className="text-nova-white">
-                    {language === 'fr' ? 'Emplacement' : 'Location'}
-                  </Label>
-                  <Select 
-                    value={newStaff.location} 
-                    onValueChange={(value) => handleSelectChange('location', value)}
-                    required
-                  >
-                    <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-nova-gray border-nova-gold/30">
-                      <SelectItem value="Downtown" className="text-nova-white hover:bg-nova-gold/20">
-                        {language === 'fr' ? 'Centre-Ville' : 'Downtown'}
-                      </SelectItem>
-                      <SelectItem value="Airport" className="text-nova-white hover:bg-nova-gold/20">
-                        {language === 'fr' ? 'Aéroport' : 'Airport'}
-                      </SelectItem>
-                      <SelectItem value="Business District" className="text-nova-white hover:bg-nova-gold/20">
-                        {language === 'fr' ? 'Quartier des Affaires' : 'Business District'}
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div>
                   <Label htmlFor="joinDate" className="text-nova-white">
                     {language === 'fr' ? 'Date d\'Embauche' : 'Join Date'}
                   </Label>
@@ -359,9 +314,6 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
                   {language === 'fr' ? 'Rôle' : 'Role'}
                 </TableHead>
                 <TableHead className="text-nova-white">
-                  {language === 'fr' ? 'Emplacement' : 'Location'}
-                </TableHead>
-                <TableHead className="text-nova-white">
                   {language === 'fr' ? 'Date d\'Embauche' : 'Join Date'}
                 </TableHead>
                 <TableHead className="text-nova-white">
@@ -398,12 +350,6 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
                   </TableCell>
                   <TableCell>
                     {getRoleBadge(staff.role)}
-                  </TableCell>
-                  <TableCell className="text-nova-white/80">
-                    <div className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-2 text-nova-gold" />
-                      {getLocationTranslation(staff.location)}
-                    </div>
                   </TableCell>
                   <TableCell className="text-nova-white/80">
                     <div className="flex items-center">

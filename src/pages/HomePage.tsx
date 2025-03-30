@@ -7,7 +7,6 @@ import { VehiclesSection } from "@/components/home/vehicles-section";
 import { FeaturedCarousel } from "@/components/home/featured-carousel";
 import { TestimonialsSection } from "@/components/home/testimonials-section";
 import { PromotionsBanner } from "@/components/home/promotions-banner";
-import { LocationMap } from "@/components/home/location-map";
 import { QuickBookingWidget } from "@/components/home/quick-booking-widget";
 import { FaqSection } from "@/components/home/faq-section";
 import { BlogNewsSection } from "@/components/home/blog-news-section";
@@ -24,7 +23,6 @@ const HomePage = () => {
         <VehiclesSection />
         <QuickBookingWidget />
         <TestimonialsSection />
-        <LocationMap />
         <FaqSection />
         <BlogNewsSection />
         <SocialMediaIntegration />
