@@ -36,7 +36,7 @@ export const PromotionsBanner = () => {
               {language === 'fr' ? 'Offre Spéciale' : 'Special Offer'}
             </Badge>
             
-            <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">
+            <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white border-2 border-nova-gold inline-block px-6 py-3 rounded-lg">
               {language === 'fr' 
                 ? 'Économisez 20% sur les locations de week-end' 
                 : 'Save 20% on Weekend Rentals'}

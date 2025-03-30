@@ -23,9 +23,9 @@ export const FeaturedCarousel = () => {
     <section className="py-16 bg-gradient-to-b from-nova-black to-nova-gray/90">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-3">
+          <h2 className="text-3xl md:text-4xl font-bold mb-3 text-nova-white border-2 border-nova-gold inline-block px-6 py-3 rounded-lg">
             <Award className="inline-block mr-2 text-nova-gold h-8 w-8" />
-            <span className="text-nova-white">
+            <span>
               {language === 'fr' ? 'Véhicules Premium' : 'Premium Vehicles'}
             </span>
           </h2>

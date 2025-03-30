@@ -39,7 +39,7 @@ const DriversPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 text-nova-white pb-20">
       <div className="container px-4 py-10 mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold mb-6 text-nova-white">
+        <h1 className="text-3xl md:text-4xl font-bold mb-6 text-nova-white border-2 border-nova-gold inline-block px-6 py-3 rounded-lg">
           {language === 'fr' ? 'Nos Chauffeurs Professionnels' : 'Our Professional Drivers'}
         </h1>
         

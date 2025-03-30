@@ -25,9 +25,9 @@ export function HeroSection() {
       <div className="container mx-auto px-4 z-10 text-center py-16">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-in">
-            <span className="bg-gold-gradient text-white px-6 py-2 rounded-lg shadow-[0_0_20px_rgba(232,191,82,0.6)] border border-nova-gold/30">NovaDrive</span>
+            <span className="bg-gold-gradient text-white px-6 py-2 rounded-lg shadow-[0_0_20px_rgba(232,191,82,0.6)] border-2 border-nova-gold">NovaDrive</span>
           </h1>
-          <h2 className="text-3xl md:text-4xl font-medium mb-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+          <h2 className="text-3xl md:text-4xl font-medium mb-6 animate-fade-in text-nova-white border-2 border-nova-gold inline-block px-6 py-3 rounded-lg" style={{ animationDelay: '0.1s' }}>
             {t('hero.title')}
           </h2>
           <p className="text-xl md:text-2xl text-nova-white/90 mb-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
