@@ -44,14 +44,28 @@ serve(async (req) => {
     
     // Store booking details in database if payment was successful
     if (paymentResult.success) {
-      const { data: bookingData, error: bookingError } = await supabaseClient
+      // Fix: Ensure we're using the correct column names for bookings table
+      // Instead of 'date', we need to use 'start_date' and 'end_date'
+      const bookingData = {
+        ...bookingDetails,
+        payment_method: paymentMethod,
+        payment_status: 'paid',
+        payment_reference: paymentResult.reference || '',
+      };
+      
+      // Make sure required fields exist
+      if (!bookingData.start_date && bookingDetails.date) {
+        bookingData.start_date = bookingDetails.date;
+      }
+      
+      if (!bookingData.end_date && bookingDetails.date) {
+        // Default to same day for end_date if not provided
+        bookingData.end_date = bookingDetails.date;
+      }
+      
+      const { error: bookingError } = await supabaseClient
         .from('bookings')
-        .insert({
-          ...bookingDetails,
-          payment_method: paymentMethod,
-          payment_status: 'paid',
-          payment_reference: paymentResult.reference || '',
-        });
+        .insert(bookingData);
         
       if (bookingError) {
         console.error('Error storing booking:', bookingError);
