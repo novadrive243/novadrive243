@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,6 +28,23 @@ interface Message {
 // API key for OpenAI
 const OPENAI_API_KEY = "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";
 
+// Add debounce helper function
+const useDebounce = <T,>(value: T, delay: number): T => {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
 const ContactChat = () => {
   const { t, language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
@@ -43,9 +60,29 @@ const ContactChat = () => {
   ]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const cachedResponsesRef = useRef<Map<string, string>>(new Map());
   
-  // Quick replies based on common questions
-  const quickReplies = [
+  // Debounce input value to reduce unnecessary renders
+  const debouncedInputValue = useDebounce(inputValue, 300);
+  
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  // Cancel ongoing API calls when component unmounts
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
+  
+  // Memoize quick replies to prevent unnecessary re-renders
+  const quickReplies = useMemo(() => [
     {
       fr: "Comment réserver un chauffeur?",
       en: "How do I book a driver?"
@@ -58,12 +95,24 @@ const ContactChat = () => {
       fr: "Quelles zones desservez-vous?",
       en: "What areas do you serve?"
     }
-  ];
+  ], []);
   
   // Get response from ChatGPT
-  const getChatGPTResponse = async (userMessage: string): Promise<string> => {
+  const getChatGPTResponse = useCallback(async (userMessage: string): Promise<string> => {
+    // Check cache first
+    const cachedResponse = cachedResponsesRef.current.get(userMessage);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    
     try {
       setIsLoading(true);
+      
+      // Cancel any ongoing API calls
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      abortControllerRef.current = new AbortController();
       
       const systemPrompt = language === 'fr' 
         ? "Tu es un assistant virtuel pour NovaDrive, un service de chauffeur de luxe à Kinshasa, Congo. Réponds de manière professionnelle, concise et utile. Utilise un ton amical mais formel. Limite tes réponses à 3-4 phrases maximum. Réponds en français."
@@ -90,6 +139,7 @@ const ContactChat = () => {
           temperature: 0.7,
           max_tokens: 150
         }),
+        signal: abortControllerRef.current.signal
       });
       
       if (!response.ok) {
@@ -97,19 +147,29 @@ const ContactChat = () => {
       }
       
       const data = await response.json();
-      return data.choices[0].message.content;
+      const botResponse = data.choices[0].message.content;
+      
+      // Cache the response
+      cachedResponsesRef.current.set(userMessage, botResponse);
+      
+      return botResponse;
     } catch (error) {
-      console.error('Error calling ChatGPT API:', error);
-      return language === 'fr'
-        ? "Désolé, je rencontre des difficultés techniques. Veuillez réessayer plus tard ou contactez-nous directement par téléphone."
-        : "Sorry, I'm experiencing technical difficulties. Please try again later or contact us directly by phone.";
+      // Only display error if not aborted
+      if (error instanceof Error && error.name !== 'AbortError') {
+        console.error('Error calling ChatGPT API:', error);
+        return language === 'fr'
+          ? "Désolé, je rencontre des difficultés techniques. Veuillez réessayer plus tard ou contactez-nous directement par téléphone."
+          : "Sorry, I'm experiencing technical difficulties. Please try again later or contact us directly by phone.";
+      }
+      throw error;
     } finally {
       setIsLoading(false);
+      abortControllerRef.current = null;
     }
-  };
+  }, [language]);
   
   // Use fallback responses if API fails
-  const getFallbackResponse = (userMessage: string): string => {
+  const getFallbackResponse = useCallback((userMessage: string): string => {
     const lowercaseMessage = userMessage.toLowerCase();
     
     // Using language-specific responses
@@ -134,16 +194,16 @@ const ContactChat = () => {
         return 'Thank you for your message. If you have any specific questions, feel free to ask. You can also contact us directly by phone or email for personalized assistance.';
       }
     }
-  };
+  }, [language]);
   
-  const handleSendMessage = async () => {
+  const handleSendMessage = useCallback(async () => {
     if (!inputValue.trim()) return;
     
     // Add user message
     const userMessage: Message = {
       id: messages.length + 1,
       type: "user",
-      text: inputValue,
+      text: inputValue.trim(),
       timestamp: new Date(),
     };
     
@@ -162,7 +222,7 @@ const ContactChat = () => {
     
     try {
       // Get response from ChatGPT
-      const chatGPTResponse = await getChatGPTResponse(inputValue);
+      const chatGPTResponse = await getChatGPTResponse(userMessage.text);
       
       // Update the processing message with the actual response
       setMessages((prev) => 
@@ -173,32 +233,35 @@ const ContactChat = () => {
         )
       );
     } catch (error) {
-      console.error('Error getting ChatGPT response:', error);
-      
-      // Use fallback response if ChatGPT fails
-      const fallbackResponse = getFallbackResponse(inputValue);
-      
-      // Update the processing message with the fallback response
-      setMessages((prev) => 
-        prev.map(msg => 
-          msg.id === processingBotMessage.id 
-            ? { ...msg, text: fallbackResponse } 
-            : msg
-        )
-      );
-      
-      // Show toast notification about the issue
-      toast({
-        title: language === 'fr' ? "Problème de connexion" : "Connection issue",
-        description: language === 'fr' 
-          ? "Nous utilisons actuellement des réponses préprogrammées en raison d'un problème technique." 
-          : "We're currently using pre-programmed responses due to a technical issue.",
-        variant: "destructive",
-      });
+      // Only handle if not aborted
+      if (error instanceof Error && error.name !== 'AbortError') {
+        console.error('Error getting ChatGPT response:', error);
+        
+        // Use fallback response if ChatGPT fails
+        const fallbackResponse = getFallbackResponse(userMessage.text);
+        
+        // Update the processing message with the fallback response
+        setMessages((prev) => 
+          prev.map(msg => 
+            msg.id === processingBotMessage.id 
+              ? { ...msg, text: fallbackResponse } 
+              : msg
+          )
+        );
+        
+        // Show toast notification about the issue
+        toast({
+          title: language === 'fr' ? "Problème de connexion" : "Connection issue",
+          description: language === 'fr' 
+            ? "Nous utilisons actuellement des réponses préprogrammées en raison d'un problème technique." 
+            : "We're currently using pre-programmed responses due to a technical issue.",
+          variant: "destructive",
+        });
+      }
     }
-  };
+  }, [inputValue, messages, language, getChatGPTResponse, getFallbackResponse]);
   
-  const handleQuickReply = async (text: string) => {
+  const handleQuickReply = useCallback(async (text: string) => {
     const userMessage: Message = {
       id: messages.length + 1,
       type: "user",
@@ -231,21 +294,78 @@ const ContactChat = () => {
         )
       );
     } catch (error) {
-      console.error('Error getting ChatGPT response:', error);
-      
-      // Use fallback response if ChatGPT fails
-      const fallbackResponse = getFallbackResponse(text);
-      
-      // Update the processing message with the fallback response
-      setMessages((prev) => 
-        prev.map(msg => 
-          msg.id === processingBotMessage.id 
-            ? { ...msg, text: fallbackResponse } 
-            : msg
-        )
-      );
+      // Only handle if not aborted
+      if (error instanceof Error && error.name !== 'AbortError') {
+        console.error('Error getting ChatGPT response:', error);
+        
+        // Use fallback response if ChatGPT fails
+        const fallbackResponse = getFallbackResponse(text);
+        
+        // Update the processing message with the fallback response
+        setMessages((prev) => 
+          prev.map(msg => 
+            msg.id === processingBotMessage.id 
+              ? { ...msg, text: fallbackResponse } 
+              : msg
+          )
+        );
+      }
     }
-  };
+  }, [messages, language, getChatGPTResponse, getFallbackResponse]);
+  
+  // Memoize the message list to prevent unnecessary re-renders
+  const messagesList = useMemo(() => {
+    return (
+      <div className="flex flex-col space-y-4">
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className={`flex ${
+              message.type === "user" ? "justify-end" : "justify-start"
+            }`}
+          >
+            <div
+              className={`max-w-[80%] rounded-lg p-3 ${
+                message.type === "user"
+                  ? "bg-nova-gold text-nova-black"
+                  : "bg-nova-gray/30 text-nova-white"
+              }`}
+            >
+              <p>{message.text}</p>
+              <p className="text-xs opacity-70 mt-1">
+                {new Date(message.timestamp).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
+            </div>
+          </div>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+    );
+  }, [messages]);
+  
+  // Memoize the quick replies to prevent unnecessary re-renders
+  const quickRepliesSection = useMemo(() => {
+    if (messages.length >= 3) return null;
+    
+    return (
+      <div className="mt-4 flex flex-wrap gap-2">
+        {quickReplies.map((reply, index) => (
+          <Button
+            key={index}
+            variant="outline"
+            className="text-nova-white border-nova-gold/30 text-sm"
+            onClick={() => handleQuickReply(language === 'fr' ? reply.fr : reply.en)}
+            disabled={isLoading}
+          >
+            {language === 'fr' ? reply.fr : reply.en}
+          </Button>
+        ))}
+      </div>
+    );
+  }, [language, quickReplies, messages.length, handleQuickReply, isLoading]);
   
   return (
     <>
@@ -268,49 +388,10 @@ const ContactChat = () => {
           
           <div className="flex flex-col p-4 h-[50vh] overflow-y-auto">
             {/* Message thread */}
-            <div className="flex flex-col space-y-4">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${
-                    message.type === "user" ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  <div
-                    className={`max-w-[80%] rounded-lg p-3 ${
-                      message.type === "user"
-                        ? "bg-nova-gold text-nova-black"
-                        : "bg-nova-gray/30 text-nova-white"
-                    }`}
-                  >
-                    <p>{message.text}</p>
-                    <p className="text-xs opacity-70 mt-1">
-                      {new Date(message.timestamp).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            {messagesList}
             
             {/* Quick replies */}
-            {messages.length < 3 && (
-              <div className="mt-4 flex flex-wrap gap-2">
-                {quickReplies.map((reply, index) => (
-                  <Button
-                    key={index}
-                    variant="outline"
-                    className="text-nova-white border-nova-gold/30 text-sm"
-                    onClick={() => handleQuickReply(language === 'fr' ? reply.fr : reply.en)}
-                    disabled={isLoading}
-                  >
-                    {language === 'fr' ? reply.fr : reply.en}
-                  </Button>
-                ))}
-              </div>
-            )}
+            {quickRepliesSection}
           </div>
           
           <DrawerFooter className="border-t border-nova-gold/30">
@@ -334,7 +415,11 @@ const ContactChat = () => {
                 className="gold-btn h-[60px]"
                 disabled={isLoading}
               >
-                <Send className="h-5 w-5" />
+                {isLoading ? (
+                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-t-transparent border-white" />
+                ) : (
+                  <Send className="h-5 w-5" />
+                )}
               </Button>
             </div>
             <DrawerClose asChild>
