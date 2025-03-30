@@ -28,7 +28,7 @@ const ContactPage = () => {
         <section className="relative py-20 overflow-hidden">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-16">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6 text-nova-white border-2 border-nova-gold inline-block px-6 py-3 rounded-lg">
+              <h1 className="text-3xl md:text-4xl font-bold mb-6 text-nova-white border-2 border-nova-gold inline-block px-6 py-3 rounded-lg">
                 {t('contact.title')}
               </h1>
               <p className="text-nova-white/70 text-lg">
