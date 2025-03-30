@@ -56,11 +56,7 @@ export const LocationMap = () => {
               {language === 'fr' ? 'Nos Emplacements' : 'Our Locations'}
             </span>
           </h2>
-          <p className="text-nova-white/70 max-w-2xl mx-auto">
-            {language === 'fr' 
-              ? 'Trouvez-nous à des emplacements stratégiques pour votre commodité' 
-              : 'Find us at strategic locations for your convenience'}
-          </p>
+          {/* Removed the subtitle text about strategic locations */}
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -113,3 +109,4 @@ export const LocationMap = () => {
     </section>
   );
 };
+
