@@ -16,7 +16,7 @@ const PricingPage = () => {
       <Header />
       <main className="flex-grow pt-28 pb-16 px-4">
         <div className="container mx-auto">
-          <h1 className="text-4xl font-bold mb-8 gold-gradient-text">
+          <h1 className="text-4xl font-bold mb-8 text-nova-white">
             {t('pricing.title') || 'Our Pricing'}
           </h1>
           
