@@ -7,7 +7,7 @@ import { useLanguage } from "@/contexts/language-context";
 import { Button } from '@/components/ui/button';
 import { vehicles as frontendVehicles } from '@/data/vehicles';
 import { useToast } from '@/hooks/use-toast';
-import { LogOut, MenuIcon } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 
 // Admin Components
 import { Dashboard } from '@/components/admin/Dashboard';
@@ -65,6 +65,7 @@ const AdminPage = () => {
     return null; // Don't render anything while checking authorization
   }
 
+  // Helper functions for formatting
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', {
@@ -104,12 +105,12 @@ const AdminPage = () => {
         
         {/* Main content */}
         <div 
-          className={`transition-all duration-300 px-4 ${
+          className={`transition-all duration-300 px-6 ${
             sidebarCollapsed ? 'ml-16' : 'ml-64'
           }`}
         >
           <div className="container mx-auto">
-            <div className="flex justify-between items-center mb-6 mt-2">
+            <div className="flex justify-between items-center mb-6 mt-4">
               <h1 className="text-xl sm:text-2xl font-bold gold-gradient-text">
                 {language === 'fr' ? 'Tableau de Bord Admin' : 'Admin Dashboard'}
               </h1>
