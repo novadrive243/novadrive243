@@ -78,7 +78,7 @@ export function Footer() {
               <a href="https://www.tiktok.com/@novadrive243" target="_blank" rel="noopener noreferrer" className="text-nova-white/70 hover:text-nova-gold">
                 TikTok
               </a>
-              <a href="mailto:novadrive243@gmail.com" className="text-nova-white/70 hover:text-nova-gold">
+              <a href="mailto:info@novadrive243.com" className="text-nova-white/70 hover:text-nova-gold">
                 Email
               </a>
             </div>

@@ -17,7 +17,7 @@ const ContactInfo = () => {
     {
       icon: <Mail className="text-nova-gold" />,
       title: t('contact.email'),
-      info: "novadrive243@gmail.com",
+      info: "info@novadrive243.com",
       description: t('contact.emailDescription')
     },
     {
