@@ -11,7 +11,7 @@ import { BookingStepOneDetails } from '@/components/booking/steps/BookingStepOne
 import { BookingStepTwoVehicle } from '@/components/booking/steps/BookingStepTwoVehicle';
 import { BookingStepThreePayment } from '@/components/booking/steps/BookingStepThreePayment';
 import { renderStars, calculateVehiclePrice } from '@/components/booking/utils/booking-utils';
-import { format } from "date-fns";
+import { format, addHours, differenceInHours } from "date-fns";
 
 const BookingPage = () => {
   const { language } = useLanguage();
@@ -27,6 +27,7 @@ const BookingPage = () => {
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
   const [depositPaymentMethod, setDepositPaymentMethod] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [installmentOption, setInstallmentOption] = useState<'full' | 'three_installments'>('full');
   
   const paymentMethods = [
     { id: "visa", name: "Visa", icon: "💳" },
@@ -66,6 +67,10 @@ const BookingPage = () => {
   const handleDepositPaymentMethodSelect = (methodId: string) => {
     setDepositPaymentMethod(methodId);
   };
+
+  const handleInstallmentOptionSelect = (option: 'full' | 'three_installments') => {
+    setInstallmentOption(option);
+  };
   
   const getSelectedVehicle = () => {
     return vehicles.find(v => v.id === selectedVehicle);
@@ -89,6 +94,30 @@ const BookingPage = () => {
     const totalPrice = parseFloat(calculateTotalPrice());
     const depositAmount = totalPrice * 0.25;
     return depositAmount.toFixed(2);
+  };
+
+  const calculateInstallmentAmount = (): string => {
+    const totalPrice = parseFloat(calculateTotalPrice());
+    const installmentAmount = totalPrice / 3;
+    return installmentAmount.toFixed(2);
+  };
+
+  const isThreeInstallmentsEligible = (): boolean => {
+    // Check if booking date is at least 24 hours away
+    if (!date) return false;
+    
+    const bookingDateTime = new Date(date);
+    const timeComponents = time.split(':');
+    bookingDateTime.setHours(
+      parseInt(timeComponents[0], 10),
+      parseInt(timeComponents[1], 10)
+    );
+    
+    const now = new Date();
+    const hoursDifference = differenceInHours(bookingDateTime, now);
+    
+    // Eligible if booking is at least 24 hours away
+    return hoursDifference >= 24;
   };
 
   const handleConfirmBooking = () => {
@@ -121,16 +150,31 @@ const BookingPage = () => {
         depositPaymentMethod: paymentMethod === 'cash' ? depositPaymentMethod : paymentMethod,
         totalPrice: calculateTotalPrice(),
         depositAmount: calculateDepositAmount(),
+        installmentOption,
+        installmentAmount: installmentOption === 'three_installments' ? calculateInstallmentAmount() : '0',
         createdAt: new Date().toISOString()
       };
       
       console.log('Booking confirmed:', bookingDetails);
       
+      let toastMessage = '';
+      if (installmentOption === 'three_installments') {
+        toastMessage = language === 'fr' 
+          ? `Premier paiement de $${bookingDetails.installmentAmount} effectué. Les prochains paiements suivront selon le calendrier.`
+          : `First payment of $${bookingDetails.installmentAmount} processed. Next payments will follow as scheduled.`;
+      } else if (paymentMethod === 'cash') {
+        toastMessage = language === 'fr' 
+          ? `Dépôt requis: $${bookingDetails.depositAmount}. Votre chauffeur vous contactera bientôt.`
+          : `Required deposit: $${bookingDetails.depositAmount}. Your driver will contact you soon.`;
+      } else {
+        toastMessage = language === 'fr' 
+          ? `Paiement complet effectué. Votre chauffeur vous contactera bientôt.`
+          : `Full payment processed. Your driver will contact you soon.`;
+      }
+      
       toast({
         title: language === 'fr' ? 'Réservation confirmée !' : 'Booking confirmed!',
-        description: language === 'fr' 
-          ? `Dépôt requis: $${bookingDetails.depositAmount}. Votre chauffeur vous contactera bientôt.`
-          : `Required deposit: $${bookingDetails.depositAmount}. Your driver will contact you soon.`,
+        description: toastMessage,
         variant: "default",
       });
       
@@ -139,6 +183,7 @@ const BookingPage = () => {
       setSelectedVehicle(null);
       setPaymentMethod(null);
       setDepositPaymentMethod(null);
+      setInstallmentOption('full');
       setDate(new Date());
       setTime('12:00');
       setDurationType('hourly');
@@ -207,9 +252,15 @@ const BookingPage = () => {
               getSelectedVehicle={getSelectedVehicle}
               calculateTotalPrice={calculateTotalPrice}
               calculateDepositAmount={calculateDepositAmount}
+              calculateInstallmentAmount={calculateInstallmentAmount}
               paymentMethod={paymentMethod}
               paymentMethods={paymentMethods}
               handlePaymentMethodSelect={handlePaymentMethodSelect}
+              depositPaymentMethod={depositPaymentMethod}
+              handleDepositPaymentMethodSelect={handleDepositPaymentMethodSelect}
+              installmentOption={installmentOption}
+              handleInstallmentOptionSelect={handleInstallmentOptionSelect}
+              isThreeInstallmentsEligible={isThreeInstallmentsEligible}
               handlePrevious={handlePrevious}
               handleConfirmBooking={handleConfirmBooking}
               isProcessing={isProcessing}

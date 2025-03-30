@@ -3,9 +3,11 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CreditCard, Banknote, ArrowRight, CheckCircle } from 'lucide-react';
+import { CreditCard, Banknote, ArrowRight, CheckCircle, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 
 interface BookingStepThreePaymentProps {
   language: string;
@@ -16,9 +18,15 @@ interface BookingStepThreePaymentProps {
   getSelectedVehicle: () => any;
   calculateTotalPrice: () => string;
   calculateDepositAmount: () => string;
+  calculateInstallmentAmount: () => string;
   paymentMethod: string | null;
   paymentMethods: Array<{ id: string; name: string; icon: string }>;
   handlePaymentMethodSelect: (methodId: string) => void;
+  depositPaymentMethod: string | null;
+  handleDepositPaymentMethodSelect: (methodId: string) => void;
+  installmentOption: 'full' | 'three_installments';
+  handleInstallmentOptionSelect: (option: 'full' | 'three_installments') => void;
+  isThreeInstallmentsEligible: () => boolean;
   handlePrevious: () => void;
   handleConfirmBooking: () => void;
   isProcessing: boolean;
@@ -33,25 +41,32 @@ export const BookingStepThreePayment = ({
   getSelectedVehicle,
   calculateTotalPrice,
   calculateDepositAmount,
+  calculateInstallmentAmount,
   paymentMethod,
   paymentMethods,
   handlePaymentMethodSelect,
+  depositPaymentMethod,
+  handleDepositPaymentMethodSelect,
+  installmentOption,
+  handleInstallmentOptionSelect,
+  isThreeInstallmentsEligible,
   handlePrevious,
   handleConfirmBooking,
   isProcessing
 }: BookingStepThreePaymentProps) => {
-  const [depositPaymentMethod, setDepositPaymentMethod] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>('online');
-
+  
   // Filter out cash method for deposit payments
   const onlinePaymentMethods = paymentMethods.filter(m => m.id !== 'cash');
   
-  const handleDepositMethodSelect = (methodId: string) => {
-    setDepositPaymentMethod(methodId);
-  };
-  
   const handleTabChange = (value: string) => {
     setActiveTab(value);
+    if (value === 'cash') {
+      handlePaymentMethodSelect('cash');
+    } else if (activeTab === 'cash' && value === 'online') {
+      // Reset payment method when switching from cash to online
+      handlePaymentMethodSelect('');
+    }
   };
   
   const canConfirmBooking = () => {
@@ -60,6 +75,9 @@ export const BookingStepThreePayment = ({
     }
     return !!paymentMethod; // For online payments, just require payment method
   };
+
+  // Check if three installments option is eligible
+  const showInstallmentOption = isThreeInstallmentsEligible() && activeTab === 'online';
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -127,13 +145,23 @@ export const BookingStepThreePayment = ({
                     : '(5% discount applied for online payment)'}
                 </div>
               )}
-              {paymentMethod && (
+              {paymentMethod && paymentMethod === 'cash' && (
                 <div className="flex justify-between text-sm mt-2 pt-2 border-t border-nova-white/10">
                   <span className="text-nova-white font-medium">
                     {language === 'fr' ? 'Dépôt requis (25%):' : 'Required deposit (25%):'}
                   </span>
                   <span className="text-nova-gold font-medium">
                     ${calculateDepositAmount()}
+                  </span>
+                </div>
+              )}
+              {paymentMethod && paymentMethod !== 'cash' && installmentOption === 'three_installments' && (
+                <div className="flex justify-between text-sm mt-2 pt-2 border-t border-nova-white/10">
+                  <span className="text-nova-white font-medium">
+                    {language === 'fr' ? 'Paiement par versement (3x):' : 'Payment in installments (3x):'}
+                  </span>
+                  <span className="text-nova-gold font-medium">
+                    ${calculateInstallmentAmount()} x 3
                   </span>
                 </div>
               )}
@@ -183,18 +211,76 @@ export const BookingStepThreePayment = ({
                     : '5% discount for online payment'}
                 </p>
                 
+                {showInstallmentOption && paymentMethod && paymentMethod !== 'cash' && (
+                  <div className="mt-6 border-t border-nova-white/10 pt-4">
+                    <h4 className="text-sm font-medium text-nova-white mb-3 flex items-center">
+                      <Calendar className="h-4 w-4 mr-2 text-nova-gold" />
+                      {language === 'fr' ? 'Options de paiement:' : 'Payment Options:'}
+                    </h4>
+                    
+                    <RadioGroup 
+                      value={installmentOption} 
+                      onValueChange={(value) => handleInstallmentOptionSelect(value as 'full' | 'three_installments')}
+                      className="space-y-3"
+                    >
+                      <div className="flex items-start space-x-2 p-3 rounded border border-nova-gray/50 hover:border-nova-gold/50">
+                        <RadioGroupItem value="full" id="full-payment" className="mt-1" />
+                        <div className="grid gap-1.5">
+                          <Label htmlFor="full-payment" className="text-nova-white">
+                            {language === 'fr' ? 'Paiement intégral' : 'Full payment'}
+                          </Label>
+                          <p className="text-xs text-nova-white/70">
+                            {language === 'fr' 
+                              ? `Payer le montant total de $${calculateTotalPrice()} maintenant.` 
+                              : `Pay the full amount of $${calculateTotalPrice()} now.`}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start space-x-2 p-3 rounded border border-nova-gray/50 hover:border-nova-gold/50">
+                        <RadioGroupItem value="three_installments" id="installments" className="mt-1" />
+                        <div className="grid gap-1.5">
+                          <Label htmlFor="installments" className="text-nova-white flex items-center">
+                            {language === 'fr' ? 'Payer en 3 fois' : 'Pay in 3 installments'}
+                            <span className="ml-2 px-2 py-0.5 bg-nova-gold/20 text-nova-gold rounded text-xs">
+                              {language === 'fr' ? 'Nouveau' : 'New'}
+                            </span>
+                          </Label>
+                          <p className="text-xs text-nova-white/70">
+                            {language === 'fr' 
+                              ? `Payez $${calculateInstallmentAmount()} maintenant, puis deux versements égaux dans les prochains jours.` 
+                              : `Pay $${calculateInstallmentAmount()} now, followed by two equal payments in the coming days.`}
+                          </p>
+                        </div>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                )}
+                
                 {paymentMethod && paymentMethod !== 'cash' && (
                   <div className="mt-4 p-3 bg-nova-gold/10 border border-nova-gold/30 rounded-md">
-                    <p className="text-sm text-nova-white">
-                      {language === 'fr' 
-                        ? `Un dépôt de $${calculateDepositAmount()} est requis pour confirmer votre réservation.` 
-                        : `A deposit of $${calculateDepositAmount()} is required to confirm your booking.`}
-                    </p>
-                    <p className="text-xs text-nova-white/70 mt-1">
-                      {language === 'fr' 
-                        ? 'Le solde restant sera payé lors de la livraison du véhicule.' 
-                        : 'The remaining balance will be paid upon vehicle delivery.'}
-                    </p>
+                    {installmentOption === 'three_installments' ? (
+                      <>
+                        <p className="text-sm text-nova-white">
+                          {language === 'fr' 
+                            ? `Premier versement de $${calculateInstallmentAmount()} requis aujourd'hui.` 
+                            : `First installment of $${calculateInstallmentAmount()} required today.`}
+                        </p>
+                        <p className="text-xs text-nova-white/70 mt-1">
+                          {language === 'fr' 
+                            ? 'Les deux versements suivants seront prélevés automatiquement dans les jours suivants.' 
+                            : 'The next two installments will be automatically charged in the coming days.'}
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-sm text-nova-white">
+                          {language === 'fr' 
+                            ? `Un paiement de $${calculateTotalPrice()} confirmera votre réservation.` 
+                            : `A payment of $${calculateTotalPrice()} will confirm your booking.`}
+                        </p>
+                      </>
+                    )}
                   </div>
                 )}
               </TabsContent>
@@ -247,7 +333,7 @@ export const BookingStepThreePayment = ({
                               ? 'border-nova-gold bg-nova-gold/10' 
                               : 'border-nova-gray/50 hover:border-nova-gold/50'
                           }`}
-                          onClick={() => handleDepositMethodSelect(method.id)}
+                          onClick={() => handleDepositPaymentMethodSelect(method.id)}
                         >
                           <span className="mr-2">{method.icon}</span>
                           <span className="text-nova-white text-sm">{method.name}</span>
