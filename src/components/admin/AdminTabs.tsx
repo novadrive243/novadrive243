@@ -79,6 +79,7 @@ export const AdminTabs = ({
         <CustomersTable 
           profiles={profiles} 
           language={language} 
+          formatDate={formatDate}
         />
       </TabsContent>
       
