@@ -10,7 +10,7 @@ export const BookingHeader = ({ language, bookingStep }: BookingHeaderProps) => 
   return (
     <>
       <h1 className="text-3xl font-bold text-center mb-6">
-        <span className="text-nova-white border-2 border-nova-gold inline-block px-6 py-3 rounded-lg">
+        <span className="gold-gradient-text">
           {language === 'fr' ? 'Réserver un chauffeur' : 'Book a chauffeur'}
         </span>
       </h1>
