@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -23,7 +22,6 @@ const AdminPage = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("bookings");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [sidebarHidden, setSidebarHidden] = useState(false);
   
   // Load admin data with the custom hook
   const { 
@@ -48,14 +46,9 @@ const AdminPage = () => {
     }
   }, [navigate]);
   
-  // Function to toggle sidebar collapse state
-  const toggleSidebar = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
-  };
-
   // Function to toggle sidebar visibility
   const toggleSidebarVisibility = () => {
-    setSidebarHidden(!sidebarHidden);
+    setSidebarCollapsed(!sidebarCollapsed);
   };
 
   const handleLogout = () => {
@@ -105,7 +98,6 @@ const AdminPage = () => {
           setActiveTab={setActiveTab} 
           language={language}
           collapsed={sidebarCollapsed}
-          toggleSidebar={toggleSidebar} 
         />
         
         {/* Mobile sidebar toggle button */}
