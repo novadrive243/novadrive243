@@ -1,3 +1,4 @@
+
 export interface Vehicle {
   id: string;
   name: string;
@@ -58,6 +59,36 @@ export const vehicles: Vehicle[] = [
       tenDayPackage: 1350,
       fifteenDayPackage: 1950,
       twentyFiveDayPackage: 3150
+    }
+  },
+  {
+    id: 'mercedes-sclass',
+    name: 'Mercedes S-Class',
+    image: '/lovable-uploads/8337e561-5a74-4d76-8fac-6fb00b629bad.png',
+    comfort: 5,
+    capacity: 4,
+    price: {
+      hourly: 70,
+      daily: 400,
+      monthly: 9600,
+      tenDayPackage: 3600,
+      fifteenDayPackage: 5100,
+      twentyFiveDayPackage: 8200
+    }
+  },
+  {
+    id: 'range-rover',
+    name: 'Range Rover Autobiography',
+    image: '/lovable-uploads/8cb4eea8-e077-4d5e-88ab-f53a7d31c997.png',
+    comfort: 5,
+    capacity: 5,
+    price: {
+      hourly: 65,
+      daily: 380,
+      monthly: 9120,
+      tenDayPackage: 3420,
+      fifteenDayPackage: 4850,
+      twentyFiveDayPackage: 7790
     }
   }
 ];
