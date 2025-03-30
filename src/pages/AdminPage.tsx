@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -8,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { vehicles as frontendVehicles } from '@/data/vehicles';
 import { useToast } from '@/hooks/use-toast';
 import { LogOut, Menu } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 // Admin Components
 import { Dashboard } from '@/components/admin/Dashboard';
@@ -100,7 +98,7 @@ const AdminPage = () => {
     <div className="min-h-screen flex flex-col bg-nova-black text-nova-white">
       <Header />
       
-      <div className="flex-grow pt-20 relative">
+      <div className="flex-grow pt-20 pb-0">
         {/* Sidebar */}
         <AdminSidebar 
           activeTab={activeTab} 
@@ -111,7 +109,7 @@ const AdminPage = () => {
           visible={sidebarVisible}
         />
         
-        {/* Sidebar toggle button */}
+        {/* Sidebar toggle button - positioned slightly higher and to the right */}
         <button
           onClick={toggleSidebarVisibility}
           className="fixed z-30 left-4 top-32 p-2 bg-nova-gold/80 text-nova-black hover:bg-nova-gold rounded-md shadow-md"
@@ -120,63 +118,54 @@ const AdminPage = () => {
           <Menu size={20} />
         </button>
         
-        {/* Main content area with ScrollArea */}
-        <div 
-          className={`transition-all duration-300 ${sidebarVisible ? 'ml-52' : 'ml-0'} ${sidebarCollapsed && sidebarVisible ? 'ml-12' : ''}`}
-          style={{ 
-            height: 'calc(100vh - 64px)',
-            marginTop: '0px',
-            overflow: 'hidden'
-          }}
-        >
-          <ScrollArea className="h-full w-full px-4">
-            <div className="container mx-auto pb-24">
-              <div className="flex justify-between items-center mb-6 mt-4">
-                <h1 className="text-xl sm:text-2xl font-bold gold-gradient-text">
-                  {language === 'fr' ? 'Tableau de Bord Admin' : 'Admin Dashboard'}
-                </h1>
-                <Button 
-                  variant="outline" 
-                  className="border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  {language === 'fr' ? 'Déconnexion' : 'Logout'}
-                </Button>
-              </div>
-              
-              {isLoading ? (
-                <LoadingState language={language} />
-              ) : (
-                <>
-                  <Dashboard 
-                    bookings={bookings}
-                    vehicles={vehicles}
-                    profiles={profiles}
-                    monthlyRevenue={monthlyRevenue}
-                    availableVehicles={availableVehicles}
-                    percentChange={percentChange}
-                    language={language}
-                    formatCurrency={formatCurrency}
-                  />
-                  
-                  <AdminTabs 
-                    activeTab={activeTab}
-                    bookings={bookings}
-                    vehicles={vehicles}
-                    profiles={profiles}
-                    language={language}
-                    formatDate={formatDate}
-                    formatCurrency={formatCurrency}
-                    getVehicleDailyPrice={getVehicleDailyPrice}
-                    isLoading={isLoading}
-                    monthlyRevenue={monthlyRevenue}
-                    refreshData={refreshData}
-                  />
-                </>
-              )}
+        {/* Main content */}
+        <div className="transition-all duration-300 px-6 pb-16">
+          <div className="container mx-auto">
+            <div className="flex justify-between items-center mb-6 mt-4">
+              <h1 className="text-xl sm:text-2xl font-bold gold-gradient-text">
+                {language === 'fr' ? 'Tableau de Bord Admin' : 'Admin Dashboard'}
+              </h1>
+              <Button 
+                variant="outline" 
+                className="border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                {language === 'fr' ? 'Déconnexion' : 'Logout'}
+              </Button>
             </div>
-          </ScrollArea>
+            
+            {isLoading ? (
+              <LoadingState language={language} />
+            ) : (
+              <>
+                <Dashboard 
+                  bookings={bookings}
+                  vehicles={vehicles}
+                  profiles={profiles}
+                  monthlyRevenue={monthlyRevenue}
+                  availableVehicles={availableVehicles}
+                  percentChange={percentChange}
+                  language={language}
+                  formatCurrency={formatCurrency}
+                />
+                
+                <AdminTabs 
+                  activeTab={activeTab}
+                  bookings={bookings}
+                  vehicles={vehicles}
+                  profiles={profiles}
+                  language={language}
+                  formatDate={formatDate}
+                  formatCurrency={formatCurrency}
+                  getVehicleDailyPrice={getVehicleDailyPrice}
+                  isLoading={isLoading}
+                  monthlyRevenue={monthlyRevenue}
+                  refreshData={refreshData}
+                />
+              </>
+            )}
+          </div>
         </div>
       </div>
       
