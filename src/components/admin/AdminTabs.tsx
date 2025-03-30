@@ -13,6 +13,7 @@ import { PromotionManager } from './PromotionManager';
 import { AdminAIAssistant } from './AdminAIAssistant';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface AdminTabsProps {
   activeTab: string;
@@ -128,11 +129,15 @@ export const AdminTabs = ({
         )}
         
         {activeTab === "promotions" && (
-          <PromotionManager 
-            language={language}
-            formatDate={formatDate}
-            formatCurrency={formatCurrency}
-          />
+          <ScrollArea className="h-[calc(100vh-250px)]">
+            <div className="pr-4">
+              <PromotionManager 
+                language={language}
+                formatDate={formatDate}
+                formatCurrency={formatCurrency}
+              />
+            </div>
+          </ScrollArea>
         )}
         
         {activeTab === "ai-assistant" && (
