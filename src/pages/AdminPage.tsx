@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -109,10 +110,10 @@ const AdminPage = () => {
           visible={sidebarVisible}
         />
         
-        {/* Sidebar toggle button - position moved considerably to the right */}
+        {/* Sidebar toggle button - positioned lower on the page */}
         <button
           onClick={toggleSidebarVisibility}
-          className="fixed z-30 left-24 top-24 p-2 bg-nova-gold/80 text-nova-black hover:bg-nova-gold rounded-md shadow-md"
+          className="fixed z-30 left-0 top-40 p-2 bg-nova-gold/80 text-nova-black hover:bg-nova-gold rounded-md shadow-md"
           aria-label={sidebarVisible ? 'Hide sidebar' : 'Show sidebar'}
         >
           <Menu size={20} />
