@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { vehicles as frontendVehicles } from '@/data/vehicles';
@@ -70,7 +70,7 @@ export const useAdminData = (isAuthorized: boolean, language: string) => {
     }
   };
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
       // Fetch bookings with user and vehicle info
@@ -134,6 +134,13 @@ export const useAdminData = (isAuthorized: boolean, language: string) => {
       if (profilesError) throw profilesError;
       setProfiles(profilesData);
       
+      toast({
+        title: language === 'fr' ? "Données mises à jour" : "Data Refreshed",
+        description: language === 'fr' 
+          ? "Les données ont été mises à jour avec succès" 
+          : "The data has been successfully refreshed"
+      });
+      
     } catch (error) {
       console.error('Error fetching data:', error);
       toast({
@@ -146,6 +153,11 @@ export const useAdminData = (isAuthorized: boolean, language: string) => {
     } finally {
       setIsLoading(false);
     }
+  }, [language, toast]);
+  
+  // Manual refresh function to be used by buttons
+  const refreshData = () => {
+    fetchData();
   };
   
   useEffect(() => {
@@ -193,7 +205,7 @@ export const useAdminData = (isAuthorized: boolean, language: string) => {
       supabase.removeChannel(vehiclesChannel);
       supabase.removeChannel(profilesChannel);
     };
-  }, [isAuthorized]);
+  }, [isAuthorized, fetchData]);
   
   return {
     isLoading,
@@ -207,6 +219,7 @@ export const useAdminData = (isAuthorized: boolean, language: string) => {
       bookings: 8.2,
       customers: 5.1,
       vehicles: -2.3
-    }
+    },
+    refreshData
   };
 };

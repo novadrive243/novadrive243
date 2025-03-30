@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from "@/contexts/language-context";
 import { Button } from '@/components/ui/button';
 import { vehicles as frontendVehicles } from '@/data/vehicles';
+import { useToast } from '@/hooks/use-toast';
 
 // Admin Components
 import { Dashboard } from '@/components/admin/Dashboard';
@@ -17,6 +18,7 @@ const AdminPage = () => {
   const navigate = useNavigate();
   const { language } = useLanguage();
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const { toast } = useToast();
   
   // Load admin data with the custom hook
   const { 
@@ -26,7 +28,8 @@ const AdminPage = () => {
     profiles, 
     monthlyRevenue,
     availableVehicles,
-    percentChange
+    percentChange,
+    refreshData
   } = useAdminData(isAuthorized, language);
   
   useEffect(() => {
@@ -42,6 +45,10 @@ const AdminPage = () => {
   
   const handleLogout = () => {
     localStorage.removeItem('adminAuth');
+    toast({
+      title: language === 'fr' ? 'Déconnexion réussie' : 'Logout Successful',
+      description: language === 'fr' ? 'Vous avez été déconnecté' : 'You have been logged out',
+    });
     navigate('/login');
   };
   
@@ -116,6 +123,7 @@ const AdminPage = () => {
                 getVehicleDailyPrice={getVehicleDailyPrice}
                 isLoading={isLoading}
                 monthlyRevenue={monthlyRevenue}
+                refreshData={refreshData}
               />
             </>
           )}

@@ -151,7 +151,9 @@ export const VehicleCalendar = ({ vehicles, bookings, language, isLoading }: Veh
                   disabled={isUpdating}
                   className="px-3 py-1 rounded text-sm bg-nova-gold/20 hover:bg-nova-gold/30 text-nova-gold"
                 >
-                  {language === 'fr' ? 'Changer' : 'Toggle'}
+                  {isUpdating ? 
+                    (language === 'fr' ? 'Mise à jour...' : 'Updating...') :
+                    (language === 'fr' ? 'Changer' : 'Toggle')}
                 </button>
               </div>
             </div>

@@ -11,6 +11,8 @@ import { MaintenanceTracking } from './MaintenanceTracking';
 import { StaffManagement } from './StaffManagement';
 import { InventoryManager } from './InventoryManager';
 import { PromotionManager } from './PromotionManager';
+import { Button } from '@/components/ui/button';
+import { RefreshCw } from 'lucide-react';
 
 interface AdminTabsProps {
   bookings: any[];
@@ -22,6 +24,7 @@ interface AdminTabsProps {
   getVehicleDailyPrice: (vehicleName: string) => number;
   isLoading: boolean;
   monthlyRevenue?: number;
+  refreshData: () => void;
 }
 
 export const AdminTabs = ({ 
@@ -33,36 +36,50 @@ export const AdminTabs = ({
   formatCurrency,
   getVehicleDailyPrice,
   isLoading,
-  monthlyRevenue = 0
+  monthlyRevenue = 0,
+  refreshData
 }: AdminTabsProps) => {
   return (
     <Tabs defaultValue="bookings" className="mt-8">
-      <TabsList className="grid grid-cols-8 bg-nova-gray/30 text-nova-white">
-        <TabsTrigger value="bookings">
-          {language === 'fr' ? 'Réservations' : 'Bookings'}
-        </TabsTrigger>
-        <TabsTrigger value="vehicles">
-          {language === 'fr' ? 'Véhicules' : 'Vehicles'}
-        </TabsTrigger>
-        <TabsTrigger value="calendar">
-          {language === 'fr' ? 'Calendrier' : 'Calendar'}
-        </TabsTrigger>
-        <TabsTrigger value="customers">
-          {language === 'fr' ? 'Clients' : 'Customers'}
-        </TabsTrigger>
-        <TabsTrigger value="analytics">
-          {language === 'fr' ? 'Analyses' : 'Analytics'}
-        </TabsTrigger>
-        <TabsTrigger value="maintenance">
-          {language === 'fr' ? 'Maintenance' : 'Maintenance'}
-        </TabsTrigger>
-        <TabsTrigger value="staff">
-          {language === 'fr' ? 'Personnel' : 'Staff'}
-        </TabsTrigger>
-        <TabsTrigger value="promotions">
-          {language === 'fr' ? 'Promotions' : 'Promotions'}
-        </TabsTrigger>
-      </TabsList>
+      <div className="flex justify-between items-center mb-2">
+        <TabsList className="grid grid-cols-8 bg-nova-gray/30 text-nova-white">
+          <TabsTrigger value="bookings">
+            {language === 'fr' ? 'Réservations' : 'Bookings'}
+          </TabsTrigger>
+          <TabsTrigger value="vehicles">
+            {language === 'fr' ? 'Véhicules' : 'Vehicles'}
+          </TabsTrigger>
+          <TabsTrigger value="calendar">
+            {language === 'fr' ? 'Calendrier' : 'Calendar'}
+          </TabsTrigger>
+          <TabsTrigger value="customers">
+            {language === 'fr' ? 'Clients' : 'Customers'}
+          </TabsTrigger>
+          <TabsTrigger value="analytics">
+            {language === 'fr' ? 'Analyses' : 'Analytics'}
+          </TabsTrigger>
+          <TabsTrigger value="maintenance">
+            {language === 'fr' ? 'Maintenance' : 'Maintenance'}
+          </TabsTrigger>
+          <TabsTrigger value="staff">
+            {language === 'fr' ? 'Personnel' : 'Staff'}
+          </TabsTrigger>
+          <TabsTrigger value="promotions">
+            {language === 'fr' ? 'Promotions' : 'Promotions'}
+          </TabsTrigger>
+        </TabsList>
+        
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={refreshData}
+          className="border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10"
+          disabled={isLoading}
+        >
+          <RefreshCw className="h-4 w-4 mr-2" />
+          {language === 'fr' ? 'Actualiser' : 'Refresh'}
+        </Button>
+      </div>
       
       <TabsContent value="bookings" className="mt-4">
         <BookingsTable 
@@ -78,6 +95,7 @@ export const AdminTabs = ({
           vehicles={vehicles}
           language={language}
           formatCurrency={formatCurrency}
+          refreshData={refreshData}
         />
       </TabsContent>
       
@@ -123,6 +141,7 @@ export const AdminTabs = ({
           vehicles={vehicles}
           language={language}
           formatDate={formatDate}
+          refreshData={refreshData}
         />
       </TabsContent>
       
@@ -130,6 +149,7 @@ export const AdminTabs = ({
         <StaffManagement 
           language={language}
           formatDate={formatDate}
+          refreshData={refreshData}
         />
       </TabsContent>
       
@@ -138,6 +158,7 @@ export const AdminTabs = ({
           language={language}
           formatDate={formatDate}
           formatCurrency={formatCurrency}
+          refreshData={refreshData}
         />
       </TabsContent>
     </Tabs>

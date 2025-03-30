@@ -10,15 +10,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UserPlus, Users, Mail, Phone, CalendarClock, Pencil, Star } from "lucide-react";
+import { UserPlus, Users, Mail, Phone, CalendarClock, Pencil, Star, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface StaffManagementProps {
   language: string;
   formatDate: (dateString: string) => string;
+  refreshData?: () => void;
 }
 
-export const StaffManagement = ({ language, formatDate }: StaffManagementProps) => {
+export const StaffManagement = ({ language, formatDate, refreshData }: StaffManagementProps) => {
   const { toast } = useToast();
   
   const [staffMembers, setStaffMembers] = useState([
@@ -28,7 +29,7 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
       email: 'emma.r@novadrive.com',
       phone: '+1 (514) 555-1234',
       role: 'manager',
-      joinDate: '2023-04-15',
+      joinDate: '2025-04-15',
       avatar: 'https://randomuser.me/api/portraits/women/33.jpg',
       rating: 4.9
     },
@@ -38,7 +39,7 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
       email: 'james.w@novadrive.com',
       phone: '+1 (514) 555-2345',
       role: 'assistant',
-      joinDate: '2023-06-22',
+      joinDate: '2025-06-22',
       avatar: 'https://randomuser.me/api/portraits/men/44.jpg',
       rating: 4.7
     },
@@ -48,7 +49,7 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
       email: 'sophia.c@novadrive.com',
       phone: '+1 (514) 555-3456',
       role: 'driver',
-      joinDate: '2024-01-10',
+      joinDate: '2025-01-10',
       avatar: 'https://randomuser.me/api/portraits/women/17.jpg',
       rating: 4.8
     },
@@ -58,7 +59,7 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
       email: 'michael.r@novadrive.com',
       phone: '+1 (514) 555-4567',
       role: 'mechanic',
-      joinDate: '2024-03-05',
+      joinDate: '2025-03-05',
       avatar: 'https://randomuser.me/api/portraits/men/22.jpg',
       rating: 4.6
     },
@@ -68,7 +69,7 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
       email: 'olivia.j@novadrive.com',
       phone: '+1 (514) 555-5678',
       role: 'driver',
-      joinDate: '2024-07-18',
+      joinDate: '2025-07-18',
       avatar: 'https://randomuser.me/api/portraits/women/29.jpg',
       rating: 4.5
     }
@@ -82,7 +83,11 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
     joinDate: new Date().toISOString().split('T')[0],
   });
   
+  const [editStaff, setEditStaff] = useState<any>(null);
   const [open, setOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [staffToDelete, setStaffToDelete] = useState<number | null>(null);
   
   const getRoleBadge = (role: string) => {
     switch (role) {
@@ -119,13 +124,21 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
     }
   };
   
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, form: 'new' | 'edit') => {
     const { name, value } = e.target;
-    setNewStaff(prev => ({ ...prev, [name]: value }));
+    if (form === 'new') {
+      setNewStaff(prev => ({ ...prev, [name]: value }));
+    } else {
+      setEditStaff(prev => ({ ...prev, [name]: value }));
+    }
   };
   
-  const handleSelectChange = (name: string, value: string) => {
-    setNewStaff(prev => ({ ...prev, [name]: value }));
+  const handleSelectChange = (name: string, value: string, form: 'new' | 'edit') => {
+    if (form === 'new') {
+      setNewStaff(prev => ({ ...prev, [name]: value }));
+    } else {
+      setEditStaff(prev => ({ ...prev, [name]: value }));
+    }
   };
   
   const handleAddStaff = (e: React.FormEvent) => {
@@ -159,7 +172,54 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
         : `${staff.name} has been successfully added to the team`,
     });
     
+    if (refreshData) refreshData();
     setOpen(false);
+  };
+
+  const handleEditStaff = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    setStaffMembers(staffMembers.map(staff => 
+      staff.id === editStaff.id ? editStaff : staff
+    ));
+    
+    toast({
+      title: language === 'fr' ? 'Membre du personnel modifié' : 'Staff Member Updated',
+      description: language === 'fr' 
+        ? `${editStaff.name} a été modifié avec succès` 
+        : `${editStaff.name} has been successfully updated`,
+    });
+    
+    if (refreshData) refreshData();
+    setEditOpen(false);
+  };
+
+  const openEditDialog = (staff: any) => {
+    setEditStaff(staff);
+    setEditOpen(true);
+  };
+
+  const confirmDelete = (id: number) => {
+    setStaffToDelete(id);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleDeleteStaff = () => {
+    if (staffToDelete) {
+      const staffName = staffMembers.find(staff => staff.id === staffToDelete)?.name;
+      setStaffMembers(staffMembers.filter(staff => staff.id !== staffToDelete));
+      
+      toast({
+        title: language === 'fr' ? 'Membre du personnel supprimé' : 'Staff Member Deleted',
+        description: language === 'fr' 
+          ? `${staffName} a été supprimé de l'équipe` 
+          : `${staffName} has been removed from the team`,
+      });
+      
+      if (refreshData) refreshData();
+      setDeleteConfirmOpen(false);
+      setStaffToDelete(null);
+    }
   };
   
   return (
@@ -199,7 +259,7 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
                     id="name"
                     name="name"
                     value={newStaff.name}
-                    onChange={handleInputChange}
+                    onChange={(e) => handleInputChange(e, 'new')}
                     className="bg-nova-black border-nova-gold/30 text-nova-white"
                     required
                   />
@@ -214,7 +274,7 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
                     name="email"
                     type="email"
                     value={newStaff.email}
-                    onChange={handleInputChange}
+                    onChange={(e) => handleInputChange(e, 'new')}
                     className="bg-nova-black border-nova-gold/30 text-nova-white"
                     required
                   />
@@ -228,7 +288,7 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
                     id="phone"
                     name="phone"
                     value={newStaff.phone}
-                    onChange={handleInputChange}
+                    onChange={(e) => handleInputChange(e, 'new')}
                     className="bg-nova-black border-nova-gold/30 text-nova-white"
                     required
                   />
@@ -240,7 +300,7 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
                   </Label>
                   <Select 
                     value={newStaff.role} 
-                    onValueChange={(value) => handleSelectChange('role', value)}
+                    onValueChange={(value) => handleSelectChange('role', value, 'new')}
                     required
                   >
                     <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
@@ -272,7 +332,7 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
                     name="joinDate"
                     type="date"
                     value={newStaff.joinDate}
-                    onChange={handleInputChange}
+                    onChange={(e) => handleInputChange(e, 'new')}
                     className="bg-nova-black border-nova-gold/30 text-nova-white"
                     required
                   />
@@ -285,6 +345,153 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
                 </Button>
               </DialogFooter>
             </form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Staff Dialog */}
+        {editStaff && (
+          <Dialog open={editOpen} onOpenChange={setEditOpen}>
+            <DialogContent className="bg-nova-gray text-nova-white border-nova-gold/30 max-w-md">
+              <DialogHeader>
+                <DialogTitle>
+                  {language === 'fr' ? 'Modifier un Membre du Personnel' : 'Edit Staff Member'}
+                </DialogTitle>
+                <DialogDescription className="text-nova-white/60">
+                  {language === 'fr' 
+                    ? 'Modifiez les informations du membre du personnel' 
+                    : 'Update the staff member information'}
+                </DialogDescription>
+              </DialogHeader>
+              
+              <form onSubmit={handleEditStaff}>
+                <div className="space-y-4 py-2">
+                  <div>
+                    <Label htmlFor="edit-name" className="text-nova-white">
+                      {language === 'fr' ? 'Nom Complet' : 'Full Name'}
+                    </Label>
+                    <Input
+                      id="edit-name"
+                      name="name"
+                      value={editStaff.name}
+                      onChange={(e) => handleInputChange(e, 'edit')}
+                      className="bg-nova-black border-nova-gold/30 text-nova-white"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="edit-email" className="text-nova-white">
+                      {language === 'fr' ? 'Email' : 'Email'}
+                    </Label>
+                    <Input
+                      id="edit-email"
+                      name="email"
+                      type="email"
+                      value={editStaff.email}
+                      onChange={(e) => handleInputChange(e, 'edit')}
+                      className="bg-nova-black border-nova-gold/30 text-nova-white"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="edit-phone" className="text-nova-white">
+                      {language === 'fr' ? 'Téléphone' : 'Phone'}
+                    </Label>
+                    <Input
+                      id="edit-phone"
+                      name="phone"
+                      value={editStaff.phone}
+                      onChange={(e) => handleInputChange(e, 'edit')}
+                      className="bg-nova-black border-nova-gold/30 text-nova-white"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="edit-role" className="text-nova-white">
+                      {language === 'fr' ? 'Rôle' : 'Role'}
+                    </Label>
+                    <Select 
+                      value={editStaff.role} 
+                      onValueChange={(value) => handleSelectChange('role', value, 'edit')}
+                      required
+                    >
+                      <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-nova-gray border-nova-gold/30">
+                        <SelectItem value="manager" className="text-nova-white hover:bg-nova-gold/20">
+                          {language === 'fr' ? 'Gestionnaire' : 'Manager'}
+                        </SelectItem>
+                        <SelectItem value="assistant" className="text-nova-white hover:bg-nova-gold/20">
+                          {language === 'fr' ? 'Assistant(e)' : 'Assistant'}
+                        </SelectItem>
+                        <SelectItem value="driver" className="text-nova-white hover:bg-nova-gold/20">
+                          {language === 'fr' ? 'Chauffeur' : 'Driver'}
+                        </SelectItem>
+                        <SelectItem value="mechanic" className="text-nova-white hover:bg-nova-gold/20">
+                          {language === 'fr' ? 'Mécanicien' : 'Mechanic'}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="edit-joinDate" className="text-nova-white">
+                      {language === 'fr' ? 'Date d\'Embauche' : 'Join Date'}
+                    </Label>
+                    <Input
+                      id="edit-joinDate"
+                      name="joinDate"
+                      type="date"
+                      value={editStaff.joinDate}
+                      onChange={(e) => handleInputChange(e, 'edit')}
+                      className="bg-nova-black border-nova-gold/30 text-nova-white"
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <DialogFooter className="mt-4">
+                  <Button type="submit" className="gold-btn">
+                    {language === 'fr' ? 'Mettre à jour' : 'Update'}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+          <DialogContent className="bg-nova-gray text-nova-white border-nova-gold/30 max-w-md">
+            <DialogHeader>
+              <DialogTitle>
+                {language === 'fr' ? 'Confirmer la suppression' : 'Confirm Deletion'}
+              </DialogTitle>
+              <DialogDescription className="text-nova-white/60">
+                {language === 'fr' 
+                  ? 'Êtes-vous sûr de vouloir supprimer ce membre du personnel ? Cette action ne peut pas être annulée.' 
+                  : 'Are you sure you want to delete this staff member? This action cannot be undone.'}
+              </DialogDescription>
+            </DialogHeader>
+            
+            <DialogFooter className="mt-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setDeleteConfirmOpen(false)}
+                className="border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10"
+              >
+                {language === 'fr' ? 'Annuler' : 'Cancel'}
+              </Button>
+              <Button 
+                variant="destructive" 
+                onClick={handleDeleteStaff}
+              >
+                {language === 'fr' ? 'Supprimer' : 'Delete'}
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
@@ -372,9 +579,24 @@ export const StaffManagement = ({ language, formatDate }: StaffManagementProps) 
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-nova-gold">
-                      <Pencil className="h-4 w-4" />
-                    </Button>
+                    <div className="flex space-x-2">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-nova-gold hover:bg-nova-gold/10"
+                        onClick={() => openEditDialog(staff)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-red-500 hover:bg-red-500/10"
+                        onClick={() => confirmDelete(staff.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
