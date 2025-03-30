@@ -102,14 +102,14 @@ export const AdminSidebar = ({
 
   return (
     <aside 
-      className={`fixed left-0 bg-nova-black border-r border-nova-gold/20 overflow-y-auto z-20 transition-all duration-300 ${
+      className={`fixed bg-nova-black border-r border-nova-gold/20 overflow-y-auto z-20 transition-all duration-300 ${
         collapsed ? 'w-16' : 'w-64'
       }`}
       style={{ 
         top: '5rem', // Fixed position below header
+        left: 0, // Ensure it starts at the leftmost edge
         bottom: 0,
-        height: 'calc(100vh - 5rem)', // Full height minus header height
-        left: 0 // Ensure it's positioned at the leftmost edge
+        height: 'calc(100vh - 5rem)' // Full height minus header height
       }}
     >
       <div className="flex flex-col h-full">
