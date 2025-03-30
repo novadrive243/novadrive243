@@ -20,10 +20,9 @@ export const QuickBookingWidget = () => {
   const [location, setLocation] = useState("");
   const [selectedVehicle, setSelectedVehicle] = useState("");
   
+  // Modified locations array - removed the three specific locations
   const locations = [
-    { value: "downtown", label: language === 'fr' ? 'Centre-Ville' : 'Downtown' },
-    { value: "airport", label: language === 'fr' ? 'Aéroport' : 'Airport' },
-    { value: "business", label: language === 'fr' ? 'Quartier des Affaires' : 'Business District' }
+    { value: "custom", label: language === 'fr' ? 'Emplacement personnalisé' : 'Custom location' },
   ];
   
   const vehicleCategories = [
