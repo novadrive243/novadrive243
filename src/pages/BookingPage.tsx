@@ -12,6 +12,12 @@ import { BookingStepTwoVehicle } from '@/components/booking/steps/BookingStepTwo
 import { BookingStepThreePayment } from '@/components/booking/steps/BookingStepThreePayment';
 import { renderStars, calculateVehiclePrice } from '@/components/booking/utils/booking-utils';
 import { format, addHours, differenceInHours } from "date-fns";
+import { supabase } from '@/integrations/supabase/client';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
 
 const BookingPage = () => {
   const { language } = useLanguage();
@@ -28,6 +34,14 @@ const BookingPage = () => {
   const [depositPaymentMethod, setDepositPaymentMethod] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [installmentOption, setInstallmentOption] = useState<'full' | 'three_installments'>('full');
+  const [showMobileMoneyDialog, setShowMobileMoneyDialog] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  
+  const form = useForm({
+    defaultValues: {
+      phoneNumber: "",
+    },
+  });
   
   const paymentMethods = [
     { id: "visa", name: "Visa", icon: "💳" },
@@ -120,6 +134,102 @@ const BookingPage = () => {
     return hoursDifference >= 24;
   };
 
+  const processPayment = async (mobilePhoneNumber?: string) => {
+    if (!paymentMethod) return;
+    
+    // For mobile money payments, we need a phone number
+    const isMobileMoney = ['mpesa', 'airtel', 'orange'].includes(paymentMethod);
+    if (isMobileMoney && !mobilePhoneNumber) {
+      setShowMobileMoneyDialog(true);
+      return;
+    }
+
+    setIsProcessing(true);
+    
+    // Determine payment amount based on payment type
+    let amountToCharge = parseFloat(calculateTotalPrice());
+    if (paymentMethod === 'cash') {
+      amountToCharge = parseFloat(calculateDepositAmount());
+    } else if (installmentOption === 'three_installments') {
+      amountToCharge = parseFloat(calculateInstallmentAmount());
+    }
+    
+    try {
+      // Create booking details object
+      const bookingDetails = {
+        date: date ? format(date, "yyyy-MM-dd") : '',
+        time,
+        durationType,
+        duration: durationType === 'hourly' ? hours : days,
+        pickup,
+        vehicleId: selectedVehicle,
+        vehicleName: getSelectedVehicle()?.name,
+        totalPrice: calculateTotalPrice(),
+      };
+      
+      // Prepare payment description
+      const description = `Booking for ${getSelectedVehicle()?.name} on ${date ? format(date, "yyyy-MM-dd") : ''} at ${time}`;
+      
+      // Process the payment using our Supabase edge function
+      const { data, error } = await supabase.functions.invoke('process-payment', {
+        body: {
+          paymentMethod: paymentMethod === 'cash' ? depositPaymentMethod : paymentMethod,
+          amount: amountToCharge,
+          description,
+          phoneNumber: mobilePhoneNumber || '',
+          bookingDetails
+        }
+      });
+      
+      if (error) {
+        throw new Error(error.message);
+      }
+      
+      // Show success toast based on payment method and result
+      let toastMessage = '';
+      if (data.success) {
+        if (installmentOption === 'three_installments') {
+          toastMessage = language === 'fr' 
+            ? `Premier paiement de $${calculateInstallmentAmount()} effectué. Les prochains paiements suivront selon le calendrier.`
+            : `First payment of $${calculateInstallmentAmount()} processed. Next payments will follow as scheduled.`;
+        } else if (paymentMethod === 'cash') {
+          toastMessage = language === 'fr' 
+            ? `Dépôt requis: $${calculateDepositAmount()} payé. Votre chauffeur vous contactera bientôt.`
+            : `Required deposit: $${calculateDepositAmount()} paid. Your driver will contact you soon.`;
+        } else {
+          toastMessage = language === 'fr' 
+            ? `Paiement complet effectué. Votre chauffeur vous contactera bientôt.`
+            : `Full payment processed. Your driver will contact you soon.`;
+        }
+        
+        toast({
+          title: language === 'fr' ? 'Réservation confirmée !' : 'Booking confirmed!',
+          description: toastMessage + (data.message ? ` ${data.message}` : ''),
+          variant: "default",
+        });
+        
+        // Reset form after successful payment
+        resetForm();
+      } else {
+        throw new Error(data.message || 'Payment failed');
+      }
+    } catch (error) {
+      toast({
+        title: language === 'fr' ? 'Erreur de paiement' : 'Payment Error',
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+      setShowMobileMoneyDialog(false);
+    }
+  };
+  
+  const handleMobileMoneySubmit = (values: { phoneNumber: string }) => {
+    processPayment(values.phoneNumber);
+    setShowMobileMoneyDialog(false);
+  };
+
   const handleConfirmBooking = () => {
     // Validation: For cash payments, require deposit payment method
     if (paymentMethod === 'cash' && !depositPaymentMethod) {
@@ -133,63 +243,22 @@ const BookingPage = () => {
       return;
     }
     
-    setIsProcessing(true);
-    
-    setTimeout(() => {
-      setIsProcessing(false);
-      
-      const bookingDetails = {
-        date: date ? format(date, "yyyy-MM-dd") : '',
-        time,
-        durationType,
-        duration: durationType === 'hourly' ? hours : days,
-        pickup,
-        vehicleId: selectedVehicle,
-        vehicleName: getSelectedVehicle()?.name,
-        paymentMethod,
-        depositPaymentMethod: paymentMethod === 'cash' ? depositPaymentMethod : paymentMethod,
-        totalPrice: calculateTotalPrice(),
-        depositAmount: calculateDepositAmount(),
-        installmentOption,
-        installmentAmount: installmentOption === 'three_installments' ? calculateInstallmentAmount() : '0',
-        createdAt: new Date().toISOString()
-      };
-      
-      console.log('Booking confirmed:', bookingDetails);
-      
-      let toastMessage = '';
-      if (installmentOption === 'three_installments') {
-        toastMessage = language === 'fr' 
-          ? `Premier paiement de $${bookingDetails.installmentAmount} effectué. Les prochains paiements suivront selon le calendrier.`
-          : `First payment of $${bookingDetails.installmentAmount} processed. Next payments will follow as scheduled.`;
-      } else if (paymentMethod === 'cash') {
-        toastMessage = language === 'fr' 
-          ? `Dépôt requis: $${bookingDetails.depositAmount}. Votre chauffeur vous contactera bientôt.`
-          : `Required deposit: $${bookingDetails.depositAmount}. Your driver will contact you soon.`;
-      } else {
-        toastMessage = language === 'fr' 
-          ? `Paiement complet effectué. Votre chauffeur vous contactera bientôt.`
-          : `Full payment processed. Your driver will contact you soon.`;
-      }
-      
-      toast({
-        title: language === 'fr' ? 'Réservation confirmée !' : 'Booking confirmed!',
-        description: toastMessage,
-        variant: "default",
-      });
-      
-      setBookingStep(1);
-      setPickup('');
-      setSelectedVehicle(null);
-      setPaymentMethod(null);
-      setDepositPaymentMethod(null);
-      setInstallmentOption('full');
-      setDate(new Date());
-      setTime('12:00');
-      setDurationType('hourly');
-      setHours(3);
-      setDays(1);
-    }, 2000);
+    // Process the payment
+    processPayment();
+  };
+  
+  const resetForm = () => {
+    setBookingStep(1);
+    setPickup('');
+    setSelectedVehicle(null);
+    setPaymentMethod(null);
+    setDepositPaymentMethod(null);
+    setInstallmentOption('full');
+    setDate(new Date());
+    setTime('12:00');
+    setDurationType('hourly');
+    setHours(3);
+    setDays(1);
   };
 
   const getDurationLabel = () => {
@@ -268,6 +337,62 @@ const BookingPage = () => {
           )}
         </div>
       </main>
+      
+      <Dialog open={showMobileMoneyDialog} onOpenChange={setShowMobileMoneyDialog}>
+        <DialogContent className="bg-nova-black border-nova-gold/50">
+          <DialogHeader>
+            <DialogTitle className="text-nova-white">
+              {language === 'fr' ? 'Numéro de téléphone requis' : 'Phone Number Required'}
+            </DialogTitle>
+            <DialogDescription className="text-nova-white/70">
+              {language === 'fr' 
+                ? 'Veuillez entrer votre numéro de téléphone pour le paiement mobile.'
+                : 'Please enter your phone number for mobile money payment.'}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleMobileMoneySubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="phoneNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-nova-white">
+                      {language === 'fr' ? 'Numéro de téléphone' : 'Phone Number'}
+                    </FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder={language === 'fr' ? 'Ex: +243XXXXXXXXX' : 'E.g., +243XXXXXXXXX'}
+                        className="bg-nova-gray/30 border-nova-gold/30 text-nova-white"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <DialogFooter>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  className="border-nova-gold/50 text-nova-gold"
+                  onClick={() => setShowMobileMoneyDialog(false)}
+                >
+                  {language === 'fr' ? 'Annuler' : 'Cancel'}
+                </Button>
+                <Button 
+                  type="submit" 
+                  className="gold-btn"
+                >
+                  {language === 'fr' ? 'Confirmer' : 'Confirm'}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
       
       <BookingFooter language={language} />
       
