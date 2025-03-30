@@ -1,4 +1,3 @@
-
 export interface Vehicle {
   id: string;
   name: string;
@@ -26,8 +25,8 @@ export const vehicles: Vehicle[] = [
       hourly: 60,
       daily: 350,
       monthly: 9900,
-      tenDayPackage: 3600,
-      fifteenDayPackage: 5250,
+      tenDayPackage: 3150,
+      fifteenDayPackage: 5100,
       twentyFiveDayPackage: 8500
     }
   },

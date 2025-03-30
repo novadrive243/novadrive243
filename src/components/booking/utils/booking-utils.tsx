@@ -40,7 +40,7 @@ export const calculateVehiclePrice = (
         } else if (vehicle.id === 'nissan-xterra') {
           dailyRate = 168; // $168 per day
         } else if (vehicle.id === 'chevrolet-tahoe') {
-          dailyRate = 340; // $340 per day
+          dailyRate = 340; // Updated to $340 per day
         } else {
           // Fallback using package calculation
           dailyRate = vehicle.price.twentyFiveDayPackage / 25;
@@ -57,7 +57,7 @@ export const calculateVehiclePrice = (
         } else if (vehicle.id === 'nissan-xterra') {
           dailyRate = 176; // $176 per day
         } else if (vehicle.id === 'chevrolet-tahoe') {
-          dailyRate = 350; // $350 per day (no discount)
+          dailyRate = 340; // Updated to $340 per day
         } else {
           // Fallback using package calculation
           dailyRate = vehicle.price.fifteenDayPackage / 15;
@@ -74,7 +74,7 @@ export const calculateVehiclePrice = (
         } else if (vehicle.id === 'nissan-xterra') {
           dailyRate = 180; // $180 per day
         } else if (vehicle.id === 'chevrolet-tahoe') {
-          dailyRate = 276.92; // $276.92 per day
+          dailyRate = 315; // Updated to $315 per day
         } else {
           // Fallback using package calculation
           dailyRate = vehicle.price.tenDayPackage / 10;
@@ -114,7 +114,7 @@ export const calculateEffectiveDailyRate = (
     } else if (vehicle.id === 'nissan-xterra') {
       return 168; // $168 per day
     } else if (vehicle.id === 'chevrolet-tahoe') {
-      return 340; // $340 per day
+      return 340; // Updated to $340 per day
     } else {
       return vehicle.price.twentyFiveDayPackage / 25;
     }
@@ -125,7 +125,7 @@ export const calculateEffectiveDailyRate = (
     } else if (vehicle.id === 'nissan-xterra') {
       return 176; // $176 per day
     } else if (vehicle.id === 'chevrolet-tahoe') {
-      return 350; // $350 per day (no discount)
+      return 340; // Updated to $340 per day
     } else {
       return vehicle.price.fifteenDayPackage / 15;
     }
@@ -136,7 +136,7 @@ export const calculateEffectiveDailyRate = (
     } else if (vehicle.id === 'nissan-xterra') {
       return 180; // $180 per day
     } else if (vehicle.id === 'chevrolet-tahoe') {
-      return 276.92; // $276.92 per day
+      return 315; // Updated to $315 per day
     } else {
       return vehicle.price.tenDayPackage / 10;
     }
