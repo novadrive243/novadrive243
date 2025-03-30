@@ -42,7 +42,7 @@ export const AdminTabs = ({
   refreshData
 }: AdminTabsProps) => {
   return (
-    <div className="mt-8">
+    <div className="mt-8 pb-20">
       <div className="flex justify-end mb-4">
         <Button 
           variant="outline" 

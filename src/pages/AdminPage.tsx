@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -98,7 +99,7 @@ const AdminPage = () => {
     <div className="min-h-screen flex flex-col bg-nova-black text-nova-white">
       <Header />
       
-      <div className="flex-grow pt-20 pb-0">
+      <div className="flex-grow pt-20 pb-0 overflow-hidden">
         {/* Sidebar */}
         <AdminSidebar 
           activeTab={activeTab} 
@@ -118,8 +119,8 @@ const AdminPage = () => {
           <Menu size={20} />
         </button>
         
-        {/* Main content */}
-        <div className="transition-all duration-300 px-6 pb-16">
+        {/* Main content - Added overflow-y-auto to enable scrolling */}
+        <div className="transition-all duration-300 px-6 pb-16 overflow-y-auto h-[calc(100vh-160px)]">
           <div className="container mx-auto">
             <div className="flex justify-between items-center mb-6 mt-4">
               <h1 className="text-xl sm:text-2xl font-bold gold-gradient-text">
