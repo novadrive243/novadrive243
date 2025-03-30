@@ -20,6 +20,7 @@ export function Header() {
     { href: "/about", label: t('header.about') || 'About' },
     { href: "/services", label: t('header.services') || 'Services' },
     { href: "/pricing", label: t('header.pricing') || 'Pricing' },
+    { href: "/drivers", label: t('header.drivers') || 'Our Drivers' },
     { href: "/contact", label: t('header.contact') || 'Contact' },
   ];
   
