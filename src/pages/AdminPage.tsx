@@ -105,6 +105,7 @@ const AdminPage = () => {
                 formatDate={formatDate}
                 formatCurrency={formatCurrency}
                 getVehicleDailyPrice={getVehicleDailyPrice}
+                isLoading={isLoading}
               />
             </>
           )}

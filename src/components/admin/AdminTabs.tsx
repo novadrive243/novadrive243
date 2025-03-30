@@ -1,10 +1,11 @@
 
 import React from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookingsTable } from './BookingsTable';
 import { VehiclesTable } from './VehiclesTable';
 import { CustomersTable } from './CustomersTable';
 import { AnalyticsCard } from './AnalyticsCard';
+import { VehicleCalendar } from './VehicleCalendar';
 
 interface AdminTabsProps {
   bookings: any[];
@@ -14,6 +15,7 @@ interface AdminTabsProps {
   formatDate: (dateString: string) => string;
   formatCurrency: (amount: number) => string;
   getVehicleDailyPrice: (vehicleName: string) => number;
+  isLoading: boolean;
 }
 
 export const AdminTabs = ({ 
@@ -23,33 +25,25 @@ export const AdminTabs = ({
   language, 
   formatDate, 
   formatCurrency,
-  getVehicleDailyPrice
+  getVehicleDailyPrice,
+  isLoading
 }: AdminTabsProps) => {
   return (
-    <Tabs defaultValue="bookings" className="mb-6">
-      <TabsList className="bg-nova-gray/30 border border-nova-gold/20 p-1">
-        <TabsTrigger 
-          value="bookings"
-          className="data-[state=active]:bg-nova-gold data-[state=active]:text-nova-black"
-        >
+    <Tabs defaultValue="bookings" className="mt-8">
+      <TabsList className="grid grid-cols-5 bg-nova-gray/30 text-nova-white">
+        <TabsTrigger value="bookings">
           {language === 'fr' ? 'Réservations' : 'Bookings'}
         </TabsTrigger>
-        <TabsTrigger 
-          value="vehicles"
-          className="data-[state=active]:bg-nova-gold data-[state=active]:text-nova-black"
-        >
+        <TabsTrigger value="vehicles">
           {language === 'fr' ? 'Véhicules' : 'Vehicles'}
         </TabsTrigger>
-        <TabsTrigger 
-          value="customers"
-          className="data-[state=active]:bg-nova-gold data-[state=active]:text-nova-black"
-        >
+        <TabsTrigger value="calendar">
+          {language === 'fr' ? 'Calendrier' : 'Calendar'}
+        </TabsTrigger>
+        <TabsTrigger value="customers">
           {language === 'fr' ? 'Clients' : 'Customers'}
         </TabsTrigger>
-        <TabsTrigger 
-          value="analytics"
-          className="data-[state=active]:bg-nova-gold data-[state=active]:text-nova-black"
-        >
+        <TabsTrigger value="analytics">
           {language === 'fr' ? 'Analyses' : 'Analytics'}
         </TabsTrigger>
       </TabsList>
@@ -67,8 +61,17 @@ export const AdminTabs = ({
         <VehiclesTable 
           vehicles={vehicles} 
           language={language} 
-          formatCurrency={formatCurrency} 
-          getVehicleDailyPrice={getVehicleDailyPrice} 
+          formatCurrency={formatCurrency}
+          getVehicleDailyPrice={getVehicleDailyPrice}
+        />
+      </TabsContent>
+      
+      <TabsContent value="calendar" className="mt-4">
+        <VehicleCalendar 
+          vehicles={vehicles}
+          bookings={bookings}
+          language={language}
+          isLoading={isLoading}
         />
       </TabsContent>
       
@@ -76,7 +79,6 @@ export const AdminTabs = ({
         <CustomersTable 
           profiles={profiles} 
           language={language} 
-          formatDate={formatDate} 
         />
       </TabsContent>
       
