@@ -73,7 +73,7 @@ export const AdminSidebar = ({
 
   return (
     <div 
-      className={`h-[calc(100vh-7rem)] bg-nova-black border-r border-nova-gold/20 overflow-y-auto fixed top-20 left-0 z-10 transition-all duration-300 transform ${
+      className={`h-[calc(100vh-12rem)] bg-nova-black border-r border-nova-gold/20 overflow-y-auto fixed top-20 left-0 z-10 transition-all duration-300 transform ${
         collapsed ? 'w-16 translate-x-0' : 'w-64 translate-x-0'
       }`}
     >

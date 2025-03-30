@@ -98,7 +98,7 @@ const AdminPage = () => {
     <div className="min-h-screen flex flex-col bg-nova-black text-nova-white">
       <Header />
       
-      <div className="flex-grow pt-20 pb-24 relative">
+      <div className="flex-grow pt-20 pb-32 relative">
         {/* Sidebar */}
         <AdminSidebar 
           activeTab={activeTab} 
