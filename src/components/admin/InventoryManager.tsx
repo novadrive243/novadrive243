@@ -250,7 +250,7 @@ export const InventoryManager = ({ vehicles: initialVehicles, language, formatCu
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold gold-gradient-text flex items-center">
+        <h2 className="text-2xl font-bold text-nova-white flex items-center">
           <Package className="mr-2 h-6 w-6 text-nova-gold" />
           {language === 'fr' ? 'Gestion d\'Inventaire' : 'Inventory Management'}
         </h2>
