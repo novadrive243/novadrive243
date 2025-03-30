@@ -54,7 +54,7 @@ export const useChat = (language: 'fr' | 'en') => {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${OPENAI_API_KEY}`,
-            'OpenAI-Beta': 'assistants=v2'
+            'OpenAI-Beta': 'assistants=v2'  // Updated to v2
           },
           body: JSON.stringify({})
         });
@@ -108,7 +108,7 @@ export const useChat = (language: 'fr' | 'en') => {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'OpenAI-Beta': 'assistants=v2'
+          'OpenAI-Beta': 'assistants=v2'  // Updated to v2
         },
         body: JSON.stringify({
           role: 'user',
@@ -127,7 +127,7 @@ export const useChat = (language: 'fr' | 'en') => {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'OpenAI-Beta': 'assistants=v2'
+          'OpenAI-Beta': 'assistants=v2'  // Updated to v2
         },
         body: JSON.stringify({
           assistant_id: ASSISTANT_ID
@@ -152,7 +152,7 @@ export const useChat = (language: 'fr' | 'en') => {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${OPENAI_API_KEY}`,
-            'OpenAI-Beta': 'assistants=v2'
+            'OpenAI-Beta': 'assistants=v2'  // Updated to v2
           },
           signal: abortControllerRef.current.signal
         });
@@ -178,7 +178,7 @@ export const useChat = (language: 'fr' | 'en') => {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'OpenAI-Beta': 'assistants=v2'
+          'OpenAI-Beta': 'assistants=v2'  // Updated to v2
         },
         signal: abortControllerRef.current.signal
       });
