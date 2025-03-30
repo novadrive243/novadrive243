@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Card, CardContent } from "@/components/ui/card";
@@ -83,10 +82,8 @@ export const TestimonialsSection = () => {
     <section className="py-16 bg-nova-black">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-3">
-            <span className="gold-gradient-text">
-              {language === 'fr' ? 'Ce Que Disent Nos Clients' : 'What Our Clients Say'}
-            </span>
+          <h2 className="text-3xl md:text-4xl font-bold mb-3 text-nova-white">
+            {language === 'fr' ? 'Ce Que Disent Nos Clients' : 'What Our Clients Say'}
           </h2>
           <p className="text-nova-white/70 max-w-2xl mx-auto">
             {language === 'fr' 

@@ -55,7 +55,7 @@ export const QuickBookingWidget = () => {
       <div className="container mx-auto px-4">
         <Card className="w-full max-w-4xl mx-auto border-2 border-nova-gold/30 shadow-[0_0_20px_rgba(212,175,55,0.2)] bg-gradient-to-br from-nova-black to-nova-gray/90">
           <CardHeader className="text-center border-b border-nova-gold/20 pb-6">
-            <CardTitle className="text-2xl md:text-3xl font-bold gold-gradient-text">
+            <CardTitle className="text-2xl md:text-3xl font-bold text-nova-white">
               {language === 'fr' ? 'Réservation Rapide' : 'Quick Booking'}
             </CardTitle>
           </CardHeader>
