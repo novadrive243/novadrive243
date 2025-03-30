@@ -31,12 +31,10 @@ export const useChat = (language: 'fr' | 'en') => {
   
   const { getFallbackResponse } = useFallbackResponses(language);
   
-  // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Cancel ongoing API calls when component unmounts
   useEffect(() => {
     return () => {
       if (abortControllerRef.current) {
@@ -45,11 +43,9 @@ export const useChat = (language: 'fr' | 'en') => {
     };
   }, []);
   
-  // Initialize thread when component mounts
   useEffect(() => {
     const createThread = async () => {
       try {
-        // Don't try to create a thread if we're in fallback mode
         if (useFallback) return;
         
         const response = await fetch('https://api.openai.com/v1/threads', {
@@ -87,16 +83,13 @@ export const useChat = (language: 'fr' | 'en') => {
     createThread();
   }, [language, useFallback]);
 
-  // Get response from OpenAI Assistant
   const getAssistantResponse = useCallback(async (userMessage: string): Promise<string> => {
-    // Check cache first
     const cachedResponse = cachedResponsesRef.current.get(userMessage);
     if (cachedResponse) {
       return cachedResponse;
     }
     
-    // If we're in fallback mode, return a fallback response directly
-    if (useFallback || !threadIdRef.current || !ASSISTANT_ID || ASSISTANT_ID === "") {
+    if (useFallback || !threadIdRef.current || !ASSISTANT_ID) {
       const fallback = getFallbackResponse(userMessage);
       cachedResponsesRef.current.set(userMessage, fallback);
       return fallback;
@@ -105,13 +98,11 @@ export const useChat = (language: 'fr' | 'en') => {
     try {
       setIsLoading(true);
       
-      // Cancel any ongoing API calls
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
       abortControllerRef.current = new AbortController();
       
-      // 1. Add the user message to the thread
       const messageResponse = await fetch(`https://api.openai.com/v1/threads/${threadIdRef.current}/messages`, {
         method: 'POST',
         headers: {
@@ -130,7 +121,6 @@ export const useChat = (language: 'fr' | 'en') => {
         throw new Error(`Failed to add message: ${messageResponse.status}`);
       }
       
-      // 2. Run the assistant on the thread
       const runResponse = await fetch(`https://api.openai.com/v1/threads/${threadIdRef.current}/runs`, {
         method: 'POST',
         headers: {
@@ -153,10 +143,8 @@ export const useChat = (language: 'fr' | 'en') => {
       const runData = await runResponse.json();
       const runId = runData.id;
       
-      // 3. Poll for the run completion
       let runStatus = 'queued';
       while (runStatus !== 'completed' && runStatus !== 'failed' && runStatus !== 'cancelled') {
-        // Wait for 1 second before polling again
         await new Promise(resolve => setTimeout(resolve, 1000));
         
         const statusResponse = await fetch(`https://api.openai.com/v1/threads/${threadIdRef.current}/runs/${runId}`, {
@@ -184,7 +172,6 @@ export const useChat = (language: 'fr' | 'en') => {
         }
       }
       
-      // 4. Get the latest messages
       const messagesResponse = await fetch(`https://api.openai.com/v1/threads/${threadIdRef.current}/messages?limit=1`, {
         method: 'GET',
         headers: {
@@ -207,19 +194,15 @@ export const useChat = (language: 'fr' | 'en') => {
       
       const botResponse = latestMessage.content[0].text.value;
       
-      // Cache the response
       cachedResponsesRef.current.set(userMessage, botResponse);
       
       return botResponse;
     } catch (error) {
-      // Only display error if not aborted
       if (error instanceof Error && error.name !== 'AbortError') {
         console.error('Error calling OpenAI Assistant API:', error);
         
-        // Set fallback mode for future messages
         setUseFallback(true);
         
-        // Show toast notification about switching to fallback mode
         toast({
           title: language === 'fr' ? "Mode hors ligne activé" : "Offline mode activated",
           description: language === 'fr' 
@@ -228,10 +211,8 @@ export const useChat = (language: 'fr' | 'en') => {
           variant: "destructive",
         });
         
-        // Get a fallback response
         const fallbackResponse = getFallbackResponse(userMessage);
         
-        // Cache it
         cachedResponsesRef.current.set(userMessage, fallbackResponse);
         
         return fallbackResponse;
@@ -246,7 +227,6 @@ export const useChat = (language: 'fr' | 'en') => {
   const handleSendMessage = useCallback(async () => {
     if (!inputValue.trim()) return;
     
-    // Add user message
     const userMessage: Message = {
       id: messages.length + 1,
       type: "user",
@@ -257,7 +237,6 @@ export const useChat = (language: 'fr' | 'en') => {
     setMessages((prev) => [...prev, userMessage]);
     setInputValue("");
     
-    // Processing indicator
     const processingBotMessage: Message = {
       id: messages.length + 2,
       type: "bot",
@@ -268,10 +247,8 @@ export const useChat = (language: 'fr' | 'en') => {
     setMessages((prev) => [...prev, processingBotMessage]);
     
     try {
-      // Get response from OpenAI Assistant
       const assistantResponse = await getAssistantResponse(userMessage.text);
       
-      // Update the processing message with the actual response
       setMessages((prev) => 
         prev.map(msg => 
           msg.id === processingBotMessage.id 
@@ -280,14 +257,11 @@ export const useChat = (language: 'fr' | 'en') => {
         )
       );
     } catch (error) {
-      // Only handle if not aborted
       if (error instanceof Error && error.name !== 'AbortError') {
         console.error('Error getting OpenAI Assistant response:', error);
         
-        // Use fallback response if OpenAI Assistant fails
         const fallbackResponse = getFallbackResponse(userMessage.text);
         
-        // Update the processing message with the fallback response
         setMessages((prev) => 
           prev.map(msg => 
             msg.id === processingBotMessage.id 
@@ -296,7 +270,6 @@ export const useChat = (language: 'fr' | 'en') => {
           )
         );
         
-        // Show toast notification about the issue
         toast({
           title: language === 'fr' ? "Problème de connexion" : "Connection issue",
           description: language === 'fr' 
@@ -318,7 +291,6 @@ export const useChat = (language: 'fr' | 'en') => {
     
     setMessages((prev) => [...prev, userMessage]);
     
-    // Processing indicator
     const processingBotMessage: Message = {
       id: messages.length + 2,
       type: "bot",
@@ -329,10 +301,8 @@ export const useChat = (language: 'fr' | 'en') => {
     setMessages((prev) => [...prev, processingBotMessage]);
     
     try {
-      // Get response from OpenAI Assistant
       const assistantResponse = await getAssistantResponse(text);
       
-      // Update the processing message with the actual response
       setMessages((prev) => 
         prev.map(msg => 
           msg.id === processingBotMessage.id 
@@ -341,14 +311,11 @@ export const useChat = (language: 'fr' | 'en') => {
         )
       );
     } catch (error) {
-      // Only handle if not aborted
       if (error instanceof Error && error.name !== 'AbortError') {
         console.error('Error getting OpenAI Assistant response:', error);
         
-        // Use fallback response if OpenAI Assistant fails
         const fallbackResponse = getFallbackResponse(text);
         
-        // Update the processing message with the fallback response
         setMessages((prev) => 
           prev.map(msg => 
             msg.id === processingBotMessage.id 
