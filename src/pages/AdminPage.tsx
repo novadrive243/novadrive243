@@ -7,7 +7,7 @@ import { useLanguage } from "@/contexts/language-context";
 import { Button } from '@/components/ui/button';
 import { vehicles as frontendVehicles } from '@/data/vehicles';
 import { useToast } from '@/hooks/use-toast';
-import { LogOut } from 'lucide-react';
+import { LogOut, MenuIcon } from 'lucide-react';
 
 // Admin Components
 import { Dashboard } from '@/components/admin/Dashboard';
@@ -23,6 +23,7 @@ const AdminPage = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("bookings");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarHidden, setSidebarHidden] = useState(false);
   
   // Load admin data with the custom hook
   const { 
@@ -47,8 +48,14 @@ const AdminPage = () => {
     }
   }, [navigate]);
   
+  // Function to toggle sidebar collapse state
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
+  };
+
+  // Function to toggle sidebar visibility
+  const toggleSidebarVisibility = () => {
+    setSidebarHidden(!sidebarHidden);
   };
 
   const handleLogout = () => {
@@ -91,67 +98,76 @@ const AdminPage = () => {
     <div className="min-h-screen flex flex-col bg-nova-black text-nova-white">
       <Header />
       
-      <div className="flex-grow pt-20 pb-10">
-        <div className="flex h-[calc(100vh-160px)]">
-          {/* Collapsible sidebar */}
-          <div className={`transition-all duration-300 ${sidebarCollapsed ? 'w-16 min-w-16' : 'w-64 min-w-64'} h-full`}>
-            <AdminSidebar 
-              activeTab={activeTab} 
-              setActiveTab={setActiveTab} 
-              language={language}
-              collapsed={sidebarCollapsed}
-              toggleSidebar={toggleSidebar} 
-            />
-          </div>
-          
-          {/* Main content */}
-          <div className="flex-1 px-4 overflow-y-auto">
-            <div className="container mx-auto">
-              <div className="flex justify-between items-center mb-6">
-                <h1 className="text-xl sm:text-2xl font-bold gold-gradient-text">
-                  {language === 'fr' ? 'Tableau de Bord Admin' : 'Admin Dashboard'}
-                </h1>
-                <Button 
-                  variant="outline" 
-                  className="border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  {language === 'fr' ? 'Déconnexion' : 'Logout'}
-                </Button>
-              </div>
-              
-              {isLoading ? (
-                <LoadingState language={language} />
-              ) : (
-                <>
-                  <Dashboard 
-                    bookings={bookings}
-                    vehicles={vehicles}
-                    profiles={profiles}
-                    monthlyRevenue={monthlyRevenue}
-                    availableVehicles={availableVehicles}
-                    percentChange={percentChange}
-                    language={language}
-                    formatCurrency={formatCurrency}
-                  />
-                  
-                  <AdminTabs 
-                    activeTab={activeTab}
-                    bookings={bookings}
-                    vehicles={vehicles}
-                    profiles={profiles}
-                    language={language}
-                    formatDate={formatDate}
-                    formatCurrency={formatCurrency}
-                    getVehicleDailyPrice={getVehicleDailyPrice}
-                    isLoading={isLoading}
-                    monthlyRevenue={monthlyRevenue}
-                    refreshData={refreshData}
-                  />
-                </>
-              )}
+      <div className="flex-grow pt-20 pb-10 relative">
+        {/* Sidebar */}
+        <AdminSidebar 
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab} 
+          language={language}
+          collapsed={sidebarCollapsed}
+          toggleSidebar={toggleSidebar} 
+        />
+        
+        {/* Mobile sidebar toggle button */}
+        <button 
+          className="fixed top-24 left-4 z-20 p-2 rounded-md bg-nova-gold/20 text-nova-gold md:hidden"
+          onClick={toggleSidebarVisibility}
+          aria-label="Toggle Sidebar"
+        >
+          <MenuIcon size={20} />
+        </button>
+        
+        {/* Main content */}
+        <div 
+          className={`transition-all duration-300 pl-4 pr-4 ${
+            sidebarCollapsed ? 'ml-16' : 'ml-64'
+          }`}
+        >
+          <div className="container mx-auto">
+            <div className="flex justify-between items-center mb-6 mt-2">
+              <h1 className="text-xl sm:text-2xl font-bold gold-gradient-text">
+                {language === 'fr' ? 'Tableau de Bord Admin' : 'Admin Dashboard'}
+              </h1>
+              <Button 
+                variant="outline" 
+                className="border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                {language === 'fr' ? 'Déconnexion' : 'Logout'}
+              </Button>
             </div>
+            
+            {isLoading ? (
+              <LoadingState language={language} />
+            ) : (
+              <>
+                <Dashboard 
+                  bookings={bookings}
+                  vehicles={vehicles}
+                  profiles={profiles}
+                  monthlyRevenue={monthlyRevenue}
+                  availableVehicles={availableVehicles}
+                  percentChange={percentChange}
+                  language={language}
+                  formatCurrency={formatCurrency}
+                />
+                
+                <AdminTabs 
+                  activeTab={activeTab}
+                  bookings={bookings}
+                  vehicles={vehicles}
+                  profiles={profiles}
+                  language={language}
+                  formatDate={formatDate}
+                  formatCurrency={formatCurrency}
+                  getVehicleDailyPrice={getVehicleDailyPrice}
+                  isLoading={isLoading}
+                  monthlyRevenue={monthlyRevenue}
+                  refreshData={refreshData}
+                />
+              </>
+            )}
           </div>
         </div>
       </div>

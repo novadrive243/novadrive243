@@ -72,7 +72,11 @@ export const AdminSidebar = ({
   ];
 
   return (
-    <div className={`h-full bg-nova-black border-r border-nova-gold/20 overflow-y-auto transition-all duration-300 ${collapsed ? 'w-16' : 'w-64'}`}>
+    <div 
+      className={`h-full bg-nova-black border-r border-nova-gold/20 overflow-y-auto fixed top-20 bottom-0 left-0 z-10 transition-all duration-300 transform ${
+        collapsed ? 'w-16 translate-x-0' : 'w-64 translate-x-0'
+      }`}
+    >
       <div className="p-4">
         {!collapsed && (
           <h2 className="text-lg font-semibold text-nova-gold mb-6">
@@ -84,6 +88,7 @@ export const AdminSidebar = ({
           <button
             onClick={toggleSidebar}
             className="p-1 rounded-full bg-nova-gold/10 text-nova-gold hover:bg-nova-gold/20 transition-colors"
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
           </button>
@@ -101,6 +106,7 @@ export const AdminSidebar = ({
                       : 'text-nova-white/80 hover:bg-nova-gold/10'
                   }`}
                   title={collapsed ? item.title : undefined}
+                  aria-label={item.title}
                 >
                   <item.icon className={`${collapsed ? 'mx-auto' : 'mr-3'} h-5 w-5 text-nova-gold`} />
                   {!collapsed && <span>{item.title}</span>}
