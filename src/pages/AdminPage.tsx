@@ -22,6 +22,7 @@ const AdminPage = () => {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("bookings");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   
   // Load admin data with the custom hook
   const { 
@@ -46,6 +47,10 @@ const AdminPage = () => {
     }
   }, [navigate]);
   
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('adminAuth');
     toast({
@@ -88,12 +93,14 @@ const AdminPage = () => {
       
       <div className="flex-grow pt-20 pb-10">
         <div className="flex h-[calc(100vh-160px)]">
-          {/* Fixed sidebar */}
-          <div className="w-64 min-w-64 h-full">
+          {/* Collapsible sidebar */}
+          <div className={`transition-all duration-300 ${sidebarCollapsed ? 'w-16 min-w-16' : 'w-64 min-w-64'} h-full`}>
             <AdminSidebar 
               activeTab={activeTab} 
               setActiveTab={setActiveTab} 
-              language={language} 
+              language={language}
+              collapsed={sidebarCollapsed}
+              toggleSidebar={toggleSidebar} 
             />
           </div>
           
