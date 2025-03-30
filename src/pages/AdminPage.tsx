@@ -7,6 +7,7 @@ import { useLanguage } from "@/contexts/language-context";
 import { Button } from '@/components/ui/button';
 import { vehicles as frontendVehicles } from '@/data/vehicles';
 import { useToast } from '@/hooks/use-toast';
+import { LogOut } from 'lucide-react';
 
 // Admin Components
 import { Dashboard } from '@/components/admin/Dashboard';
@@ -86,7 +87,7 @@ const AdminPage = () => {
       <main className="flex-grow pt-20 pb-10 px-4">
         <div className="container mx-auto">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold gold-gradient-text">
+            <h1 className="text-xl sm:text-2xl font-bold gold-gradient-text">
               {language === 'fr' ? 'Tableau de Bord Admin' : 'Admin Dashboard'}
             </h1>
             <Button 
@@ -94,6 +95,7 @@ const AdminPage = () => {
               className="border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10"
               onClick={handleLogout}
             >
+              <LogOut className="h-4 w-4 mr-2" />
               {language === 'fr' ? 'Déconnexion' : 'Logout'}
             </Button>
           </div>
