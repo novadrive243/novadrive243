@@ -67,37 +67,6 @@ export const SocialMediaIntegration = () => {
             </a>
           ))}
         </div>
-        
-        <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="overflow-hidden rounded-lg aspect-square hover:opacity-90 transition-opacity">
-            <img 
-              src="https://images.unsplash.com/photo-1549399542-7e13f3b95a12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bHV4dXJ5JTIwY2FyfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60" 
-              alt="Social media post 1" 
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="overflow-hidden rounded-lg aspect-square hover:opacity-90 transition-opacity">
-            <img 
-              src="https://images.unsplash.com/photo-1604048606947-d0ea89f75a79?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bGFtYm9yZ2hpbml8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60" 
-              alt="Social media post 2" 
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="overflow-hidden rounded-lg aspect-square hover:opacity-90 transition-opacity">
-            <img 
-              src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8c3BvcnRzJTIwY2FyfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60" 
-              alt="Social media post 3" 
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="overflow-hidden rounded-lg aspect-square hover:opacity-90 transition-opacity">
-            <img 
-              src="https://images.unsplash.com/photo-1553440569-bcc63803a83d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8bHV4dXJ5JTIwY2FyfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60" 
-              alt="Social media post 4" 
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
       </div>
     </section>
   );
