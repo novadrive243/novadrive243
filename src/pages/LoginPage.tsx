@@ -27,10 +27,7 @@ const LoginPage = () => {
         </div>
         
         <div className="bg-nova-black/40 border border-nova-gold/20 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-nova-white mb-6">
-            {t('login.welcome') || 'Welcome Back'}
-          </h2>
-          
+          {/* Removed the translation here since we're handling it directly in LoginForm */}
           <LoginForm />
         </div>
         

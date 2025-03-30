@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
@@ -46,18 +45,11 @@ export function LoginForm() {
     setIsLoading(true);
     
     try {
-      // In a real app, you would verify credentials with your backend
       console.log("Login attempt:", data);
       
-      // Check if this is an admin login attempt
       if (isAdminLogin) {
-        // For demo purposes, using a hardcoded admin credential
-        // In a real app, this would be verified against a secure backend
         if (data.email === "admin@novadrive.com" && data.password === "admin123") {
-          // Store admin authentication state
           localStorage.setItem('adminAuth', 'true');
-          
-          // Redirect to admin dashboard
           navigate("/admin");
           return;
         } else {
@@ -65,29 +57,23 @@ export function LoginForm() {
         }
       }
       
-      // Regular user login flow
       const userData = localStorage.getItem('userData');
       
       if (userData) {
         const user = JSON.parse(userData);
         
-        // Simple credential check for demo purposes
         if (user.email === data.email) {
-          // Check if PIN exists
           const hasPin = localStorage.getItem('userPin') !== null;
           
           if (hasPin) {
-            // Redirect to PIN verification
             navigate("/verify-pin");
           } else {
-            // Redirect to PIN creation
             navigate("/create-pin");
           }
         } else {
           throw new Error("Invalid credentials");
         }
       } else {
-        // No user data found, redirect to registration
         toast({
           title: language === 'fr' ? "Compte inconnu" : "Account not found",
           description: language === 'fr' 
@@ -121,7 +107,6 @@ export function LoginForm() {
   
   const toggleAdminLogin = () => {
     setIsAdminLogin(!isAdminLogin);
-    // Reset form when switching login modes
     form.reset();
   };
 
@@ -129,10 +114,10 @@ export function LoginForm() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-nova-white">
+          <h2 className="text-xl font-semibold text-nova-gold">
             {isAdminLogin 
               ? (language === 'fr' ? 'Connexion Administrateur' : 'Admin Login') 
-              : (language === 'fr' ? 'Connexion' : 'Login')}
+              : 'Welcome'}
           </h2>
           <Button 
             type="button"
