@@ -14,7 +14,7 @@ export const FaqSection = () => {
     },
     {
       question: "Is there a security deposit required?",
-      answer: "Yes, we require a security deposit that varies depending on the vehicle model. The deposit is fully refundable upon the safe return of the vehicle in its original condition."
+      answer: "No, we don't require any security deposit for our vehicle rentals. You can enjoy a worry-free experience with no upfront deposit."
     },
     {
       question: "Can I modify or cancel my reservation?",
@@ -41,7 +41,7 @@ export const FaqSection = () => {
     },
     {
       question: "Y a-t-il une caution requise?",
-      answer: "Oui, nous demandons une caution qui varie selon le modèle du véhicule. La caution est entièrement remboursable lors du retour du véhicule en bon état."
+      answer: "Non, nous ne demandons aucune caution pour la location de nos véhicules. Vous pouvez profiter d'une expérience sans souci, sans dépôt initial."
     },
     {
       question: "Puis-je modifier ou annuler ma réservation?",
