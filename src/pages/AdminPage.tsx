@@ -105,13 +105,12 @@ const AdminPage = () => {
         
         {/* Main content */}
         <div 
-          className="transition-all duration-300 px-6 py-4"
-          style={{
-            marginLeft: sidebarCollapsed ? '64px' : '256px'
-          }}
+          className={`transition-all duration-300 px-6 ${
+            sidebarCollapsed ? 'ml-16' : 'ml-64'
+          }`}
         >
           <div className="container mx-auto">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-6 mt-4">
               <h1 className="text-xl sm:text-2xl font-bold gold-gradient-text">
                 {language === 'fr' ? 'Tableau de Bord Admin' : 'Admin Dashboard'}
               </h1>
