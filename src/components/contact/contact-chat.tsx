@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Button } from "@/components/ui/button";
@@ -93,7 +94,7 @@ const ContactChat = () => {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${OPENAI_API_KEY}`,
-            'OpenAI-Beta': 'assistants=v1'
+            'OpenAI-Beta': 'assistants=v2'  // Updated to v2
           },
           body: JSON.stringify({})
         });
@@ -163,7 +164,7 @@ const ContactChat = () => {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'OpenAI-Beta': 'assistants=v1'
+          'OpenAI-Beta': 'assistants=v2'  // Updated to v2
         },
         body: JSON.stringify({
           role: 'user',
@@ -182,7 +183,7 @@ const ContactChat = () => {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'OpenAI-Beta': 'assistants=v1'
+          'OpenAI-Beta': 'assistants=v2'  // Updated to v2
         },
         body: JSON.stringify({
           assistant_id: ASSISTANT_ID
@@ -207,7 +208,7 @@ const ContactChat = () => {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${OPENAI_API_KEY}`,
-            'OpenAI-Beta': 'assistants=v1'
+            'OpenAI-Beta': 'assistants=v2'  // Updated to v2
           },
           signal: abortControllerRef.current.signal
         });
@@ -233,7 +234,7 @@ const ContactChat = () => {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'OpenAI-Beta': 'assistants=v1'
+          'OpenAI-Beta': 'assistants=v2'  // Updated to v2
         },
         signal: abortControllerRef.current.signal
       });
