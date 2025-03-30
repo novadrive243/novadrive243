@@ -10,7 +10,7 @@ export const FaqSection = () => {
   const faqsEn = [
     {
       question: "What documents do I need to rent a vehicle?",
-      answer: "To rent a vehicle with NovaDrive, you'll need a valid driver's license, a credit card in your name, and proof of insurance. International renters will also need a passport and international driving permit if applicable."
+      answer: "To rent a vehicle with NovaDrive, you'll only need a valid passport. No other documents are required."
     },
     {
       question: "Is there a security deposit required?",
@@ -37,7 +37,7 @@ export const FaqSection = () => {
   const faqsFr = [
     {
       question: "Quels documents sont nécessaires pour louer un véhicule?",
-      answer: "Pour louer un véhicule chez NovaDrive, vous aurez besoin d'un permis de conduire valide, d'une carte de crédit à votre nom et d'une preuve d'assurance. Les locataires internationaux auront également besoin d'un passeport et d'un permis de conduire international, le cas échéant."
+      answer: "Pour louer un véhicule chez NovaDrive, vous aurez uniquement besoin d'un passeport valide. Aucun autre document n'est nécessaire."
     },
     {
       question: "Y a-t-il une caution requise?",
