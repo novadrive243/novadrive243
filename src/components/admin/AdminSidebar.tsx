@@ -32,7 +32,7 @@ export const AdminSidebar = ({
   collapsed, 
   toggleSidebar 
 }: AdminSidebarProps) => {
-  // Admin menu items grouped by category
+  // Admin menu items grouped by category with clear section headers
   const menuGroups = [
     {
       id: "operations",
@@ -102,37 +102,31 @@ export const AdminSidebar = ({
 
   return (
     <aside 
-      className={`fixed left-0 bg-[#1A1F2C] border-r border-[#9b87f5]/20 overflow-y-auto z-20 transition-all duration-300 ${
-        collapsed ? 'w-16' : 'w-64'
-      }`}
-      style={{ 
-        top: '5rem', // Fixed position below header
-        bottom: 0,
-        height: 'calc(100vh - 5rem)' // Exact height calculation
-      }}
+      className="fixed left-0 top-20 bottom-0 bg-[#1A1F2C] border-r border-nova-gold/20 h-[calc(100vh-5rem)] z-20 transition-all duration-300 overflow-hidden"
+      style={{ width: collapsed ? '64px' : '256px' }}
     >
       <div className="flex flex-col h-full">
-        <div className="p-4 border-b border-[#9b87f5]/20">
+        {/* Header section */}
+        <div className="p-4 border-b border-nova-gold/20">
           {!collapsed && (
-            <h2 className="text-lg font-semibold text-[#9b87f5] mb-4">
+            <h2 className="text-lg font-semibold text-nova-gold mb-4">
               {language === 'fr' ? 'Administration' : 'Admin Panel'}
             </h2>
           )}
           
-          <div className="flex justify-end">
-            <button
-              onClick={toggleSidebar}
-              className="p-1 rounded-full bg-[#9b87f5]/10 text-[#9b87f5] hover:bg-[#9b87f5]/20 transition-colors"
-              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            >
-              {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-            </button>
-          </div>
+          <button
+            onClick={toggleSidebar}
+            className={`${collapsed ? 'mx-auto' : 'ml-auto'} flex items-center justify-center p-2 rounded-md bg-nova-gold/10 text-nova-gold hover:bg-nova-gold/20 transition-colors`}
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          </button>
         </div>
         
-        <nav className="flex-1 overflow-y-auto p-3">
+        {/* Navigation menu */}
+        <nav className="flex-1 overflow-y-auto py-4">
           {menuGroups.map((group) => (
-            <div key={group.id} className="mb-6">
+            <div key={group.id} className={`mb-6 ${collapsed ? 'px-2' : 'px-4'}`}>
               {!collapsed && (
                 <h3 className="text-xs uppercase tracking-wider text-[#8E9196] font-medium mb-3 px-2">
                   {group.title}
@@ -144,19 +138,23 @@ export const AdminSidebar = ({
                     <button
                       onClick={() => setActiveTab(item.id)}
                       className={cn(
-                        "w-full flex items-center px-3 py-2 text-sm rounded-md transition-colors",
+                        "w-full flex items-center rounded-md transition-colors",
+                        collapsed ? "p-2 justify-center" : "px-3 py-2",
                         activeTab === item.id
-                          ? "bg-[#9b87f5]/20 text-white"
-                          : "text-[#F1F1F1] hover:bg-[#9b87f5]/10"
+                          ? "bg-[#6E59A5] text-white"
+                          : "text-[#F1F1F1] hover:bg-[#7E69AB]/20"
                       )}
                       title={collapsed ? item.title : undefined}
                       aria-label={item.title}
                     >
                       <item.icon className={cn(
-                        "h-5 w-5 text-[#9b87f5]",
-                        collapsed ? "mx-auto" : "mr-3"
+                        "flex-shrink-0",
+                        collapsed ? "h-5 w-5" : "h-4 w-4 mr-3",
+                        activeTab === item.id ? "text-white" : "text-[#9b87f5]"
                       )} />
-                      {!collapsed && <span>{item.title}</span>}
+                      {!collapsed && (
+                        <span className="truncate">{item.title}</span>
+                      )}
                     </button>
                   </li>
                 ))}
@@ -165,7 +163,8 @@ export const AdminSidebar = ({
           ))}
         </nav>
         
-        <div className="p-4 mt-auto border-t border-[#9b87f5]/20">
+        {/* Footer with version info */}
+        <div className="p-4 mt-auto border-t border-[#9b87f5]/20 bg-[#1A1F2C]/80">
           {!collapsed && (
             <div className="text-xs text-[#8E9196] text-center">
               NovaDrive Admin v1.0
