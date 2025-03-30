@@ -66,7 +66,7 @@ const BookingPage = () => {
     
     let finalPrice = total;
     if (paymentMethod && paymentMethod !== 'cash') {
-      finalPrice = total * 0.95;
+      finalPrice = total * 0.95; // 5% discount for online payment
     }
     
     return finalPrice.toFixed(2);
@@ -88,6 +88,7 @@ const BookingPage = () => {
         vehicleName: getSelectedVehicle()?.name,
         paymentMethod,
         totalPrice: calculateTotalPrice(),
+        depositAmount: paymentMethod === 'cash' ? (parseFloat(calculateTotalPrice()) * 0.25).toFixed(2) : '0',
         createdAt: new Date().toISOString()
       };
       
@@ -96,8 +97,8 @@ const BookingPage = () => {
       toast({
         title: language === 'fr' ? 'Réservation confirmée !' : 'Booking confirmed!',
         description: language === 'fr' 
-          ? 'Votre chauffeur vous contactera bientôt.' 
-          : 'Your driver will contact you soon.',
+          ? `${paymentMethod === 'cash' ? `Dépôt requis: $${bookingDetails.depositAmount}. ` : ''}Votre chauffeur vous contactera bientôt.` 
+          : `${paymentMethod === 'cash' ? `Required deposit: $${bookingDetails.depositAmount}. ` : ''}Your driver will contact you soon.`,
         variant: "default",
       });
       

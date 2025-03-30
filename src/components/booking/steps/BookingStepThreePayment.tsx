@@ -38,6 +38,14 @@ export const BookingStepThreePayment = ({
   handleConfirmBooking,
   isProcessing
 }: BookingStepThreePaymentProps) => {
+  // Calculate deposit amount (25% of total price) for cash payments
+  const calculateDepositAmount = () => {
+    if (paymentMethod !== 'cash') return '0';
+    const totalPrice = parseFloat(calculateTotalPrice());
+    const depositAmount = totalPrice * 0.25;
+    return depositAmount.toFixed(2);
+  };
+
   return (
     <div className="max-w-2xl mx-auto">
       <Button 
@@ -102,6 +110,16 @@ export const BookingStepThreePayment = ({
                   {language === 'fr' 
                     ? '(Remise de 5% appliquée pour paiement en ligne)' 
                     : '(5% discount applied for online payment)'}
+                </div>
+              )}
+              {paymentMethod === 'cash' && (
+                <div className="flex justify-between text-sm mt-2 pt-2 border-t border-nova-white/10">
+                  <span className="text-nova-white font-medium">
+                    {language === 'fr' ? 'Dépôt requis (25%):' : 'Required deposit (25%):'}
+                  </span>
+                  <span className="text-nova-gold font-medium">
+                    ${calculateDepositAmount()}
+                  </span>
                 </div>
               )}
             </div>
@@ -173,6 +191,20 @@ export const BookingStepThreePayment = ({
                     ? 'Un dépôt de 25% est requis pour les réservations en espèces' 
                     : '25% deposit is required for cash bookings'}
                 </p>
+                {paymentMethod === 'cash' && (
+                  <div className="mt-4 p-3 bg-nova-gold/10 border border-nova-gold/30 rounded-md">
+                    <p className="text-sm text-nova-white">
+                      {language === 'fr' 
+                        ? `Veuillez préparer un dépôt de $${calculateDepositAmount()} pour confirmer votre réservation.` 
+                        : `Please prepare a deposit of $${calculateDepositAmount()} to confirm your booking.`}
+                    </p>
+                    <p className="text-xs text-nova-white/70 mt-1">
+                      {language === 'fr' 
+                        ? 'Le solde restant sera payé à la livraison du véhicule.' 
+                        : 'The remaining balance will be paid upon vehicle delivery.'}
+                    </p>
+                  </div>
+                )}
               </TabsContent>
             </Tabs>
           </div>
