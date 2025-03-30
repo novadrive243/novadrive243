@@ -659,164 +659,165 @@ export const PromotionManager = ({ language, formatDate, formatCurrency }: Promo
                       </div>
                     </div>
                   </div>
+                </div>
                   
+                <div>
+                  <Label htmlFor="description" className="text-nova-white">
+                    {language === 'fr' ? 'Description (Anglais)' : 'Description (English)'}
+                  </Label>
+                  <Textarea
+                    id="description"
+                    name="description"
+                    value={editPromotion.description}
+                    onChange={handleEditInputChange}
+                    className="bg-nova-black border-nova-gold/30 text-nova-white min-h-[80px]"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="descriptionFr" className="text-nova-white">
+                    {language === 'fr' ? 'Description (Français)' : 'Description (French)'}
+                  </Label>
+                  <Textarea
+                    id="descriptionFr"
+                    name="descriptionFr"
+                    value={editPromotion.descriptionFr}
+                    onChange={handleEditInputChange}
+                    className="bg-nova-black border-nova-gold/30 text-nova-white min-h-[80px]"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="startDate" className="text-nova-white">
+                    {language === 'fr' ? 'Date de Début' : 'Start Date'}
+                  </Label>
+                  <Input
+                    id="startDate"
+                    name="startDate"
+                    type="date"
+                    value={editPromotion.startDate}
+                    onChange={handleEditInputChange}
+                    className="bg-nova-black border-nova-gold/30 text-nova-white"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="endDate" className="text-nova-white">
+                    {language === 'fr' ? 'Date de Fin' : 'End Date'}
+                  </Label>
+                  <Input
+                    id="endDate"
+                    name="endDate"
+                    type="date"
+                    value={editPromotion.endDate}
+                    onChange={handleEditInputChange}
+                    className="bg-nova-black border-nova-gold/30 text-nova-white"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="categories" className="text-nova-white">
+                    {language === 'fr' ? 'Catégories de Véhicules' : 'Vehicle Categories'}
+                  </Label>
+                  <Select 
+                    value={editPromotion.categories[0]} 
+                    onValueChange={(value) => handleEditSelectChange('categories', [value])}
+                    required
+                  >
+                    <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-nova-gray border-nova-gold/30">
+                      <SelectItem value="All" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Toutes les catégories' : 'All categories'}
+                      </SelectItem>
+                      <SelectItem value="SUV" className="text-nova-white hover:bg-nova-gold/20">SUV</SelectItem>
+                      <SelectItem value="Sedan" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Berline' : 'Sedan'}
+                      </SelectItem>
+                      <SelectItem value="Sports" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Sport' : 'Sports'}
+                      </SelectItem>
+                      <SelectItem value="Electric" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Électrique' : 'Electric'}
+                      </SelectItem>
+                      <SelectItem value="Luxury" className="text-nova-white hover:bg-nova-gold/20">
+                        {language === 'fr' ? 'Luxe' : 'Luxury'}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="description" className="text-nova-white">
-                      {language === 'fr' ? 'Description (Anglais)' : 'Description (English)'}
-                    </Label>
-                    <Textarea
-                      id="description"
-                      name="description"
-                      value={editPromotion.description}
-                      onChange={handleEditInputChange}
-                      className="bg-nova-black border-nova-gold/30 text-nova-white min-h-[80px]"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="descriptionFr" className="text-nova-white">
-                      {language === 'fr' ? 'Description (Français)' : 'Description (French)'}
-                    </Label>
-                    <Textarea
-                      id="descriptionFr"
-                      name="descriptionFr"
-                      value={editPromotion.descriptionFr}
-                      onChange={handleEditInputChange}
-                      className="bg-nova-black border-nova-gold/30 text-nova-white min-h-[80px]"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="startDate" className="text-nova-white">
-                      {language === 'fr' ? 'Date de Début' : 'Start Date'}
-                    </Label>
-                    <Input
-                      id="startDate"
-                      name="startDate"
-                      type="date"
-                      value={editPromotion.startDate}
-                      onChange={handleEditInputChange}
-                      className="bg-nova-black border-nova-gold/30 text-nova-white"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="endDate" className="text-nova-white">
-                      {language === 'fr' ? 'Date de Fin' : 'End Date'}
-                    </Label>
-                    <Input
-                      id="endDate"
-                      name="endDate"
-                      type="date"
-                      value={editPromotion.endDate}
-                      onChange={handleEditInputChange}
-                      className="bg-nova-black border-nova-gold/30 text-nova-white"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="categories" className="text-nova-white">
-                      {language === 'fr' ? 'Catégories de Véhicules' : 'Vehicle Categories'}
-                    </Label>
-                    <Select 
-                      value={editPromotion.categories[0]} 
-                      onValueChange={(value) => handleEditSelectChange('categories', [value])}
-                      required
-                    >
-                      <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-nova-gray border-nova-gold/30">
-                        <SelectItem value="All" className="text-nova-white hover:bg-nova-gold/20">
-                          {language === 'fr' ? 'Toutes les catégories' : 'All categories'}
-                        </SelectItem>
-                        <SelectItem value="SUV" className="text-nova-white hover:bg-nova-gold/20">SUV</SelectItem>
-                        <SelectItem value="Sedan" className="text-nova-white hover:bg-nova-gold/20">
-                          {language === 'fr' ? 'Berline' : 'Sedan'}
-                        </SelectItem>
-                        <SelectItem value="Sports" className="text-nova-white hover:bg-nova-gold/20">
-                          {language === 'fr' ? 'Sport' : 'Sports'}
-                        </SelectItem>
-                        <SelectItem value="Electric" className="text-nova-white hover:bg-nova-gold/20">
-                          {language === 'fr' ? 'Électrique' : 'Electric'}
-                        </SelectItem>
-                        <SelectItem value="Luxury" className="text-nova-white hover:bg-nova-gold/20">
-                          {language === 'fr' ? 'Luxe' : 'Luxury'}
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="minRental" className="text-nova-white">
-                        {language === 'fr' ? 'Durée Min. (jours)' : 'Min. Duration (days)'}
-                      </Label>
-                      <Input
-                        id="minRental"
-                        name="minRental"
-                        type="number"
-                        value={editPromotion.minRental}
-                        onChange={handleEditNumberChange}
-                        className="bg-nova-black border-nova-gold/30 text-nova-white"
-                        required
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="usageLimit" className="text-nova-white">
-                        {language === 'fr' ? 'Limite d\'Utilisation' : 'Usage Limit'}
-                      </Label>
-                      <Input
-                        id="usageLimit"
-                        name="usageLimit"
-                        type="number"
-                        value={editPromotion.usageLimit}
-                        onChange={handleEditNumberChange}
-                        className="bg-nova-black border-nova-gold/30 text-nova-white"
-                        required
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="maxDiscount" className="text-nova-white">
-                      {language === 'fr' ? 'Réduction Max. ($)' : 'Max. Discount ($)'}
+                    <Label htmlFor="minRental" className="text-nova-white">
+                      {language === 'fr' ? 'Durée Min. (jours)' : 'Min. Duration (days)'}
                     </Label>
                     <Input
-                      id="maxDiscount"
-                      name="maxDiscount"
+                      id="minRental"
+                      name="minRental"
                       type="number"
-                      value={editPromotion.maxDiscount || ''}
+                      value={editPromotion.minRental}
                       onChange={handleEditNumberChange}
                       className="bg-nova-black border-nova-gold/30 text-nova-white"
-                      placeholder={language === 'fr' ? 'Aucune limite' : 'No limit'}
+                      required
                     />
                   </div>
                   
-                  <div className="flex items-center space-x-2 pt-4">
-                    <Switch
-                      id="active"
-                      checked={editPromotion.active}
-                      onCheckedChange={(checked) => handleEditSwitchChange('active', checked)}
-                    />
-                    <Label htmlFor="active" className="text-nova-white">
-                      {language === 'fr' ? 'Promotion active' : 'Active promotion'}
+                  <div>
+                    <Label htmlFor="usageLimit" className="text-nova-white">
+                      {language === 'fr' ? 'Limite d\'Utilisation' : 'Usage Limit'}
                     </Label>
+                    <Input
+                      id="usageLimit"
+                      name="usageLimit"
+                      type="number"
+                      value={editPromotion.usageLimit}
+                      onChange={handleEditNumberChange}
+                      className="bg-nova-black border-nova-gold/30 text-nova-white"
+                      required
+                    />
                   </div>
                 </div>
                 
-                <DialogFooter className="mt-6">
-                  <Button type="submit" className="gold-btn">
-                    {language === 'fr' ? 'Enregistrer les Modifications' : 'Save Changes'}
-                  </Button>
-                </DialogFooter>
-              </form>
-            )}
+                <div>
+                  <Label htmlFor="maxDiscount" className="text-nova-white">
+                    {language === 'fr' ? 'Réduction Max. ($)' : 'Max. Discount ($)'}
+                  </Label>
+                  <Input
+                    id="maxDiscount"
+                    name="maxDiscount"
+                    type="number"
+                    value={editPromotion.maxDiscount || ''}
+                    onChange={handleEditNumberChange}
+                    className="bg-nova-black border-nova-gold/30 text-nova-white"
+                    placeholder={language === 'fr' ? 'Aucune limite' : 'No limit'}
+                  />
+                </div>
+                
+                <div className="flex items-center space-x-2 pt-4">
+                  <Switch
+                    id="active"
+                    checked={editPromotion.active}
+                    onCheckedChange={(checked) => handleEditSwitchChange('active', checked)}
+                  />
+                  <Label htmlFor="active" className="text-nova-white">
+                    {language === 'fr' ? 'Promotion active' : 'Active promotion'}
+                  </Label>
+                </div>
+              </div>
+              
+              <DialogFooter className="mt-6">
+                <Button type="submit" className="gold-btn">
+                  {language === 'fr' ? 'Enregistrer les Modifications' : 'Save Changes'}
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
         </DialogContent>
       </Dialog>
       
@@ -840,4 +841,4 @@ export const PromotionManager = ({ language, formatDate, formatCurrency }: Promo
                 {selectedPromotion.type === 'percentage' 
                   ? `${selectedPromotion.value}%` 
                   : formatCurrency(selectedPromotion.value)}
-              </p>
+              </p
