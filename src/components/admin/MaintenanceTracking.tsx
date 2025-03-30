@@ -163,7 +163,6 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
   const handleAddRecord = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Find vehicle name based on ID
     const vehicle = vehicles.find(v => v.id === newRecord.vehicleId);
     const vehicleName = vehicle ? vehicle.name : 'Unknown Vehicle';
     
@@ -180,7 +179,6 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
     
     setMaintenanceRecords([...maintenanceRecords, record]);
     
-    // Reset form
     setNewRecord({
       vehicleId: '',
       type: 'routine',
