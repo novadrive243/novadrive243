@@ -9,54 +9,54 @@ import { useNavigate } from "react-router-dom";
 const blogPosts = [
   {
     id: 1,
-    title: "The Rise of Luxury Electric Vehicles in 2024",
-    excerpt: "Explore how electric vehicles are dominating the luxury car segment with cutting-edge technology and sustainable luxury.",
-    author: "James Reynolds",
-    date: "2024-03-15",
-    image: "/lovable-uploads/8337e561-5a74-4d76-8fac-6fb00b629bad.png"
+    title: "Kinshasa's New Road Infrastructure Project Set to Transform Urban Transport",
+    excerpt: "Learn about the major infrastructure developments happening across Kinshasa that will improve traffic flow and transportation in the city.",
+    author: "Jean Mutombo",
+    date: "2024-06-10",
+    image: "/lovable-uploads/d46547d7-848f-40e6-8df3-826987faa8ef.png"
   },
   {
     id: 2,
-    title: "Top 5 Scenic Drives Around Montreal",
-    excerpt: "Discover the most breathtaking routes around Montreal perfect for enjoying your luxury vehicle rental.",
-    author: "Sophie Laurent",
-    date: "2024-02-28",
+    title: "Luxury Travel Trends in Central Africa for 2024",
+    excerpt: "Discover how luxury travel is evolving in Central Africa with new expectations from business executives and diplomats visiting the region.",
+    author: "Marie Nzuzi",
+    date: "2024-05-22",
     image: "/lovable-uploads/a564e144-c5d6-4636-8cba-43b5410310a6.png"
   },
   {
     id: 3,
-    title: "Ultimate Guide to Car Care for Luxury Vehicles",
-    excerpt: "Learn professional tips and tricks to maintain the pristine condition of high-end vehicles.",
-    author: "Michael Chen",
-    date: "2024-02-10",
-    image: "/lovable-uploads/d46547d7-848f-40e6-8df3-826987faa8ef.png"
+    title: "Electric Vehicles Making Inroads in the DRC Market",
+    excerpt: "The future of transportation in DRC is changing with new electric vehicle options becoming increasingly available for premium transportation services.",
+    author: "Philippe Lumumba",
+    date: "2024-05-05",
+    image: "/lovable-uploads/8337e561-5a74-4d76-8fac-6fb00b629bad.png"
   }
 ];
 
 const blogPostsFr = [
   {
     id: 1,
-    title: "L'essor des Véhicules Électriques de Luxe en 2024",
-    excerpt: "Découvrez comment les véhicules électriques dominent le segment des voitures de luxe avec une technologie de pointe et un luxe durable.",
-    author: "James Reynolds",
-    date: "2024-03-15",
-    image: "/lovable-uploads/8337e561-5a74-4d76-8fac-6fb00b629bad.png"
+    title: "Le Nouveau Projet d'Infrastructure Routière de Kinshasa Transformera le Transport Urbain",
+    excerpt: "Découvrez les grands développements d'infrastructure en cours à Kinshasa qui amélioreront la fluidité du trafic et le transport dans la ville.",
+    author: "Jean Mutombo",
+    date: "2024-06-10",
+    image: "/lovable-uploads/d46547d7-848f-40e6-8df3-826987faa8ef.png"
   },
   {
     id: 2,
-    title: "Les 5 Routes Panoramiques Autour de Montréal",
-    excerpt: "Découvrez les itinéraires les plus époustouflants autour de Montréal, parfaits pour profiter de votre location de véhicule de luxe.",
-    author: "Sophie Laurent",
-    date: "2024-02-28",
+    title: "Tendances du Voyage de Luxe en Afrique Centrale pour 2024",
+    excerpt: "Découvrez comment le voyage de luxe évolue en Afrique centrale avec de nouvelles attentes des cadres d'entreprise et des diplomates visitant la région.",
+    author: "Marie Nzuzi",
+    date: "2024-05-22",
     image: "/lovable-uploads/a564e144-c5d6-4636-8cba-43b5410310a6.png"
   },
   {
     id: 3,
-    title: "Guide Ultime d'Entretien pour Véhicules de Luxe",
-    excerpt: "Apprenez des conseils et astuces professionnels pour maintenir l'état impeccable des véhicules haut de gamme.",
-    author: "Michael Chen",
-    date: "2024-02-10",
-    image: "/lovable-uploads/d46547d7-848f-40e6-8df3-826987faa8ef.png"
+    title: "Les Véhicules Électriques Font leur Entrée sur le Marché Congolais",
+    excerpt: "L'avenir du transport en RDC évolue avec de nouvelles options de véhicules électriques de plus en plus disponibles pour les services de transport haut de gamme.",
+    author: "Philippe Lumumba",
+    date: "2024-05-05",
+    image: "/lovable-uploads/8337e561-5a74-4d76-8fac-6fb00b629bad.png"
   }
 ];
 
@@ -80,13 +80,13 @@ export const BlogNewsSection = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-3">
             <BookOpen className="inline-block mr-2 text-nova-gold h-8 w-8" />
             <span className="gold-gradient-text">
-              {language === 'fr' ? 'Blog & Actualités' : 'Blog & News'}
+              {language === 'fr' ? 'Actualités & Tendances' : 'News & Trends'}
             </span>
           </h2>
           <p className="text-nova-white/70 max-w-2xl mx-auto">
             {language === 'fr' 
-              ? 'Restez informé avec nos derniers articles et actualités du monde automobile' 
-              : 'Stay informed with our latest articles and news from the automotive world'}
+              ? 'Restez informé des derniers développements qui affectent le transport et la mobilité en RDC' 
+              : 'Stay informed about the latest developments affecting transportation and mobility in DRC'}
           </p>
         </div>
         
