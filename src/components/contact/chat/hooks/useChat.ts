@@ -1,8 +1,7 @@
-
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { toast } from "@/hooks/use-toast";
 import { Message } from '../types';
-import { ASSISTANT_ID, OPENAI_API_KEY } from '../constants';
+import { ASSISTANT_ID, OPENAI_API_KEY, USE_FALLBACK_BY_DEFAULT } from '../constants';
 import { useFallbackResponses } from './useFallbackResponses';
 
 /**
@@ -28,6 +27,7 @@ export const useChat = (language: 'fr' | 'en') => {
   const abortControllerRef = useRef<AbortController | null>(null);
   const cachedResponsesRef = useRef<Map<string, string>>(new Map());
   const threadIdRef = useRef<string | null>(null);
+  const [useFallback, setUseFallback] = useState(USE_FALLBACK_BY_DEFAULT);
   
   const { getFallbackResponse } = useFallbackResponses(language);
   
@@ -49,6 +49,9 @@ export const useChat = (language: 'fr' | 'en') => {
   useEffect(() => {
     const createThread = async () => {
       try {
+        // Don't try to create a thread if we're in fallback mode
+        if (useFallback) return;
+        
         const response = await fetch('https://api.openai.com/v1/threads', {
           method: 'POST',
           headers: {
@@ -60,7 +63,9 @@ export const useChat = (language: 'fr' | 'en') => {
         });
         
         if (!response.ok) {
-          throw new Error(`Failed to create thread: ${response.status}`);
+          console.error(`Failed to create thread: ${response.status}`);
+          setUseFallback(true);
+          return;
         }
         
         const data = await response.json();
@@ -68,18 +73,19 @@ export const useChat = (language: 'fr' | 'en') => {
         console.log('Thread created:', threadIdRef.current);
       } catch (error) {
         console.error('Error creating thread:', error);
+        setUseFallback(true);
         toast({
-          title: language === 'fr' ? "Erreur de connexion" : "Connection error",
+          title: language === 'fr' ? "Mode hors ligne" : "Offline mode",
           description: language === 'fr' 
-            ? "Impossible de démarrer une nouvelle conversation. Veuillez réessayer plus tard." 
-            : "Unable to start a new conversation. Please try again later.",
+            ? "Assistant en mode local. Les réponses sont préprogrammées." 
+            : "Assistant in local mode. Responses are pre-programmed.",
           variant: "destructive",
         });
       }
     };
     
     createThread();
-  }, [language]);
+  }, [language, useFallback]);
 
   // Get response from OpenAI Assistant
   const getAssistantResponse = useCallback(async (userMessage: string): Promise<string> => {
@@ -89,8 +95,11 @@ export const useChat = (language: 'fr' | 'en') => {
       return cachedResponse;
     }
     
-    if (!threadIdRef.current) {
-      throw new Error("No active thread");
+    // If we're in fallback mode, return a fallback response directly
+    if (useFallback || !threadIdRef.current || !ASSISTANT_ID || ASSISTANT_ID === "asst_YOUR_ASSISTANT_ID_HERE") {
+      const fallback = getFallbackResponse(userMessage);
+      cachedResponsesRef.current.set(userMessage, fallback);
+      return fallback;
     }
     
     try {
@@ -136,6 +145,8 @@ export const useChat = (language: 'fr' | 'en') => {
       });
       
       if (!runResponse.ok) {
+        const errorData = await runResponse.json();
+        console.error('Run assistant error:', errorData);
         throw new Error(`Failed to run assistant: ${runResponse.status}`);
       }
       
@@ -204,16 +215,33 @@ export const useChat = (language: 'fr' | 'en') => {
       // Only display error if not aborted
       if (error instanceof Error && error.name !== 'AbortError') {
         console.error('Error calling OpenAI Assistant API:', error);
-        return language === 'fr'
-          ? "Désolé, je rencontre des difficultés techniques. Veuillez réessayer plus tard ou contactez-nous directement par téléphone."
-          : "Sorry, I'm experiencing technical difficulties. Please try again later or contact us directly by phone.";
+        
+        // Set fallback mode for future messages
+        setUseFallback(true);
+        
+        // Show toast notification about switching to fallback mode
+        toast({
+          title: language === 'fr' ? "Mode hors ligne activé" : "Offline mode activated",
+          description: language === 'fr' 
+            ? "L'assistant est passé en mode local. Les réponses sont préprogrammées." 
+            : "The assistant has switched to local mode. Responses are pre-programmed.",
+          variant: "destructive",
+        });
+        
+        // Get a fallback response
+        const fallbackResponse = getFallbackResponse(userMessage);
+        
+        // Cache it
+        cachedResponsesRef.current.set(userMessage, fallbackResponse);
+        
+        return fallbackResponse;
       }
       throw error;
     } finally {
       setIsLoading(false);
       abortControllerRef.current = null;
     }
-  }, [language]);
+  }, [language, useFallback, getFallbackResponse]);
   
   const handleSendMessage = useCallback(async () => {
     if (!inputValue.trim()) return;
@@ -339,6 +367,7 @@ export const useChat = (language: 'fr' | 'en') => {
     isLoading,
     messagesEndRef,
     handleSendMessage,
-    handleQuickReply
+    handleQuickReply,
+    useFallback
   };
 };

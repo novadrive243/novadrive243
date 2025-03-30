@@ -2,7 +2,7 @@
 import React from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Button } from "@/components/ui/button";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Bot, WifiOff } from "lucide-react";
 import {
   Drawer,
   DrawerClose,
@@ -17,7 +17,6 @@ import { MessagesList } from './components/MessagesList';
 import { QuickReplies } from './components/QuickReplies';
 import { ChatInput } from './components/ChatInput';
 import { useDebounce } from './hooks/useDebounce';
-import { Bot } from "lucide-react";
 
 /**
  * Main contact chat drawer component
@@ -33,7 +32,8 @@ const ContactChatDrawer = () => {
     isLoading,
     messagesEndRef,
     handleSendMessage,
-    handleQuickReply
+    handleQuickReply,
+    useFallback
   } = useChat(language);
   
   // Debounce input value to reduce unnecessary renders
@@ -53,8 +53,17 @@ const ContactChatDrawer = () => {
         <DrawerContent className="max-h-[80vh]">
           <DrawerHeader className="border-b border-nova-gold/30">
             <DrawerTitle className="flex items-center gap-2">
-              <Bot className="h-5 w-5 text-nova-gold" />
+              {useFallback ? (
+                <WifiOff className="h-5 w-5 text-red-500" />
+              ) : (
+                <Bot className="h-5 w-5 text-nova-gold" />
+              )}
               {t('contact.chatTitle') || 'NovaDrive Assistant'}
+              {useFallback && (
+                <span className="text-xs font-normal text-red-500 ml-2">
+                  {language === 'fr' ? '(Mode hors ligne)' : '(Offline mode)'}
+                </span>
+              )}
             </DrawerTitle>
           </DrawerHeader>
           
