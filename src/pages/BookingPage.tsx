@@ -72,6 +72,12 @@ const BookingPage = () => {
     return finalPrice.toFixed(2);
   };
 
+  const calculateDepositAmount = (): string => {
+    const totalPrice = parseFloat(calculateTotalPrice());
+    const depositAmount = totalPrice * 0.25;
+    return depositAmount.toFixed(2);
+  };
+
   const handleConfirmBooking = () => {
     setIsProcessing(true);
     
@@ -88,7 +94,7 @@ const BookingPage = () => {
         vehicleName: getSelectedVehicle()?.name,
         paymentMethod,
         totalPrice: calculateTotalPrice(),
-        depositAmount: paymentMethod === 'cash' ? (parseFloat(calculateTotalPrice()) * 0.25).toFixed(2) : '0',
+        depositAmount: calculateDepositAmount(),
         createdAt: new Date().toISOString()
       };
       
@@ -97,8 +103,8 @@ const BookingPage = () => {
       toast({
         title: language === 'fr' ? 'Réservation confirmée !' : 'Booking confirmed!',
         description: language === 'fr' 
-          ? `${paymentMethod === 'cash' ? `Dépôt requis: $${bookingDetails.depositAmount}. ` : ''}Votre chauffeur vous contactera bientôt.` 
-          : `${paymentMethod === 'cash' ? `Required deposit: $${bookingDetails.depositAmount}. ` : ''}Your driver will contact you soon.`,
+          ? `Dépôt requis: $${bookingDetails.depositAmount}. Votre chauffeur vous contactera bientôt.`
+          : `Required deposit: $${bookingDetails.depositAmount}. Your driver will contact you soon.`,
         variant: "default",
       });
       
@@ -173,6 +179,7 @@ const BookingPage = () => {
               getDurationLabel={getDurationLabel}
               getSelectedVehicle={getSelectedVehicle}
               calculateTotalPrice={calculateTotalPrice}
+              calculateDepositAmount={calculateDepositAmount}
               paymentMethod={paymentMethod}
               paymentMethods={paymentMethods}
               handlePaymentMethodSelect={handlePaymentMethodSelect}
