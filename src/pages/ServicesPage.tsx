@@ -120,8 +120,8 @@ const ServicesPage = () => {
         <div className="container mx-auto px-4">
           {/* Hero section */}
           <section className="text-center py-10 mb-10">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="gold-gradient-text">{title}</span>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-nova-white">
+              {title}
             </h1>
             <p className="text-nova-white/70 text-lg max-w-3xl mx-auto">
               {subtitle}

@@ -76,8 +76,8 @@ const AboutPage = () => {
       <main className="flex-grow pt-24 pb-16">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold mb-3">
-              <span className="gold-gradient-text">{title}</span>
+            <h1 className="text-4xl md:text-5xl font-bold mb-3 text-nova-white">
+              {title}
             </h1>
             <p className="text-xl text-nova-white/80 mb-12">{subtitle}</p>
             
