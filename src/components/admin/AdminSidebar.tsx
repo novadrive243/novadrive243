@@ -23,6 +23,7 @@ interface AdminSidebarProps {
   language: string;
   collapsed: boolean;
   toggleSidebar: () => void;
+  visible: boolean;
 }
 
 export const AdminSidebar = ({ 
@@ -30,7 +31,8 @@ export const AdminSidebar = ({
   setActiveTab, 
   language, 
   collapsed, 
-  toggleSidebar 
+  toggleSidebar,
+  visible
 }: AdminSidebarProps) => {
   // Admin menu items grouped by category
   const menuGroups = [
@@ -104,6 +106,8 @@ export const AdminSidebar = ({
     <aside 
       className={`fixed bg-nova-black border-r border-nova-gold/20 overflow-y-auto z-20 transition-all duration-300 ${
         collapsed ? 'w-16' : 'w-64'
+      } ${
+        visible ? 'translate-x-0' : '-translate-x-full'
       }`}
       style={{ 
         top: '5rem', // Fixed position below header

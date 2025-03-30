@@ -7,7 +7,7 @@ import { useLanguage } from "@/contexts/language-context";
 import { Button } from '@/components/ui/button';
 import { vehicles as frontendVehicles } from '@/data/vehicles';
 import { useToast } from '@/hooks/use-toast';
-import { LogOut } from 'lucide-react';
+import { LogOut, Menu } from 'lucide-react';
 
 // Admin Components
 import { Dashboard } from '@/components/admin/Dashboard';
@@ -23,6 +23,7 @@ const AdminPage = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("bookings");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
   
   // Load admin data with the custom hook
   const { 
@@ -50,6 +51,11 @@ const AdminPage = () => {
   // Function to toggle sidebar collapse state
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
+  };
+
+  // Function to toggle sidebar visibility
+  const toggleSidebarVisibility = () => {
+    setSidebarVisible(!sidebarVisible);
   };
 
   const handleLogout = () => {
@@ -100,15 +106,21 @@ const AdminPage = () => {
           setActiveTab={setActiveTab} 
           language={language}
           collapsed={sidebarCollapsed}
-          toggleSidebar={toggleSidebar} 
+          toggleSidebar={toggleSidebar}
+          visible={sidebarVisible}
         />
         
-        {/* Main content */}
-        <div 
-          className={`transition-all duration-300 px-6 pb-16 ${
-            sidebarCollapsed ? 'ml-16' : 'ml-64'
-          }`}
+        {/* Sidebar toggle button */}
+        <button
+          onClick={toggleSidebarVisibility}
+          className="fixed z-30 left-0 top-24 p-2 bg-nova-gold/80 text-nova-black hover:bg-nova-gold rounded-r-md shadow-md"
+          aria-label={sidebarVisible ? 'Hide sidebar' : 'Show sidebar'}
         >
+          <Menu size={20} />
+        </button>
+        
+        {/* Main content */}
+        <div className="transition-all duration-300 px-6 pb-16">
           <div className="container mx-auto">
             <div className="flex justify-between items-center mb-6 mt-4">
               <h1 className="text-xl sm:text-2xl font-bold gold-gradient-text">
