@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PieChart, Pie, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown, AlertTriangle, Activity, BarChart3 } from "lucide-react";
+import { TrendingUp, TrendingDown, AlertTriangle, Activity, BarChart3 } from 'lucide-react';
 
 interface AdvancedAnalyticsProps {
   bookings: any[];
@@ -82,7 +82,7 @@ export const AdvancedAnalytics = ({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold gold-gradient-text flex items-center">
+        <h2 className="text-2xl font-bold text-nova-white flex items-center">
           <BarChart3 className="mr-2 h-6 w-6 text-nova-gold" />
           {language === 'fr' ? 'Analyses Avancées' : 'Advanced Analytics'}
         </h2>
