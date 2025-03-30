@@ -1,10 +1,12 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User } from 'lucide-react';
+import { Send, Bot, User, Calendar, Car, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Message {
   role: 'assistant' | 'user';
@@ -20,6 +22,7 @@ interface AdminAIAssistantProps {
 }
 
 export const AdminAIAssistant = ({ language, bookings = [], vehicles = [], profiles = [] }: AdminAIAssistantProps) => {
+  const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
@@ -33,18 +36,26 @@ export const AdminAIAssistant = ({ language, bookings = [], vehicles = [], profi
   const [isProcessing, setIsProcessing] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   
+  // Reference to store booking details during conversation
+  const [bookingDetails, setBookingDetails] = useState<{
+    customerId?: string;
+    customerName?: string;
+    vehicleId?: string;
+    vehicleName?: string;
+    startDate?: string;
+    endDate?: string;
+    pickupLocation?: string;
+    status?: 'pending' | 'confirmed' | 'active' | 'completed' | 'cancelled';
+    totalPrice?: number;
+  }>({});
+  
+  // Booking process state
+  const [bookingStep, setBookingStep] = useState<'idle' | 'collecting' | 'confirming' | 'completed'>('idle');
+  
   useEffect(() => {
     // Scroll to bottom when messages change
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  // Auto-scroll the messages area when new messages arrive
-  useEffect(() => {
-    if (scrollAreaRef.current) {
-      const scrollArea = scrollAreaRef.current;
-      scrollArea.scrollTop = scrollArea.scrollHeight;
     }
   }, [messages]);
 
@@ -62,9 +73,13 @@ export const AdminAIAssistant = ({ language, bookings = [], vehicles = [], profi
     setInput('');
     setIsProcessing(true);
     
-    // Simulate AI processing time
+    // Process user input
     setTimeout(() => {
-      processAdminQuery(input);
+      if (bookingStep === 'collecting' || bookingStep === 'confirming' || input.toLowerCase().includes('book') || input.toLowerCase().includes('reservation') || input.toLowerCase().includes('réservation')) {
+        processReservationRequest(input);
+      } else {
+        processAdminQuery(input);
+      }
     }, 1000);
   };
 
@@ -74,7 +89,15 @@ export const AdminAIAssistant = ({ language, bookings = [], vehicles = [], profi
     
     // Simple rule-based responses based on query content
     if (queryLower.includes('booking') || queryLower.includes('réservation')) {
-      response = generateBookingResponse(queryLower);
+      if (queryLower.includes('create') || queryLower.includes('new') || queryLower.includes('make') || queryLower.includes('create') || queryLower.includes('nouvelle')) {
+        // Start booking process
+        setBookingStep('collecting');
+        response = language === 'fr'
+          ? "Je vais vous aider à créer une nouvelle réservation. Pour commencer, pouvez-vous me donner le nom du client ?"
+          : "I'll help you create a new booking. To start, can you provide the customer name?";
+      } else {
+        response = generateBookingResponse(queryLower);
+      }
     } else if (queryLower.includes('vehicle') || queryLower.includes('car') || queryLower.includes('véhicule')) {
       response = generateVehicleResponse(queryLower);
     } else if (queryLower.includes('customer') || queryLower.includes('client')) {
@@ -83,12 +106,12 @@ export const AdminAIAssistant = ({ language, bookings = [], vehicles = [], profi
       response = generateRevenueResponse();
     } else if (queryLower.includes('help') || queryLower.includes('aide')) {
       response = language === 'fr' 
-        ? "Je peux vous aider avec la gestion des réservations, l'analyse des véhicules, les informations sur les clients, et plus encore. Posez-moi simplement une question spécifique."
-        : "I can help you with managing bookings, analyzing vehicle data, customer information, and more. Just ask me a specific question.";
+        ? "Je peux vous aider avec la gestion des réservations, l'analyse des véhicules, les informations sur les clients, et plus encore. Je peux même créer de nouvelles réservations pour vous. Demandez simplement 'créer une réservation'."
+        : "I can help you with managing bookings, analyzing vehicle data, customer information, and more. I can even create new bookings for you. Just ask to 'create a booking'.";
     } else {
       response = language === 'fr'
-        ? "Je ne suis pas sûr de comprendre votre demande. Pourriez-vous préciser si vous avez besoin d'aide avec les réservations, les véhicules, ou les clients ?"
-        : "I'm not sure I understand your request. Could you clarify if you need help with bookings, vehicles, or customers?";
+        ? "Je ne suis pas sûr de comprendre votre demande. Pourriez-vous préciser si vous avez besoin d'aide avec les réservations, les véhicules, ou les clients ? Vous pouvez également me demander de créer une nouvelle réservation."
+        : "I'm not sure I understand your request. Could you clarify if you need help with bookings, vehicles, or customers? You can also ask me to create a new booking.";
     }
     
     const assistantMessage: Message = {
@@ -100,7 +123,225 @@ export const AdminAIAssistant = ({ language, bookings = [], vehicles = [], profi
     setMessages(prev => [...prev, assistantMessage]);
     setIsProcessing(false);
   };
+
+  const processReservationRequest = (input: string) => {
+    const inputLower = input.toLowerCase();
+    let response = '';
+    let newBookingDetails = { ...bookingDetails };
+    
+    if (bookingStep === 'idle') {
+      setBookingStep('collecting');
+      response = language === 'fr'
+        ? "Je vais vous aider à créer une nouvelle réservation. Pour commencer, pouvez-vous me donner le nom du client ?"
+        : "I'll help you create a new booking. To start, can you provide the customer name?";
+      
+    } else if (bookingStep === 'collecting') {
+      // Try to identify which piece of information the user is providing
+      if (!newBookingDetails.customerName) {
+        // User is providing customer name
+        newBookingDetails.customerName = input;
+        
+        // Try to find customer in the profiles
+        const customer = profiles.find(p => 
+          p.full_name && p.full_name.toLowerCase().includes(inputLower)
+        );
+        
+        if (customer) {
+          newBookingDetails.customerId = customer.id;
+          response = language === 'fr'
+            ? `J'ai trouvé ${customer.full_name} dans notre système. Quel véhicule voulez-vous réserver ?`
+            : `I found ${customer.full_name} in our system. Which vehicle would you like to book?`;
+        } else {
+          response = language === 'fr'
+            ? `Je n'ai pas trouvé ce client dans notre système. Cependant, je peux créer une réservation pour ${input}. Quel véhicule voulez-vous réserver ?`
+            : `I couldn't find this customer in our system. However, I can create a booking for ${input}. Which vehicle would you like to book?`;
+        }
+      } else if (!newBookingDetails.vehicleName) {
+        // User is providing vehicle name
+        newBookingDetails.vehicleName = input;
+        
+        // Try to find vehicle in the vehicles list
+        const vehicle = vehicles.find(v => 
+          v.name && v.name.toLowerCase().includes(inputLower)
+        );
+        
+        if (vehicle) {
+          newBookingDetails.vehicleId = vehicle.id;
+          response = language === 'fr'
+            ? `J'ai trouvé ${vehicle.name} dans notre flotte. Quelle est la date de début de la réservation ? (format: YYYY-MM-DD)`
+            : `I found ${vehicle.name} in our fleet. What is the start date for the booking? (format: YYYY-MM-DD)`;
+        } else {
+          response = language === 'fr'
+            ? `Je n'ai pas trouvé ce véhicule dans notre flotte. Pourriez-vous spécifier un autre véhicule ?`
+            : `I couldn't find this vehicle in our fleet. Could you specify another vehicle?`;
+        }
+      } else if (!newBookingDetails.startDate) {
+        // User is providing start date
+        if (isValidDate(input)) {
+          newBookingDetails.startDate = input;
+          response = language === 'fr'
+            ? `Date de début enregistrée. Quelle est la date de fin de la réservation ? (format: YYYY-MM-DD)`
+            : `Start date recorded. What is the end date for the booking? (format: YYYY-MM-DD)`;
+        } else {
+          response = language === 'fr'
+            ? `Format de date invalide. Veuillez fournir la date au format YYYY-MM-DD.`
+            : `Invalid date format. Please provide the date in YYYY-MM-DD format.`;
+        }
+      } else if (!newBookingDetails.endDate) {
+        // User is providing end date
+        if (isValidDate(input)) {
+          newBookingDetails.endDate = input;
+          response = language === 'fr'
+            ? `Date de fin enregistrée. Quel est le lieu de prise en charge ?`
+            : `End date recorded. What is the pickup location?`;
+        } else {
+          response = language === 'fr'
+            ? `Format de date invalide. Veuillez fournir la date au format YYYY-MM-DD.`
+            : `Invalid date format. Please provide the date in YYYY-MM-DD format.`;
+        }
+      } else if (!newBookingDetails.pickupLocation) {
+        // User is providing pickup location
+        newBookingDetails.pickupLocation = input;
+        
+        // Calculate estimated price (basic implementation)
+        const vehicle = vehicles.find(v => v.id === newBookingDetails.vehicleId);
+        if (vehicle && newBookingDetails.startDate && newBookingDetails.endDate) {
+          const startDate = new Date(newBookingDetails.startDate);
+          const endDate = new Date(newBookingDetails.endDate);
+          const days = Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
+          
+          newBookingDetails.totalPrice = vehicle.price_per_day * days;
+        } else {
+          // Default price if we can't calculate
+          newBookingDetails.totalPrice = 100;
+        }
+        
+        setBookingStep('confirming');
+        
+        // Prepare booking summary for confirmation
+        response = language === 'fr'
+          ? `Voici un résumé de la réservation :
+Client : ${newBookingDetails.customerName}
+Véhicule : ${newBookingDetails.vehicleName}
+Date de début : ${newBookingDetails.startDate}
+Date de fin : ${newBookingDetails.endDate}
+Lieu de prise en charge : ${newBookingDetails.pickupLocation}
+Prix estimé : $${newBookingDetails.totalPrice?.toFixed(2)}
+
+Voulez-vous confirmer cette réservation ? (oui/non)`
+          : `Here's a summary of the booking:
+Customer: ${newBookingDetails.customerName}
+Vehicle: ${newBookingDetails.vehicleName}
+Start date: ${newBookingDetails.startDate}
+End date: ${newBookingDetails.endDate}
+Pickup location: ${newBookingDetails.pickupLocation}
+Estimated price: $${newBookingDetails.totalPrice?.toFixed(2)}
+
+Would you like to confirm this booking? (yes/no)`;
+      }
+    } else if (bookingStep === 'confirming') {
+      if (inputLower.includes('oui') || inputLower.includes('yes') || inputLower.includes('confirm')) {
+        // User confirms booking, create it in the database
+        createBooking(newBookingDetails);
+        response = language === 'fr'
+          ? `Parfait ! J'ai créé la réservation pour ${newBookingDetails.customerName}. Le client recevra une confirmation par email.`
+          : `Great! I've created the booking for ${newBookingDetails.customerName}. The customer will receive a confirmation email.`;
+        
+        // Reset booking process
+        setBookingStep('completed');
+        newBookingDetails = {};
+      } else if (inputLower.includes('non') || inputLower.includes('no') || inputLower.includes('cancel')) {
+        // User cancels booking process
+        response = language === 'fr'
+          ? `D'accord, j'ai annulé la création de cette réservation. Puis-je vous aider avec autre chose ?`
+          : `Okay, I've cancelled this booking creation. Can I help you with anything else?`;
+        
+        // Reset booking process
+        setBookingStep('idle');
+        newBookingDetails = {};
+      } else {
+        response = language === 'fr'
+          ? `Je n'ai pas compris votre réponse. Veuillez confirmer par 'oui' ou 'non'.`
+          : `I didn't understand your response. Please confirm with 'yes' or 'no'.`;
+      }
+    } else if (bookingStep === 'completed') {
+      setBookingStep('idle');
+      response = language === 'fr'
+        ? `Puis-je vous aider avec autre chose ?`
+        : `Can I help you with anything else?`;
+    }
+    
+    // Update booking details
+    setBookingDetails(newBookingDetails);
+    
+    // Send AI response
+    const assistantMessage: Message = {
+      role: 'assistant',
+      content: response,
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, assistantMessage]);
+    setIsProcessing(false);
+  };
   
+  const isValidDate = (dateString: string): boolean => {
+    // Simple date validation for YYYY-MM-DD format
+    return /^\d{4}-\d{2}-\d{2}$/.test(dateString) && !isNaN(Date.parse(dateString));
+  };
+  
+  const createBooking = async (details: typeof bookingDetails) => {
+    try {
+      // Prepare booking data
+      const bookingData = {
+        user_id: details.customerId || profiles[0]?.id, // Fallback to first profile if no ID
+        vehicle_id: details.vehicleId || vehicles[0]?.id, // Fallback to first vehicle if no ID
+        start_date: details.startDate,
+        end_date: details.endDate,
+        total_price: details.totalPrice || 100,
+        status: 'pending'
+      };
+      
+      // Insert booking into database
+      const { data, error } = await supabase
+        .from('bookings')
+        .insert(bookingData)
+        .select();
+      
+      if (error) {
+        console.error('Error creating booking:', error);
+        toast({
+          title: language === 'fr' ? 'Erreur' : 'Error',
+          description: language === 'fr' 
+            ? `Impossible de créer la réservation: ${error.message}`
+            : `Failed to create booking: ${error.message}`,
+          variant: "destructive",
+        });
+        return false;
+      }
+      
+      toast({
+        title: language === 'fr' ? 'Réservation créée' : 'Booking Created',
+        description: language === 'fr'
+          ? `Réservation créée avec succès pour ${details.customerName}`
+          : `Successfully created booking for ${details.customerName}`,
+        variant: "default",
+      });
+      
+      return true;
+    } catch (err) {
+      console.error('Error in booking creation:', err);
+      toast({
+        title: language === 'fr' ? 'Erreur' : 'Error',
+        description: language === 'fr'
+          ? 'Une erreur est survenue lors de la création de la réservation'
+          : 'An error occurred while creating the booking',
+        variant: "destructive",
+      });
+      return false;
+    }
+  };
+
   const generateBookingResponse = (query: string): string => {
     const bookingCount = bookings.length;
     
