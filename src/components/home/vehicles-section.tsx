@@ -17,7 +17,7 @@ interface VehicleCardProps {
 }
 
 function VehicleCard({ name, image, comfort, capacity, price, onClick }: VehicleCardProps) {
-  const { t } = useLanguage();
+  const { language } = useLanguage();
   
   return (
     <Card className="nova-card overflow-hidden hover:border-nova-gold/60 transition-all duration-300">
@@ -35,7 +35,9 @@ function VehicleCard({ name, image, comfort, capacity, price, onClick }: Vehicle
           
           <div className="flex justify-between mb-4">
             <div>
-              <p className="text-sm text-nova-white/70 mb-1">{t('vehicles.comfort')}</p>
+              <p className="text-sm text-nova-white/70 mb-1">
+                {language === 'fr' ? 'Confort' : 'Comfort'}
+              </p>
               <div className="flex">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star 
@@ -47,15 +49,19 @@ function VehicleCard({ name, image, comfort, capacity, price, onClick }: Vehicle
               </div>
             </div>
             <div>
-              <p className="text-sm text-nova-white/70 mb-1">{t('vehicles.capacity')}</p>
-              <p className="text-nova-white">{capacity} persons</p>
+              <p className="text-sm text-nova-white/70 mb-1">
+                {language === 'fr' ? 'Capacité' : 'Capacity'}
+              </p>
+              <p className="text-nova-white">{capacity} {language === 'fr' ? 'personnes' : 'persons'}</p>
             </div>
           </div>
           
           <div className="flex justify-between items-center mb-4">
             <div>
-              <p className="text-sm text-nova-white/70">{t('vehicles.dailyRate') || 'Daily rate'}</p>
-              <p className="text-nova-gold font-semibold">${price}/day</p>
+              <p className="text-sm text-nova-white/70">
+                {language === 'fr' ? 'Tarif journalier' : 'Daily rate'}
+              </p>
+              <p className="text-nova-gold font-semibold">${price}/{language === 'fr' ? 'jour' : 'day'}</p>
             </div>
           </div>
           
@@ -63,7 +69,7 @@ function VehicleCard({ name, image, comfort, capacity, price, onClick }: Vehicle
             onClick={onClick} 
             className="gold-btn w-full"
           >
-            {t('vehicles.select')}
+            {language === 'fr' ? 'Sélectionner' : 'Select'}
           </Button>
         </div>
       </CardContent>
@@ -72,7 +78,7 @@ function VehicleCard({ name, image, comfort, capacity, price, onClick }: Vehicle
 }
 
 export function VehiclesSection() {
-  const { t } = useLanguage();
+  const { language } = useLanguage();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   
@@ -85,10 +91,14 @@ export function VehiclesSection() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-3">
-            <span className="gold-gradient-text">{t('vehicles.title')}</span>
+            <span className="gold-gradient-text">
+              {language === 'fr' ? 'Notre Flotte de Véhicules' : 'Our Vehicle Fleet'}
+            </span>
           </h2>
           <p className="text-nova-white/70 max-w-2xl mx-auto">
-            {t('vehicles.subtitle')}
+            {language === 'fr' 
+              ? 'Découvrez notre collection exclusive de véhicules de luxe pour une expérience de conduite incomparable.'
+              : 'Explore our exclusive collection of luxury vehicles for an unparalleled driving experience.'}
           </p>
         </div>
         
