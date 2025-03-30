@@ -105,7 +105,7 @@ export const AdminSidebar = ({
   return (
     <aside 
       className={`fixed bg-nova-black border-r border-nova-gold/20 overflow-y-auto z-20 transition-all duration-300 ${
-        collapsed ? 'w-14' : 'w-56'
+        collapsed ? 'w-12' : 'w-52'
       } ${
         visible ? 'translate-x-0' : '-translate-x-full'
       }`}
@@ -117,29 +117,29 @@ export const AdminSidebar = ({
       }}
     >
       <div className="flex flex-col h-full">
-        <div className="p-3">
+        <div className="p-2">
           {!collapsed && (
-            <h2 className="text-base font-semibold text-nova-gold mb-4">
+            <h2 className="text-sm font-semibold text-nova-gold mb-3">
               {language === 'fr' ? 'Administration' : 'Admin Panel'}
             </h2>
           )}
           
-          <div className="flex justify-end mb-3">
+          <div className="flex justify-end mb-2">
             <button
               onClick={toggleSidebar}
               className="p-1 rounded-full bg-nova-gold/10 text-nova-gold hover:bg-nova-gold/20 transition-colors"
               aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
-              {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+              {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
             </button>
           </div>
         </div>
         
-        <nav className="flex-1 overflow-y-auto px-2 py-1">
+        <nav className="flex-1 overflow-y-auto px-1 py-1">
           {menuGroups.map((group) => (
-            <div key={group.id} className="mb-4">
+            <div key={group.id} className="mb-3">
               {!collapsed && (
-                <h3 className="text-xs uppercase tracking-wider text-nova-gold/70 font-medium mb-1 px-2">
+                <h3 className="text-xs uppercase tracking-wider text-nova-gold/70 font-medium mb-1 px-1">
                   {group.title}
                 </h3>
               )}
@@ -149,7 +149,7 @@ export const AdminSidebar = ({
                     <button
                       onClick={() => setActiveTab(item.id)}
                       className={cn(
-                        "w-full flex items-center px-2 py-1.5 text-xs rounded-md transition-colors",
+                        "w-full flex items-center px-1.5 py-1 text-xs rounded-md transition-colors",
                         activeTab === item.id
                           ? "bg-nova-gold/20 text-nova-white"
                           : "text-nova-white/80 hover:bg-nova-gold/10"
@@ -158,10 +158,10 @@ export const AdminSidebar = ({
                       aria-label={item.title}
                     >
                       <item.icon className={cn(
-                        "h-4 w-4 text-nova-gold",
-                        collapsed ? "mx-auto" : "mr-2"
+                        "h-3.5 w-3.5 text-nova-gold",
+                        collapsed ? "mx-auto" : "mr-1.5"
                       )} />
-                      {!collapsed && <span>{item.title}</span>}
+                      {!collapsed && <span className="text-xs">{item.title}</span>}
                     </button>
                   </li>
                 ))}
@@ -170,7 +170,7 @@ export const AdminSidebar = ({
           ))}
         </nav>
         
-        <div className="p-3 mt-auto border-t border-nova-gold/10">
+        <div className="p-2 mt-auto border-t border-nova-gold/10">
           {!collapsed && (
             <div className="text-xs text-nova-white/50 text-center">
               NovaDrive Admin v1.0
