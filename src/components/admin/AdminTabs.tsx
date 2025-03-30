@@ -57,7 +57,7 @@ export const AdminTabs = ({
       </div>
       
       {/* Content based on active tab */}
-      <div className="mt-4">
+      <div>
         {activeTab === "bookings" && (
           <BookingsTable 
             bookings={bookings} 

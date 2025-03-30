@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -99,7 +100,7 @@ const AdminPage = () => {
     <div className="min-h-screen flex flex-col bg-nova-black text-nova-white">
       <Header />
       
-      <div className="flex-grow pt-20 pb-0">
+      <div className="flex-grow pt-20 relative">
         {/* Sidebar */}
         <AdminSidebar 
           activeTab={activeTab} 
@@ -110,7 +111,7 @@ const AdminPage = () => {
           visible={sidebarVisible}
         />
         
-        {/* Sidebar toggle button - positioned slightly higher and to the right */}
+        {/* Sidebar toggle button */}
         <button
           onClick={toggleSidebarVisibility}
           className="fixed z-30 left-4 top-32 p-2 bg-nova-gold/80 text-nova-black hover:bg-nova-gold rounded-md shadow-md"
@@ -119,9 +120,16 @@ const AdminPage = () => {
           <Menu size={20} />
         </button>
         
-        {/* Main content - Using ScrollArea from shadcn/ui for better scrolling */}
-        <div className="transition-all duration-300 px-6" style={{ height: 'calc(100vh - 140px)' }}>
-          <ScrollArea className="h-full w-full pr-4">
+        {/* Main content area with ScrollArea */}
+        <div 
+          className={`transition-all duration-300 ${sidebarVisible ? 'ml-52' : 'ml-0'} ${sidebarCollapsed && sidebarVisible ? 'ml-12' : ''}`}
+          style={{ 
+            height: 'calc(100vh - 64px)',
+            marginTop: '0px',
+            overflow: 'hidden'
+          }}
+        >
+          <ScrollArea className="h-full w-full px-4">
             <div className="container mx-auto pb-24">
               <div className="flex justify-between items-center mb-6 mt-4">
                 <h1 className="text-xl sm:text-2xl font-bold gold-gradient-text">
