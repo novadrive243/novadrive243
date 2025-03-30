@@ -10,9 +10,11 @@ import { Star } from 'lucide-react';
 interface RatingFormProps {
   onSubmit: (ratings: Record<string, number>, comment: string) => void;
   onCancel?: () => void;
+  vehicleName?: string;
+  bookingId?: string;
 }
 
-export function RatingForm({ onSubmit, onCancel }: RatingFormProps) {
+export function RatingForm({ onSubmit, onCancel, vehicleName, bookingId }: RatingFormProps) {
   const { t } = useLanguage();
   const { toast } = useToast();
   
@@ -36,8 +38,8 @@ export function RatingForm({ onSubmit, onCancel }: RatingFormProps) {
     // Validate that all ratings are provided
     if (Object.values(ratings).some(r => r === 0)) {
       toast({
-        title: "Rating required",
-        description: "Please provide a rating for all categories",
+        title: t('ratings.ratingRequired') || "Rating required",
+        description: t('ratings.provideAllRatings') || "Please provide a rating for all categories",
         variant: "destructive"
       });
       return;
@@ -47,8 +49,8 @@ export function RatingForm({ onSubmit, onCancel }: RatingFormProps) {
     setSubmitted(true);
     
     toast({
-      title: t('ratings.thankYou'),
-      description: "Your feedback helps us improve our service.",
+      title: t('ratings.thankYou') || "Thank you for your feedback!",
+      description: t('ratings.feedbackHelps') || "Your feedback helps us improve our service.",
     });
   };
   
@@ -61,8 +63,8 @@ export function RatingForm({ onSubmit, onCancel }: RatingFormProps) {
               <Star key={star} className="h-8 w-8 text-nova-gold fill-nova-gold" />
             ))}
           </div>
-          <h3 className="text-xl font-bold text-nova-white mb-2">{t('ratings.thankYou')}</h3>
-          <p className="text-nova-white/70">Your feedback helps us improve our service.</p>
+          <h3 className="text-xl font-bold text-nova-white mb-2">{t('ratings.thankYou') || "Thank you for your feedback!"}</h3>
+          <p className="text-nova-white/70">{t('ratings.feedbackHelps') || "Your feedback helps us improve our service."}</p>
         </CardContent>
       </Card>
     );
@@ -71,36 +73,40 @@ export function RatingForm({ onSubmit, onCancel }: RatingFormProps) {
   return (
     <Card className="bg-nova-black/40 border-nova-gold/20">
       <CardHeader className="pb-2">
-        <CardTitle className="text-nova-white">{t('ratings.rateExperience')}</CardTitle>
+        <CardTitle className="text-nova-white">
+          {vehicleName 
+            ? t('ratings.rateVehicle') ? `${t('ratings.rateVehicle')} ${vehicleName}` : `Rate your experience with ${vehicleName}`
+            : t('ratings.rateExperience') || "Rate your experience"}
+        </CardTitle>
       </CardHeader>
       <CardContent className="pt-2 space-y-4">
         <RatingCategory 
-          title={t('ratings.serviceRating')}
+          title={t('ratings.serviceRating') || "Service Quality"}
           value={ratings.service}
           onChange={(value) => handleRatingChange('service', value)}
         />
         
         <RatingCategory 
-          title={t('ratings.driverRating')}
+          title={t('ratings.driverRating') || "Driver Professionalism"}
           value={ratings.driver}
           onChange={(value) => handleRatingChange('driver', value)}
         />
         
         <RatingCategory 
-          title={t('ratings.vehicleRating')}
+          title={t('ratings.vehicleRating') || "Vehicle Condition"}
           value={ratings.vehicle}
           onChange={(value) => handleRatingChange('vehicle', value)}
         />
         
         <div className="pt-2">
           <label className="block text-sm font-medium text-nova-white/70 mb-2">
-            {t('ratings.leaveComment')}
+            {t('ratings.leaveComment') || "Leave a comment"}
           </label>
           <Textarea 
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             className="bg-nova-black/30 border-nova-gold/20 text-nova-white"
-            placeholder="Share your experience..."
+            placeholder={t('ratings.shareExperience') || "Share your experience..."}
             rows={4}
           />
         </div>
@@ -112,7 +118,7 @@ export function RatingForm({ onSubmit, onCancel }: RatingFormProps) {
             onClick={onCancel}
             className="border-nova-gold/20 text-nova-white hover:bg-nova-gold/10"
           >
-            Cancel
+            {t('ratings.cancel') || "Cancel"}
           </Button>
         )}
         <Button 
@@ -120,7 +126,7 @@ export function RatingForm({ onSubmit, onCancel }: RatingFormProps) {
           onClick={handleSubmit}
           className="bg-nova-gold text-nova-black hover:bg-nova-gold/90 ml-auto"
         >
-          {t('ratings.submit')}
+          {t('ratings.submit') || "Submit"}
         </Button>
       </CardFooter>
     </Card>

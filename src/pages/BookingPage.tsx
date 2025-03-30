@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -18,6 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
+import { BookingCompletedModal } from '@/components/booking/BookingCompletedModal';
 
 const BookingPage = () => {
   const { language } = useLanguage();
@@ -36,6 +36,14 @@ const BookingPage = () => {
   const [installmentOption, setInstallmentOption] = useState<'full' | 'three_installments'>('full');
   const [showMobileMoneyDialog, setShowMobileMoneyDialog] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [showCompletedModal, setShowCompletedModal] = useState(false);
+  const [completedBookingDetails, setCompletedBookingDetails] = useState({
+    id: '',
+    vehicleName: '',
+    date: '',
+    duration: '',
+    totalPrice: ''
+  });
   
   const form = useForm({
     defaultValues: {
@@ -134,6 +142,23 @@ const BookingPage = () => {
     return hoursDifference >= 24;
   };
 
+  const handleConfirmBooking = () => {
+    // Validation: For cash payments, require deposit payment method
+    if (paymentMethod === 'cash' && !depositPaymentMethod) {
+      toast({
+        title: language === 'fr' ? 'Erreur de paiement' : 'Payment Error',
+        description: language === 'fr' 
+          ? 'Veuillez sélectionner une méthode de paiement pour le dépôt.' 
+          : 'Please select a payment method for the deposit.',
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Process the payment
+    processPayment();
+  };
+  
   const processPayment = async (mobilePhoneNumber?: string) => {
     if (!paymentMethod) return;
     
@@ -208,6 +233,18 @@ const BookingPage = () => {
           variant: "default",
         });
         
+        // Set completed booking details for the modal
+        setCompletedBookingDetails({
+          id: data.bookingId || 'unknown',
+          vehicleName: getSelectedVehicle()?.name || 'Unknown Vehicle',
+          date: date ? `${format(date, "yyyy-MM-dd")} at ${time}` : '',
+          duration: getDurationLabel(),
+          totalPrice: calculateTotalPrice()
+        });
+        
+        // Show completed modal
+        setShowCompletedModal(true);
+        
         // Reset form after successful payment
         resetForm();
       } else {
@@ -230,22 +267,7 @@ const BookingPage = () => {
     setShowMobileMoneyDialog(false);
   };
 
-  const handleConfirmBooking = () => {
-    // Validation: For cash payments, require deposit payment method
-    if (paymentMethod === 'cash' && !depositPaymentMethod) {
-      toast({
-        title: language === 'fr' ? 'Erreur de paiement' : 'Payment Error',
-        description: language === 'fr' 
-          ? 'Veuillez sélectionner une méthode de paiement pour le dépôt.' 
-          : 'Please select a payment method for the deposit.',
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Process the payment
-    processPayment();
-  };
+  
   
   const resetForm = () => {
     setBookingStep(1);
@@ -393,6 +415,13 @@ const BookingPage = () => {
           </Form>
         </DialogContent>
       </Dialog>
+      
+      {/* Add booking completed modal */}
+      <BookingCompletedModal 
+        open={showCompletedModal}
+        onClose={() => setShowCompletedModal(false)}
+        bookingDetails={completedBookingDetails}
+      />
       
       <BookingFooter language={language} />
       

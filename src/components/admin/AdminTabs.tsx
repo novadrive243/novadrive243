@@ -13,6 +13,7 @@ import { AdminAIAssistant } from './AdminAIAssistant';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { VehicleRatings } from './VehicleRatings';
 
 interface AdminTabsProps {
   activeTab: string;
@@ -110,6 +111,13 @@ export const AdminTabs = ({
               formatCurrency={formatCurrency}
             />
           </div>
+        )}
+        
+        {activeTab === "ratings" && (
+          <VehicleRatings
+            language={language}
+            formatDate={formatDate}
+          />
         )}
         
         {activeTab === "maintenance" && (
