@@ -55,7 +55,7 @@ export const DriversSearch = ({
               <SelectValue placeholder={language === 'fr' ? 'Langue' : 'Language'} />
             </SelectTrigger>
             <SelectContent className="bg-nova-gray border-nova-gold/20">
-              <SelectItem value="" className="text-nova-white">
+              <SelectItem value="all" className="text-nova-white">
                 {language === 'fr' ? 'Toutes les langues' : 'All languages'}
               </SelectItem>
               <SelectItem value="Français" className="text-nova-white">Français</SelectItem>

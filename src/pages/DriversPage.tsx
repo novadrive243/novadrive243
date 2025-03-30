@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLanguage } from '@/contexts/language-context';
 import { DriversHeader } from './drivers/DriversHeader';
@@ -15,7 +16,7 @@ const DriversPage = () => {
   
   const filteredDrivers = driversData.filter(driver => {
     const matchesSearch = driver.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesLanguage = !filterLanguage || driver.languages.includes(filterLanguage);
+    const matchesLanguage = !filterLanguage || filterLanguage === 'all' || driver.languages.includes(filterLanguage);
     return matchesSearch && matchesLanguage;
   });
 
