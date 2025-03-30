@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -67,11 +66,9 @@ export const FaqSection = () => {
     <section className="py-16 bg-nova-black">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-3">
+          <h2 className="text-3xl md:text-4xl font-bold mb-3 text-nova-white">
             <HelpCircle className="inline-block mr-2 text-nova-gold h-8 w-8" />
-            <span className="gold-gradient-text">
-              {language === 'fr' ? 'Questions Fréquentes' : 'Frequently Asked Questions'}
-            </span>
+            {language === 'fr' ? 'Questions Fréquentes' : 'Frequently Asked Questions'}
           </h2>
           <p className="text-nova-white/70 max-w-2xl mx-auto">
             {language === 'fr' 
