@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   ListTodo,
@@ -77,12 +76,7 @@ export const AdminSidebar = ({
           id: "customers",
           title: language === 'fr' ? 'Clients' : 'Customers',
           icon: Users,
-        },
-        {
-          id: "promotions",
-          title: language === 'fr' ? 'Promotions' : 'Promotions',
-          icon: BadgePercent,
-        },
+        }
       ]
     },
     {

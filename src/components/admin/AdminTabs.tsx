@@ -9,7 +9,6 @@ import { AdvancedAnalytics } from './AdvancedAnalytics';
 import { MaintenanceTracking } from './MaintenanceTracking';
 import { StaffManagement } from './StaffManagement';
 import { InventoryManager } from './InventoryManager';
-import { PromotionManager } from './PromotionManager';
 import { AdminAIAssistant } from './AdminAIAssistant';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
@@ -126,18 +125,6 @@ export const AdminTabs = ({
             language={language}
             formatDate={formatDate}
           />
-        )}
-        
-        {activeTab === "promotions" && (
-          <ScrollArea className="h-[calc(100vh-250px)]">
-            <div className="pr-4">
-              <PromotionManager 
-                language={language}
-                formatDate={formatDate}
-                formatCurrency={formatCurrency}
-              />
-            </div>
-          </ScrollArea>
         )}
         
         {activeTab === "ai-assistant" && (
