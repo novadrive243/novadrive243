@@ -32,6 +32,7 @@ export function LoginForm() {
   
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAdminLogin, setIsAdminLogin] = useState(false);
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -48,7 +49,23 @@ export function LoginForm() {
       // In a real app, you would verify credentials with your backend
       console.log("Login attempt:", data);
       
-      // Check if user data exists in localStorage
+      // Check if this is an admin login attempt
+      if (isAdminLogin) {
+        // For demo purposes, using a hardcoded admin credential
+        // In a real app, this would be verified against a secure backend
+        if (data.email === "admin@novadrive.com" && data.password === "admin123") {
+          // Store admin authentication state
+          localStorage.setItem('adminAuth', 'true');
+          
+          // Redirect to admin dashboard
+          navigate("/admin");
+          return;
+        } else {
+          throw new Error("Invalid admin credentials");
+        }
+      }
+      
+      // Regular user login flow
       const userData = localStorage.getItem('userData');
       
       if (userData) {
@@ -82,10 +99,12 @@ export function LoginForm() {
     } catch (error) {
       toast({
         variant: "destructive",
-        title: language === 'fr' ? "Erreur de connexion" : "Login failed",
-        description: language === 'fr' 
-          ? "Adresse e-mail ou mot de passe incorrect" 
-          : "Incorrect email or password",
+        title: isAdminLogin 
+          ? (language === 'fr' ? "Erreur d'authentification admin" : "Admin authentication failed")
+          : (language === 'fr' ? "Erreur de connexion" : "Login failed"),
+        description: isAdminLogin
+          ? (language === 'fr' ? "Identifiants administrateur incorrects" : "Incorrect admin credentials")
+          : (language === 'fr' ? "Adresse e-mail ou mot de passe incorrect" : "Incorrect email or password"),
       });
     } finally {
       setIsLoading(false);
@@ -100,14 +119,33 @@ export function LoginForm() {
     navigate("/register");
   };
   
-  const handleForgotPassword = () => {
-    // Handle forgot password functionality
-    console.log("Forgot password clicked");
+  const toggleAdminLogin = () => {
+    setIsAdminLogin(!isAdminLogin);
+    // Reset form when switching login modes
+    form.reset();
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold text-nova-white">
+            {isAdminLogin 
+              ? (language === 'fr' ? 'Connexion Administrateur' : 'Admin Login') 
+              : (language === 'fr' ? 'Connexion' : 'Login')}
+          </h2>
+          <Button 
+            type="button"
+            variant="link" 
+            className="text-nova-gold p-0 h-auto"
+            onClick={toggleAdminLogin}
+          >
+            {isAdminLogin 
+              ? (language === 'fr' ? 'Connexion utilisateur' : 'User login') 
+              : (language === 'fr' ? 'Connexion admin' : 'Admin login')}
+          </Button>
+        </div>
+        
         <FormField
           control={form.control}
           name="email"
@@ -119,7 +157,9 @@ export function LoginForm() {
               <FormControl>
                 <div className="relative">
                   <Input 
-                    placeholder={language === 'fr' ? 'Entrez votre adresse e-mail' : 'Enter your email address'} 
+                    placeholder={isAdminLogin 
+                      ? (language === 'fr' ? 'Email administrateur' : 'Admin email') 
+                      : (language === 'fr' ? 'Entrez votre adresse e-mail' : 'Enter your email address')} 
                     {...field} 
                     className="bg-nova-black/60 border-nova-gold/30 text-nova-white pl-10"
                     type="email"
@@ -143,7 +183,9 @@ export function LoginForm() {
               <FormControl>
                 <div className="relative">
                   <Input 
-                    placeholder={language === 'fr' ? 'Entrez votre mot de passe' : 'Enter your password'} 
+                    placeholder={isAdminLogin 
+                      ? (language === 'fr' ? 'Mot de passe administrateur' : 'Admin password') 
+                      : (language === 'fr' ? 'Entrez votre mot de passe' : 'Enter your password')} 
                     {...field} 
                     className="bg-nova-black/60 border-nova-gold/30 text-nova-white pl-10 pr-10"
                     type={showPassword ? "text" : "password"}
@@ -165,15 +207,17 @@ export function LoginForm() {
           )}
         />
         
-        <div className="flex justify-end">
-          <Button 
-            variant="link" 
-            className="text-nova-gold p-0 h-auto"
-            onClick={() => navigate("/reset-pin")}
-          >
-            {language === 'fr' ? 'Mot de passe oublié?' : 'Forgot password?'}
-          </Button>
-        </div>
+        {!isAdminLogin && (
+          <div className="flex justify-end">
+            <Button 
+              variant="link" 
+              className="text-nova-gold p-0 h-auto"
+              onClick={() => navigate("/reset-pin")}
+            >
+              {language === 'fr' ? 'Mot de passe oublié?' : 'Forgot password?'}
+            </Button>
+          </div>
+        )}
         
         <Button 
           type="submit" 
@@ -182,21 +226,25 @@ export function LoginForm() {
         >
           {isLoading 
             ? (language === 'fr' ? 'Connexion en cours...' : 'Logging in...') 
-            : (language === 'fr' ? 'Connexion' : 'Login')}
+            : (isAdminLogin 
+                ? (language === 'fr' ? 'Connexion Admin' : 'Admin Login')
+                : (language === 'fr' ? 'Connexion' : 'Login'))}
         </Button>
         
-        <div className="text-center">
-          <p className="text-nova-white/70 text-sm">
-            {language === 'fr' ? 'Pas encore de compte?' : 'Don\'t have an account?'}{' '}
-            <Button 
-              variant="link" 
-              className="text-nova-gold p-0 h-auto font-medium"
-              onClick={handleRegister}
-            >
-              {language === 'fr' ? 'S\'inscrire' : 'Register'}
-            </Button>
-          </p>
-        </div>
+        {!isAdminLogin && (
+          <div className="text-center">
+            <p className="text-nova-white/70 text-sm">
+              {language === 'fr' ? 'Pas encore de compte?' : 'Don\'t have an account?'}{' '}
+              <Button 
+                variant="link" 
+                className="text-nova-gold p-0 h-auto font-medium"
+                onClick={handleRegister}
+              >
+                {language === 'fr' ? 'S\'inscrire' : 'Register'}
+              </Button>
+            </p>
+          </div>
+        )}
       </form>
     </Form>
   );

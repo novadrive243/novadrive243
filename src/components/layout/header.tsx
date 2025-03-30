@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { useLanguage } from "@/contexts/language-context";
-import { Menu } from "lucide-react";
+import { Menu, User } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -13,6 +13,7 @@ import {
 
 export function Header() {
   const { t } = useLanguage();
+  const isAdmin = localStorage.getItem('adminAuth') === 'true';
   
   const menuLinks = [
     { href: "/home", label: t('header.home') || 'Home' },
@@ -52,6 +53,22 @@ export function Header() {
           <Button asChild variant="default" className="gold-btn px-5 py-2 rounded-full ml-4">
             <Link to="/book">{t('header.bookNow') || 'Book Now'}</Link>
           </Button>
+
+          {isAdmin ? (
+            <Button asChild variant="outline" className="border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10 ml-2">
+              <Link to="/admin">
+                <User className="mr-2 h-4 w-4" />
+                Admin
+              </Link>
+            </Button>
+          ) : (
+            <Button asChild variant="ghost" className="text-nova-white hover:text-nova-gold ml-2">
+              <Link to="/login">
+                <User className="mr-2 h-4 w-4" />
+                {t('header.login') || 'Login'}
+              </Link>
+            </Button>
+          )}
           
           <LanguageSwitcher />
         </nav>
@@ -80,6 +97,22 @@ export function Header() {
                 <Button asChild variant="default" className="gold-btn w-full mt-4">
                   <Link to="/book">{t('header.bookNow') || 'Book Now'}</Link>
                 </Button>
+
+                {isAdmin ? (
+                  <Button asChild variant="outline" className="border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10 w-full">
+                    <Link to="/admin">
+                      <User className="mr-2 h-4 w-4" />
+                      Admin
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button asChild variant="ghost" className="text-nova-white hover:text-nova-gold w-full">
+                    <Link to="/login">
+                      <User className="mr-2 h-4 w-4" />
+                      {t('header.login') || 'Login'}
+                    </Link>
+                  </Button>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
