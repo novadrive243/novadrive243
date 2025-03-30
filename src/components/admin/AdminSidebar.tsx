@@ -73,7 +73,12 @@ export const AdminSidebar = ({ activeTab, setActiveTab, language }: AdminSidebar
   ];
 
   return (
-    <Sidebar variant="floating" collapsible="icon" className="bg-nova-black border-r border-nova-gold/20">
+    <Sidebar 
+      variant="floating" 
+      collapsible="icon" 
+      className="bg-nova-black border-r border-nova-gold/20 h-full"
+      side="left"
+    >
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="text-nova-gold">{language === 'fr' ? 'Administration' : 'Admin Panel'}</SidebarGroupLabel>
