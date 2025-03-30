@@ -111,7 +111,7 @@ export const AdminSidebar = ({
       }`}
       style={{ 
         top: '5rem', // Fixed position below header
-        left: '2rem', // Add offset to avoid overlap with toggle button
+        left: 0, // Ensure it starts at the leftmost edge
         bottom: 0,
         height: 'calc(100vh - 5rem)' // Full height minus header height
       }}
