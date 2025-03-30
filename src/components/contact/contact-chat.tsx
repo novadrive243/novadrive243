@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Button } from "@/components/ui/button";
@@ -27,6 +26,9 @@ interface Message {
 
 // API key for OpenAI
 const OPENAI_API_KEY = "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";
+
+// Assistant ID
+const ASSISTANT_ID = "asst_G1ik7q0ohUBVpwdiNsEa4cz";
 
 // Add debounce helper function
 const useDebounce = <T,>(value: T, delay: number): T => {
@@ -63,6 +65,7 @@ const ContactChat = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const cachedResponsesRef = useRef<Map<string, string>>(new Map());
+  const threadIdRef = useRef<string | null>(null);
   
   // Debounce input value to reduce unnecessary renders
   const debouncedInputValue = useDebounce(inputValue, 300);
@@ -81,6 +84,42 @@ const ContactChat = () => {
     };
   }, []);
   
+  // Initialize thread when component mounts
+  useEffect(() => {
+    const createThread = async () => {
+      try {
+        const response = await fetch('https://api.openai.com/v1/threads', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${OPENAI_API_KEY}`,
+            'OpenAI-Beta': 'assistants=v1'
+          },
+          body: JSON.stringify({})
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to create thread: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        threadIdRef.current = data.id;
+        console.log('Thread created:', threadIdRef.current);
+      } catch (error) {
+        console.error('Error creating thread:', error);
+        toast({
+          title: language === 'fr' ? "Erreur de connexion" : "Connection error",
+          description: language === 'fr' 
+            ? "Impossible de démarrer une nouvelle conversation. Veuillez réessayer plus tard." 
+            : "Unable to start a new conversation. Please try again later.",
+          variant: "destructive",
+        });
+      }
+    };
+    
+    createThread();
+  }, [language]);
+  
   // Memoize quick replies to prevent unnecessary re-renders
   const quickReplies = useMemo(() => [
     {
@@ -97,12 +136,16 @@ const ContactChat = () => {
     }
   ], []);
   
-  // Get response from ChatGPT
-  const getChatGPTResponse = useCallback(async (userMessage: string): Promise<string> => {
+  // Get response from OpenAI Assistant
+  const getAssistantResponse = useCallback(async (userMessage: string): Promise<string> => {
     // Check cache first
     const cachedResponse = cachedResponsesRef.current.get(userMessage);
     if (cachedResponse) {
       return cachedResponse;
+    }
+    
+    if (!threadIdRef.current) {
+      throw new Error("No active thread");
     }
     
     try {
@@ -114,40 +157,99 @@ const ContactChat = () => {
       }
       abortControllerRef.current = new AbortController();
       
-      const systemPrompt = language === 'fr' 
-        ? "Tu es un assistant virtuel pour NovaDrive, un service de chauffeur de luxe à Kinshasa, Congo. Réponds de manière professionnelle, concise et utile. Utilise un ton amical mais formel. Limite tes réponses à 3-4 phrases maximum. Réponds en français."
-        : "You are a virtual assistant for NovaDrive, a luxury chauffeur service in Kinshasa, Congo. Answer in a professional, concise, and helpful manner. Use a friendly but formal tone. Limit your responses to 3-4 sentences maximum. Answer in English.";
-      
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      // 1. Add the user message to the thread
+      const messageResponse = await fetch(`https://api.openai.com/v1/threads/${threadIdRef.current}/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${OPENAI_API_KEY}`,
+          'OpenAI-Beta': 'assistants=v1'
         },
         body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [
-            {
-              role: 'system',
-              content: systemPrompt
-            },
-            {
-              role: 'user',
-              content: userMessage
-            }
-          ],
-          temperature: 0.7,
-          max_tokens: 150
+          role: 'user',
+          content: userMessage
         }),
         signal: abortControllerRef.current.signal
       });
       
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
+      if (!messageResponse.ok) {
+        throw new Error(`Failed to add message: ${messageResponse.status}`);
       }
       
-      const data = await response.json();
-      const botResponse = data.choices[0].message.content;
+      // 2. Run the assistant on the thread
+      const runResponse = await fetch(`https://api.openai.com/v1/threads/${threadIdRef.current}/runs`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+          'OpenAI-Beta': 'assistants=v1'
+        },
+        body: JSON.stringify({
+          assistant_id: ASSISTANT_ID
+        }),
+        signal: abortControllerRef.current.signal
+      });
+      
+      if (!runResponse.ok) {
+        throw new Error(`Failed to run assistant: ${runResponse.status}`);
+      }
+      
+      const runData = await runResponse.json();
+      const runId = runData.id;
+      
+      // 3. Poll for the run completion
+      let runStatus = 'queued';
+      while (runStatus !== 'completed' && runStatus !== 'failed' && runStatus !== 'cancelled') {
+        // Wait for 1 second before polling again
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        const statusResponse = await fetch(`https://api.openai.com/v1/threads/${threadIdRef.current}/runs/${runId}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${OPENAI_API_KEY}`,
+            'OpenAI-Beta': 'assistants=v1'
+          },
+          signal: abortControllerRef.current.signal
+        });
+        
+        if (!statusResponse.ok) {
+          throw new Error(`Failed to get run status: ${statusResponse.status}`);
+        }
+        
+        const statusData = await statusResponse.json();
+        runStatus = statusData.status;
+        
+        if (runStatus === 'failed') {
+          throw new Error("Assistant run failed");
+        }
+        
+        if (runStatus === 'cancelled') {
+          throw new Error("Assistant run was cancelled");
+        }
+      }
+      
+      // 4. Get the latest messages
+      const messagesResponse = await fetch(`https://api.openai.com/v1/threads/${threadIdRef.current}/messages?limit=1`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+          'OpenAI-Beta': 'assistants=v1'
+        },
+        signal: abortControllerRef.current.signal
+      });
+      
+      if (!messagesResponse.ok) {
+        throw new Error(`Failed to get messages: ${messagesResponse.status}`);
+      }
+      
+      const messagesData = await messagesResponse.json();
+      const latestMessage = messagesData.data.find(msg => msg.role === 'assistant');
+      
+      if (!latestMessage) {
+        throw new Error("No assistant message found");
+      }
+      
+      const botResponse = latestMessage.content[0].text.value;
       
       // Cache the response
       cachedResponsesRef.current.set(userMessage, botResponse);
@@ -156,7 +258,7 @@ const ContactChat = () => {
     } catch (error) {
       // Only display error if not aborted
       if (error instanceof Error && error.name !== 'AbortError') {
-        console.error('Error calling ChatGPT API:', error);
+        console.error('Error calling OpenAI Assistant API:', error);
         return language === 'fr'
           ? "Désolé, je rencontre des difficultés techniques. Veuillez réessayer plus tard ou contactez-nous directement par téléphone."
           : "Sorry, I'm experiencing technical difficulties. Please try again later or contact us directly by phone.";
@@ -221,23 +323,23 @@ const ContactChat = () => {
     setMessages((prev) => [...prev, processingBotMessage]);
     
     try {
-      // Get response from ChatGPT
-      const chatGPTResponse = await getChatGPTResponse(userMessage.text);
+      // Get response from OpenAI Assistant
+      const assistantResponse = await getAssistantResponse(userMessage.text);
       
       // Update the processing message with the actual response
       setMessages((prev) => 
         prev.map(msg => 
           msg.id === processingBotMessage.id 
-            ? { ...msg, text: chatGPTResponse } 
+            ? { ...msg, text: assistantResponse } 
             : msg
         )
       );
     } catch (error) {
       // Only handle if not aborted
       if (error instanceof Error && error.name !== 'AbortError') {
-        console.error('Error getting ChatGPT response:', error);
+        console.error('Error getting OpenAI Assistant response:', error);
         
-        // Use fallback response if ChatGPT fails
+        // Use fallback response if OpenAI Assistant fails
         const fallbackResponse = getFallbackResponse(userMessage.text);
         
         // Update the processing message with the fallback response
@@ -259,7 +361,7 @@ const ContactChat = () => {
         });
       }
     }
-  }, [inputValue, messages, language, getChatGPTResponse, getFallbackResponse]);
+  }, [inputValue, messages, language, getAssistantResponse, getFallbackResponse]);
   
   const handleQuickReply = useCallback(async (text: string) => {
     const userMessage: Message = {
@@ -282,23 +384,23 @@ const ContactChat = () => {
     setMessages((prev) => [...prev, processingBotMessage]);
     
     try {
-      // Get response from ChatGPT
-      const chatGPTResponse = await getChatGPTResponse(text);
+      // Get response from OpenAI Assistant
+      const assistantResponse = await getAssistantResponse(text);
       
       // Update the processing message with the actual response
       setMessages((prev) => 
         prev.map(msg => 
           msg.id === processingBotMessage.id 
-            ? { ...msg, text: chatGPTResponse } 
+            ? { ...msg, text: assistantResponse } 
             : msg
         )
       );
     } catch (error) {
       // Only handle if not aborted
       if (error instanceof Error && error.name !== 'AbortError') {
-        console.error('Error getting ChatGPT response:', error);
+        console.error('Error getting OpenAI Assistant response:', error);
         
-        // Use fallback response if ChatGPT fails
+        // Use fallback response if OpenAI Assistant fails
         const fallbackResponse = getFallbackResponse(text);
         
         // Update the processing message with the fallback response
@@ -311,7 +413,7 @@ const ContactChat = () => {
         );
       }
     }
-  }, [messages, language, getChatGPTResponse, getFallbackResponse]);
+  }, [messages, language, getAssistantResponse, getFallbackResponse]);
   
   // Memoize the message list to prevent unnecessary re-renders
   const messagesList = useMemo(() => {
