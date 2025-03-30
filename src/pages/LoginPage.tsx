@@ -19,10 +19,10 @@ const LoginPage = () => {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">
-            <span className="gold-gradient-text">NovaDrive</span>
+            <span className="text-nova-white border border-nova-gold px-3 py-1 rounded shadow-[0_0_10px_rgba(232,191,82,0.5)]">NovaDrive</span>
           </h1>
           <p className="text-nova-white/70">
-            {t('login.slogan') || 'Le Pouvoir du Mouvement'}
+            Le Pouvoir du Mouvement
           </p>
         </div>
         
