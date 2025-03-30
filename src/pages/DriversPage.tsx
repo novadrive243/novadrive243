@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/language-context';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,11 +7,12 @@ import { Badge } from '@/components/ui/badge';
 import { Filter, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { DriverRecruitmentCard } from '@/components/drivers/driver-recruitment-card';
 
 const DriversPage = () => {
   const { t, language } = useLanguage();
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterLanguage, setFilterLanguage] = useState<string>('');
   const [showFilters, setShowFilters] = useState(false);
