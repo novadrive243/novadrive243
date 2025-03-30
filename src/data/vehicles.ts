@@ -24,10 +24,10 @@ export const vehicles: Vehicle[] = [
     price: {
       hourly: 60,
       daily: 350,
-      monthly: 9900,
+      monthly: 8400,
       tenDayPackage: 3150,
-      fifteenDayPackage: 5100,
-      twentyFiveDayPackage: 8500
+      fifteenDayPackage: 4500,
+      twentyFiveDayPackage: 7250
     }
   },
   {
