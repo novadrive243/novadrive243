@@ -16,6 +16,7 @@ interface AdminTabsProps {
   formatCurrency: (amount: number) => string;
   getVehicleDailyPrice: (vehicleName: string) => number;
   isLoading: boolean;
+  monthlyRevenue?: number;
 }
 
 export const AdminTabs = ({ 
@@ -26,7 +27,8 @@ export const AdminTabs = ({
   formatDate, 
   formatCurrency,
   getVehicleDailyPrice,
-  isLoading
+  isLoading,
+  monthlyRevenue = 0
 }: AdminTabsProps) => {
   return (
     <Tabs defaultValue="bookings" className="mt-8">
@@ -84,7 +86,13 @@ export const AdminTabs = ({
       </TabsContent>
       
       <TabsContent value="analytics" className="mt-4">
-        <AnalyticsCard language={language} />
+        <AnalyticsCard 
+          language={language} 
+          bookings={bookings}
+          vehicles={vehicles}
+          profiles={profiles}
+          monthlyRevenue={monthlyRevenue}
+        />
       </TabsContent>
     </Tabs>
   );

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -106,6 +105,7 @@ const AdminPage = () => {
                 formatCurrency={formatCurrency}
                 getVehicleDailyPrice={getVehicleDailyPrice}
                 isLoading={isLoading}
+                monthlyRevenue={monthlyRevenue}
               />
             </>
           )}
