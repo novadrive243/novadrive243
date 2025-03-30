@@ -201,7 +201,7 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold gold-gradient-text flex items-center">
+        <h2 className="text-2xl font-bold text-nova-white flex items-center">
           <Settings className="mr-2 h-6 w-6 text-nova-gold" />
           {language === 'fr' ? 'Suivi de Maintenance' : 'Maintenance Tracking'}
         </h2>
