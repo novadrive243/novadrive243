@@ -10,6 +10,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Notification, NotificationType } from '@/components/notifications/notifications-center';
 import { useToast } from '@/hooks/use-toast';
 import { Trash2, Bell, Plus, RefreshCw, Send } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface NotificationsManagerProps {
   language: string;
@@ -210,36 +211,94 @@ export const NotificationsManager = ({ language }: NotificationsManagerProps) =>
               <TabsTrigger value="promotion">{language === 'fr' ? "Promotion" : "Promotion"}</TabsTrigger>
             </TabsList>
             
-            <ScrollArea className="h-[400px] w-full pr-4">
-              {filteredNotifications.length > 0 ? (
-                <div className="space-y-4">
-                  {filteredNotifications.map(notification => (
-                    <div 
-                      key={notification.id} 
-                      className={`p-4 rounded-lg border ${!notification.read ? 'bg-muted/10 border-nova-gold/20' : 'border-border'}`}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <Bell className="h-4 w-4 text-nova-gold" />
-                            <h3 className="font-medium">{notification.title}</h3>
+            <TabsContent value="all">
+              <ScrollArea className="h-[400px] w-full pr-4">
+                {filteredNotifications.length > 0 ? (
+                  <div className="space-y-4">
+                    {filteredNotifications.map(notification => (
+                      <div 
+                        key={notification.id} 
+                        className={`p-4 rounded-lg border ${!notification.read ? 'bg-muted/10 border-nova-gold/20' : 'border-border'}`}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <Bell className="h-4 w-4 text-nova-gold" />
+                              <h3 className="font-medium">{notification.title}</h3>
+                            </div>
+                            <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
+                            <p className="text-xs text-muted-foreground mt-2">{new Date(notification.date).toLocaleString()}</p>
+                            <div className="mt-2">
+                              <Badge variant="outline" className="mr-2">
+                                {notification.type}
+                              </Badge>
+                              {!notification.read && (
+                                <Badge className="bg-red-500/90">
+                                  {language === 'fr' ? "Non lu" : "Unread"}
+                                </Badge>
+                              )}
+                            </div>
                           </div>
-                          <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
-                          <p className="text-xs text-muted-foreground mt-2">{new Date(notification.date).toLocaleString()}</p>
-                          <div className="mt-2">
-                            <Badge variant="outline" className="mr-2">
-                              {notification.type}
-                            </Badge>
+                          
+                          <div className="flex gap-2">
                             {!notification.read && (
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => handleMarkAsRead(notification.id)}
+                              >
+                                {language === 'fr' ? "Marquer comme lu" : "Mark as read"}
+                              </Button>
+                            )}
+                            <Button 
+                              size="sm" 
+                              variant="destructive"
+                              onClick={() => handleDeleteNotification(notification.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-40 text-muted-foreground">
+                    <Bell className="h-8 w-8 mb-2 text-muted-foreground/50" />
+                    <p>{language === 'fr' ? "Aucune notification" : "No notifications"}</p>
+                  </div>
+                )}
+              </ScrollArea>
+            </TabsContent>
+            
+            <TabsContent value="unread">
+              <ScrollArea className="h-[400px] w-full pr-4">
+                {filteredNotifications.length > 0 ? (
+                  <div className="space-y-4">
+                    {filteredNotifications.map(notification => (
+                      <div 
+                        key={notification.id} 
+                        className="p-4 rounded-lg border bg-muted/10 border-nova-gold/20"
+                      >
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <Bell className="h-4 w-4 text-nova-gold" />
+                              <h3 className="font-medium">{notification.title}</h3>
+                            </div>
+                            <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
+                            <p className="text-xs text-muted-foreground mt-2">{new Date(notification.date).toLocaleString()}</p>
+                            <div className="mt-2">
+                              <Badge variant="outline" className="mr-2">
+                                {notification.type}
+                              </Badge>
                               <Badge className="bg-red-500/90">
                                 {language === 'fr' ? "Non lu" : "Unread"}
                               </Badge>
-                            )}
+                            </div>
                           </div>
-                        </div>
-                        
-                        <div className="flex gap-2">
-                          {!notification.read && (
+                          
+                          <div className="flex gap-2">
                             <Button 
                               size="sm" 
                               variant="outline"
@@ -247,27 +306,207 @@ export const NotificationsManager = ({ language }: NotificationsManagerProps) =>
                             >
                               {language === 'fr' ? "Marquer comme lu" : "Mark as read"}
                             </Button>
-                          )}
-                          <Button 
-                            size="sm" 
-                            variant="destructive"
-                            onClick={() => handleDeleteNotification(notification.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                            <Button 
+                              size="sm" 
+                              variant="destructive"
+                              onClick={() => handleDeleteNotification(notification.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center h-40 text-muted-foreground">
-                  <Bell className="h-8 w-8 mb-2 text-muted-foreground/50" />
-                  <p>{language === 'fr' ? "Aucune notification" : "No notifications"}</p>
-                </div>
-              )}
-            </ScrollArea>
-          </TabsList>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-40 text-muted-foreground">
+                    <Bell className="h-8 w-8 mb-2 text-muted-foreground/50" />
+                    <p>{language === 'fr' ? "Aucune notification non lue" : "No unread notifications"}</p>
+                  </div>
+                )}
+              </ScrollArea>
+            </TabsContent>
+            
+            <TabsContent value="system">
+              <ScrollArea className="h-[400px] w-full pr-4">
+                {filteredNotifications.length > 0 ? (
+                  <div className="space-y-4">
+                    {filteredNotifications.map(notification => (
+                      <div 
+                        key={notification.id} 
+                        className={`p-4 rounded-lg border ${!notification.read ? 'bg-muted/10 border-nova-gold/20' : 'border-border'}`}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <Bell className="h-4 w-4 text-nova-gold" />
+                              <h3 className="font-medium">{notification.title}</h3>
+                            </div>
+                            <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
+                            <p className="text-xs text-muted-foreground mt-2">{new Date(notification.date).toLocaleString()}</p>
+                            <div className="mt-2">
+                              <Badge variant="outline" className="mr-2">
+                                {notification.type}
+                              </Badge>
+                              {!notification.read && (
+                                <Badge className="bg-red-500/90">
+                                  {language === 'fr' ? "Non lu" : "Unread"}
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="flex gap-2">
+                            {!notification.read && (
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => handleMarkAsRead(notification.id)}
+                              >
+                                {language === 'fr' ? "Marquer comme lu" : "Mark as read"}
+                              </Button>
+                            )}
+                            <Button 
+                              size="sm" 
+                              variant="destructive"
+                              onClick={() => handleDeleteNotification(notification.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-40 text-muted-foreground">
+                    <Bell className="h-8 w-8 mb-2 text-muted-foreground/50" />
+                    <p>{language === 'fr' ? "Aucune notification système" : "No system notifications"}</p>
+                  </div>
+                )}
+              </ScrollArea>
+            </TabsContent>
+            
+            <TabsContent value="booking">
+              <ScrollArea className="h-[400px] w-full pr-4">
+                {filteredNotifications.length > 0 ? (
+                  <div className="space-y-4">
+                    {filteredNotifications.map(notification => (
+                      <div 
+                        key={notification.id} 
+                        className={`p-4 rounded-lg border ${!notification.read ? 'bg-muted/10 border-nova-gold/20' : 'border-border'}`}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <Bell className="h-4 w-4 text-nova-gold" />
+                              <h3 className="font-medium">{notification.title}</h3>
+                            </div>
+                            <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
+                            <p className="text-xs text-muted-foreground mt-2">{new Date(notification.date).toLocaleString()}</p>
+                            <div className="mt-2">
+                              <Badge variant="outline" className="mr-2">
+                                {notification.type}
+                              </Badge>
+                              {!notification.read && (
+                                <Badge className="bg-red-500/90">
+                                  {language === 'fr' ? "Non lu" : "Unread"}
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="flex gap-2">
+                            {!notification.read && (
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => handleMarkAsRead(notification.id)}
+                              >
+                                {language === 'fr' ? "Marquer comme lu" : "Mark as read"}
+                              </Button>
+                            )}
+                            <Button 
+                              size="sm" 
+                              variant="destructive"
+                              onClick={() => handleDeleteNotification(notification.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-40 text-muted-foreground">
+                    <Bell className="h-8 w-8 mb-2 text-muted-foreground/50" />
+                    <p>{language === 'fr' ? "Aucune notification de réservation" : "No booking notifications"}</p>
+                  </div>
+                )}
+              </ScrollArea>
+            </TabsContent>
+            
+            <TabsContent value="promotion">
+              <ScrollArea className="h-[400px] w-full pr-4">
+                {filteredNotifications.length > 0 ? (
+                  <div className="space-y-4">
+                    {filteredNotifications.map(notification => (
+                      <div 
+                        key={notification.id} 
+                        className={`p-4 rounded-lg border ${!notification.read ? 'bg-muted/10 border-nova-gold/20' : 'border-border'}`}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <Bell className="h-4 w-4 text-nova-gold" />
+                              <h3 className="font-medium">{notification.title}</h3>
+                            </div>
+                            <p className="text-sm text-muted-foreground mt-1">{notification.message}</p>
+                            <p className="text-xs text-muted-foreground mt-2">{new Date(notification.date).toLocaleString()}</p>
+                            <div className="mt-2">
+                              <Badge variant="outline" className="mr-2">
+                                {notification.type}
+                              </Badge>
+                              {!notification.read && (
+                                <Badge className="bg-red-500/90">
+                                  {language === 'fr' ? "Non lu" : "Unread"}
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="flex gap-2">
+                            {!notification.read && (
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => handleMarkAsRead(notification.id)}
+                              >
+                                {language === 'fr' ? "Marquer comme lu" : "Mark as read"}
+                              </Button>
+                            )}
+                            <Button 
+                              size="sm" 
+                              variant="destructive"
+                              onClick={() => handleDeleteNotification(notification.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-40 text-muted-foreground">
+                    <Bell className="h-8 w-8 mb-2 text-muted-foreground/50" />
+                    <p>{language === 'fr' ? "Aucune notification de promotion" : "No promotion notifications"}</p>
+                  </div>
+                )}
+              </ScrollArea>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>
