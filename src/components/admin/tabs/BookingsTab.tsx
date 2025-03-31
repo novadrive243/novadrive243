@@ -35,10 +35,16 @@ export const BookingsTab = ({
                 : 'No bookings available. Start adding bookings.'}
           </CardDescription>
         </div>
-        <Button variant="outline" size="sm" className="border-nova-gold/30 text-nova-gold hover:bg-nova-gold/10 hover:text-nova-white">
-          <PlusCircle className="h-4 w-4 mr-2" />
-          {language === 'fr' ? 'Ajouter' : 'Add'}
-        </Button>
+        <div className="flex space-x-2">
+          <Button variant="outline" size="sm" className="border-nova-gold/30 text-nova-gold hover:bg-nova-gold/10 hover:text-nova-white">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            {language === 'fr' ? 'Actualiser' : 'Refresh'}
+          </Button>
+          <Button variant="outline" size="sm" className="border-nova-gold/30 text-nova-gold hover:bg-nova-gold/10 hover:text-nova-white">
+            <PlusCircle className="h-4 w-4 mr-2" />
+            {language === 'fr' ? 'Ajouter' : 'Add'}
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <BookingsTable 

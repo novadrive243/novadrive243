@@ -4,7 +4,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { useLanguage } from "@/contexts/language-context";
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, Calendar, Moon } from "lucide-react";
+import { Clock, Calendar, Moon, Clock3 } from "lucide-react";
 import { vehicles } from "@/data/vehicles";
 import { Link } from "react-router-dom";
 
@@ -46,14 +46,14 @@ const PricingPage = () => {
                         <Clock className="w-5 h-5 text-nova-gold mr-3 mt-1 flex-shrink-0" />
                         <div>
                           <p className="font-semibold">${vehicle.price.hourly} par heure</p>
-                          <p className="text-sm text-nova-white/70">De 7h à 21h</p>
+                          <p className="text-sm text-nova-white/70">De 7h à 21h (minimum 2h)</p>
                         </div>
                       </li>
                       <li className="flex items-start">
                         <Moon className="w-5 h-5 text-nova-gold mr-3 mt-1 flex-shrink-0" />
                         <div>
                           <p className="font-semibold">Supplément après 21h</p>
-                          <p className="text-sm text-nova-white/70">+20$ par heure</p>
+                          <p className="text-sm text-nova-white/70">Frais fixe de +20$</p>
                         </div>
                       </li>
                     </ul>
@@ -76,7 +76,11 @@ const PricingPage = () => {
               </li>
               <li className="flex items-start">
                 <div className="w-2 h-2 rounded-full bg-nova-gold mt-2 mr-3"></div>
-                <p>Un supplément de 20$ par heure s'applique pour les services après 21h00.</p>
+                <p>Un supplément fixe de 20$ s'applique pour les services après 21h00.</p>
+              </li>
+              <li className="flex items-start">
+                <div className="w-2 h-2 rounded-full bg-nova-gold mt-2 mr-3"></div>
+                <p>Durée minimum de réservation : 2 heures.</p>
               </li>
               <li className="flex items-start">
                 <div className="w-2 h-2 rounded-full bg-nova-gold mt-2 mr-3"></div>

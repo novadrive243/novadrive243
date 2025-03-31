@@ -1,3 +1,4 @@
+
 import { Vehicle } from '@/data/vehicles';
 import React from 'react';
 import { Star } from 'lucide-react';
@@ -146,8 +147,9 @@ export const calculateEffectiveDailyRate = (
  * Generate arrays for duration options
  */
 export const generateDurationOptions = () => {
-  // Hours options: 1, 2, 3, 4, 5, 6, 7, 14, 21, 30
-  const hourOptions = [1, 2, 3, 4, 5, 6, 7, 14, 21, 30];
+  // Hours options: 2, 3, 4, 5, 6, 7, 14, 21, 30
+  // Updated to start at 2 hours instead of 1 to reflect the 2-hour minimum
+  const hourOptions = [2, 3, 4, 5, 6, 7, 14, 21, 30];
   
   // Create an array with all days of the month (1-31)
   const dayOptions = Array.from({ length: 31 }, (_, i) => i + 1);
