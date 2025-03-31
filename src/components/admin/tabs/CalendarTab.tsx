@@ -17,12 +17,12 @@ export const CalendarTab = ({
   isLoading
 }: CalendarTabProps) => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
+    <Card className="shadow-md">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-2xl font-bold text-nova-white">
           {language === 'fr' ? 'Calendrier des Véhicules' : 'Vehicle Calendar'}
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-nova-white/70">
           {language === 'fr' 
             ? 'Consultez et gérez la disponibilité des véhicules' 
             : 'View and manage vehicle availability'}

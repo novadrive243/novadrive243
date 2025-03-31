@@ -99,7 +99,7 @@ export const VehicleCalendar = ({ vehicles, bookings, language, isLoading }: Veh
   return (
     <Card className="bg-nova-gray/30 border-nova-gold/30">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-nova-white">
+        <CardTitle className="text-nova-white text-xl">
           {language === 'fr' ? 'Calendrier de Disponibilité' : 'Availability Calendar'}
         </CardTitle>
         <div className="w-[200px]">
@@ -110,7 +110,7 @@ export const VehicleCalendar = ({ vehicles, bookings, language, isLoading }: Veh
             <SelectTrigger className="border-nova-gold/50 bg-nova-black text-nova-white">
               <SelectValue placeholder={language === 'fr' ? 'Sélectionner un véhicule' : 'Select a vehicle'} />
             </SelectTrigger>
-            <SelectContent className="bg-nova-black border-nova-gold/50">
+            <SelectContent className="bg-nova-black border-nova-gold/50 z-50">
               {vehicles.map(vehicle => (
                 <SelectItem key={vehicle.id} value={vehicle.id} className="text-nova-white">
                   {vehicle.name}
@@ -122,7 +122,7 @@ export const VehicleCalendar = ({ vehicles, bookings, language, isLoading }: Veh
       </CardHeader>
       <CardContent>
         {selectedVehicleData ? (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
                 <div className="h-12 w-16 rounded overflow-hidden mr-3">
@@ -158,26 +158,38 @@ export const VehicleCalendar = ({ vehicles, bookings, language, isLoading }: Veh
               </div>
             </div>
             
-            <div className="flex flex-col items-center">
-              <Calendar
-                mode="multiple"
-                selected={bookedDates}
-                className="rounded border border-nova-gold/20 bg-nova-black/50"
-                classNames={{
-                  day_selected: "bg-red-500/80 text-white hover:bg-red-500 hover:text-white focus:bg-red-500 focus:text-white",
-                  day_today: "bg-nova-gold/30 text-nova-white",
-                }}
-                disabled={bookedDates}
-                footer={
-                  <div className="pt-3 border-t border-nova-gold/10">
-                    <p className="text-sm text-nova-white/70 text-center">
-                      {language === 'fr' 
-                        ? 'Les dates en rouge sont réservées' 
-                        : 'Red dates are booked'}
-                    </p>
-                  </div>
-                }
-              />
+            <div className="flex flex-col items-center mt-4">
+              <div className="w-full max-w-[350px] mx-auto">
+                <Calendar
+                  mode="multiple"
+                  selected={bookedDates}
+                  className="rounded border border-nova-gold/20 bg-nova-black/50 w-full"
+                  classNames={{
+                    day_selected: "bg-red-500/80 text-white hover:bg-red-500 hover:text-white focus:bg-red-500 focus:text-white",
+                    day_today: "bg-nova-gold/30 text-nova-white",
+                    months: "w-full",
+                    month: "w-full",
+                    table: "w-full",
+                    head_cell: "text-nova-white/70 w-8 font-normal text-[0.8rem]",
+                    cell: "h-8 w-8 text-center p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md",
+                    day: "h-8 w-8 p-0 font-normal text-sm aria-selected:opacity-100",
+                    caption: "flex justify-center pt-1 relative items-center text-nova-white",
+                    caption_label: "text-sm font-medium text-nova-white",
+                    nav: "space-x-1 flex items-center text-nova-gold",
+                    nav_button: "h-7 w-7 bg-nova-black text-nova-gold p-0 opacity-70 hover:opacity-100 border border-nova-gold/30",
+                  }}
+                  disabled={bookedDates}
+                  footer={
+                    <div className="pt-3 border-t border-nova-gold/10">
+                      <p className="text-sm text-nova-white/70 text-center">
+                        {language === 'fr' 
+                          ? 'Les dates en rouge sont réservées' 
+                          : 'Red dates are booked'}
+                      </p>
+                    </div>
+                  }
+                />
+              </div>
             </div>
             
             <div className="text-center pt-2">
