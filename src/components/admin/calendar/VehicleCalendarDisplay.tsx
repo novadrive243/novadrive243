@@ -54,14 +54,9 @@ export const VehicleCalendarDisplay = ({
       fromMonth: new Date(),
       disabled: (date: Date) => false,
       fixedWeeks: true,
-      weekStartsOn: 1,
+      weekStartsOn: 1 as 0 | 1 | 2 | 3 | 4 | 5 | 6, // Fix: Explicitly type as required union type
       locale: language === 'fr' ? fr : enUS
     };
-
-    // For "week" or "day" views, we can adjust other parameters, 
-    // but since react-day-picker doesn't directly support these views, 
-    // we'll have to handle them differently in a more comprehensive implementation
-    // For now, we'll just adjust the number of months displayed
 
     return config;
   };
