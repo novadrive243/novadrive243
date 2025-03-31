@@ -4,7 +4,6 @@ import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { useLanguage } from '@/contexts/language-context';
 
 // Tab components
-import { TabTriggers } from './tabs/TabTriggers';
 import { VehiclesTab } from './tabs/VehiclesTab';
 import { BookingsTab } from './tabs/BookingsTab';
 import { CustomersTab } from './tabs/CustomersTab';
@@ -15,6 +14,7 @@ import { MaintenanceTab } from './tabs/MaintenanceTab';
 import { RidesTab } from './tabs/RidesTab';
 import { SessionsTab } from './tabs/SessionsTab';
 import { NotificationsTab } from './tabs/NotificationsTab';
+import { CalendarTab } from './tabs/CalendarTab';
 
 interface AdminTabsProps {
   activeTab: string;
@@ -59,14 +59,39 @@ export const AdminTabs = ({
     }
   }, [activeTab, setActiveTab]);
 
-  return (
-    <Tabs defaultValue="bookings" value={activeTab} onValueChange={handleTabChange} className="w-full space-y-8">
-      <div className="sticky top-0 z-10 bg-nova-black pt-4 pb-2">
-        <TabTriggers activeTab={activeTab} />
+  // Show empty state messages when there's no data
+  const isEmpty = bookings.length === 0 && vehicles.length === 0 && profiles.length === 0;
+
+  // Render empty state if there's no data
+  if (isEmpty && !isLoading) {
+    return (
+      <div className="w-full flex flex-col items-center justify-center space-y-4 p-8 text-center">
+        <div className="bg-nova-black/40 border border-nova-gold/20 rounded-lg p-8 max-w-2xl">
+          <h2 className="text-2xl font-bold text-nova-white mb-4">
+            {language === 'fr' ? 'Aucune donnée disponible' : 'No Data Available'}
+          </h2>
+          <p className="text-nova-white/80 mb-6">
+            {language === 'fr' 
+              ? 'Utilisez les boutons ci-dessous pour ajouter des véhicules, des clients ou des réservations au système.'
+              : 'Use the buttons below to add vehicles, customers, or bookings to the system.'}
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button 
+              onClick={refreshData}
+              className="bg-nova-gold text-nova-black hover:bg-nova-gold/90 px-4 py-2 rounded-md transition-colors"
+            >
+              {language === 'fr' ? 'Rafraîchir les données' : 'Refresh Data'}
+            </button>
+          </div>
+        </div>
       </div>
-      
-      {/* Tabs content with increased top margin for better spacing */}
-      <TabsContent value="bookings" className="mt-8">
+    );
+  }
+
+  return (
+    <Tabs defaultValue="bookings" value={activeTab} onValueChange={handleTabChange} className="w-full space-y-4">
+      {/* Tabs content */}
+      <TabsContent value="bookings" className="mt-4">
         <BookingsTab 
           bookings={bookings}
           language={language}
@@ -75,7 +100,7 @@ export const AdminTabs = ({
         />
       </TabsContent>
       
-      <TabsContent value="vehicles" className="mt-8">
+      <TabsContent value="vehicles" className="mt-4">
         <VehiclesTab 
           vehicles={vehicles}
           language={language}
@@ -84,7 +109,7 @@ export const AdminTabs = ({
         />
       </TabsContent>
       
-      <TabsContent value="customers" className="mt-8">
+      <TabsContent value="customers" className="mt-4">
         <CustomersTab 
           profiles={profiles}
           language={language}
@@ -92,14 +117,14 @@ export const AdminTabs = ({
         />
       </TabsContent>
       
-      <TabsContent value="staff" className="mt-8">
+      <TabsContent value="staff" className="mt-4">
         <StaffTab 
           language={language}
           formatDate={formatDate}
         />
       </TabsContent>
       
-      <TabsContent value="analytics" className="mt-8">
+      <TabsContent value="analytics" className="mt-4">
         <AnalyticsTab 
           bookings={bookings}
           vehicles={vehicles}
@@ -109,7 +134,7 @@ export const AdminTabs = ({
         />
       </TabsContent>
       
-      <TabsContent value="inventory" className="mt-8">
+      <TabsContent value="inventory" className="mt-4">
         <InventoryTab 
           vehicles={vehicles}
           language={language}
@@ -117,7 +142,7 @@ export const AdminTabs = ({
         />
       </TabsContent>
       
-      <TabsContent value="maintenance" className="mt-8">
+      <TabsContent value="maintenance" className="mt-4">
         <MaintenanceTab 
           vehicles={vehicles}
           language={language}
@@ -125,15 +150,24 @@ export const AdminTabs = ({
         />
       </TabsContent>
       
-      <TabsContent value="rides" className="mt-8">
+      <TabsContent value="calendar" className="mt-4">
+        <CalendarTab 
+          vehicles={vehicles}
+          bookings={bookings}
+          language={language}
+          isLoading={isLoading}
+        />
+      </TabsContent>
+      
+      <TabsContent value="rides" className="mt-4">
         <RidesTab />
       </TabsContent>
       
-      <TabsContent value="sessions" className="mt-8">
+      <TabsContent value="sessions" className="mt-4">
         <SessionsTab />
       </TabsContent>
       
-      <TabsContent value="notifications" className="mt-8">
+      <TabsContent value="notifications" className="mt-4">
         <NotificationsTab language={language} />
       </TabsContent>
     </Tabs>

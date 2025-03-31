@@ -24,8 +24,12 @@ export const BookingsTab = ({
         </CardTitle>
         <CardDescription>
           {language === 'fr' 
-            ? 'Gérer les réservations et les réservations des clients' 
-            : 'Manage customer bookings and reservations'}
+            ? bookings.length > 0 
+              ? 'Gérer les réservations et les réservations des clients' 
+              : 'Aucune réservation disponible. Commencez à ajouter des réservations.'
+            : bookings.length > 0 
+              ? 'Manage customer bookings and reservations' 
+              : 'No bookings available. Start adding bookings.'}
         </CardDescription>
       </CardHeader>
       <CardContent>

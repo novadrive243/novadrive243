@@ -64,7 +64,7 @@ export const BookingsTable = ({ bookings, language, formatDate, formatCurrency }
           </Table>
         ) : (
           <div className="text-center p-8 text-nova-white/70">
-            {language === 'fr' ? 'Aucune réservation trouvée' : 'No bookings found'}
+            {language === 'fr' ? 'Aucune réservation disponible. Commencez à ajouter des réservations.' : 'No bookings available. Start adding bookings.'}
           </div>
         )}
       </CardContent>
