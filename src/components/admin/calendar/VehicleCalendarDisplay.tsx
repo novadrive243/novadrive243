@@ -28,43 +28,32 @@ export const VehicleCalendarDisplay = ({
     );
   };
 
-  // Calculate the number of months to display based on the view
-  // We only support 'month' view directly, but we can adjust the behavior for others
-  const getCalendarConfig = () => {
-    // Default configuration with common props
-    const config = {
-      mode: "range" as const,
-      selected: {
-        from: new Date(),
-        to: new Date(new Date().setDate(new Date().getDate() + 7))
-      },
-      className: "rounded-md text-nova-white",
-      classNames: {
-        day_today: "bg-nova-gold/20 text-nova-white",
-        day_selected: "bg-nova-gold text-nova-black hover:bg-nova-gold/80",
-        day_disabled: "text-nova-white/30",
-        day_range_middle: "bg-nova-gold/30 text-nova-white rounded-none", 
-      },
-      modifiers: {
-        booked: bookedDateObjects
-      },
-      modifiersClassNames: {
-        booked: "bg-red-500/20 text-red-200 relative before:absolute before:inset-0 before:border-2 before:border-red-500/40 before:rounded-full before:scale-75"
-      },
-      fromMonth: new Date(),
-      disabled: (date: Date) => false,
-      fixedWeeks: true,
-      weekStartsOn: 1 as 0 | 1 | 2 | 3 | 4 | 5 | 6,
-      locale: language === 'fr' ? fr : enUS
-    };
-
-    return config;
-  };
-
   return (
     <div className="rounded-md border border-nova-gold/20 p-4 bg-nova-gray/10">
       <Calendar
-        {...getCalendarConfig()}
+        mode="range"
+        selected={{
+          from: new Date(),
+          to: new Date(new Date().setDate(new Date().getDate() + 7))
+        }}
+        className="rounded-md text-nova-white"
+        classNames={{
+          day_today: "bg-nova-gold/20 text-nova-white",
+          day_selected: "bg-nova-gold text-nova-black hover:bg-nova-gold/80",
+          day_disabled: "text-nova-white/30",
+          day_range_middle: "bg-nova-gold/30 text-nova-white rounded-none"
+        }}
+        modifiers={{
+          booked: bookedDateObjects
+        }}
+        modifiersClassNames={{
+          booked: "bg-red-500/20 text-red-200 relative before:absolute before:inset-0 before:border-2 before:border-red-500/40 before:rounded-full before:scale-75"
+        }}
+        fromMonth={new Date()}
+        disabled={(date: Date) => false}
+        fixedWeeks={true}
+        weekStartsOn={1}
+        locale={language === 'fr' ? fr : enUS}
       />
       {view !== 'month' && (
         <div className="mt-2 text-xs text-nova-white/50 text-center">
