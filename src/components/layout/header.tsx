@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, User, ShoppingCart, ChevronDown, LogOut } from 'lucide-react';
+import { Menu, X, User, ShoppingCart, ChevronDown, LogOut, Settings, UserRound } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { useLanguage } from "@/contexts/language-context";
@@ -9,6 +9,14 @@ import { useTheme } from "@/contexts/theme-context";
 import { NotificationsCenter } from "@/components/notifications/notifications-center";
 import { useAuth } from '@/hooks/use-auth';
 import ContactChatDrawer from '@/components/contact/chat/ContactChatDrawer';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Header = () => {
   const { theme, setTheme } = useTheme();
@@ -17,7 +25,6 @@ export const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  const [showUserMenu, setShowUserMenu] = useState(false);
   
   // Empty notifications array
   const notifications = [];
@@ -41,11 +48,6 @@ export const Header = () => {
   // Toggle menu
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-  };
-
-  // Toggle user menu
-  const toggleUserMenu = () => {
-    setShowUserMenu(!showUserMenu);
   };
 
   // Handle sign out
@@ -98,43 +100,59 @@ export const Header = () => {
           <NotificationsCenter notifications={notifications} />
 
           {user ? (
-            <div className="relative">
-              <Button variant="secondary" className="gap-2 px-3" onClick={toggleUserMenu}>
-                <User className="h-4 w-4" />
-                {user.email}
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-              {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-nova-black border border-nova-gold/20 z-10">
-                  <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                    <Link
-                      to="/account"
-                      className="block px-4 py-2 text-sm text-nova-white hover:bg-nova-gold/10 transition-colors"
-                      role="menuitem"
-                    >
-                      {t('header.account')}
-                    </Link>
-                    {user.role === 'admin' && (
-                      <Link
-                        to="/admin"
-                        className="block px-4 py-2 text-sm text-nova-white hover:bg-nova-gold/10 transition-colors"
-                        role="menuitem"
-                      >
-                        {t('header.admin')}
-                      </Link>
-                    )}
-                    <button
-                      onClick={handleSignOut}
-                      className="flex items-center px-4 py-2 text-sm text-nova-white hover:bg-nova-gold/10 transition-colors w-full text-left"
-                      role="menuitem"
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      {t('header.signOut')}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="secondary" className="gap-2 px-3">
+                  <UserRound className="h-4 w-4" />
+                  <span className="hidden sm:inline">{user.email}</span>
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 bg-nova-black border border-nova-gold/20">
+                <DropdownMenuLabel className="text-nova-gold">
+                  {t('header.myProfile')}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-nova-gold/20" />
+                <DropdownMenuItem 
+                  className="text-nova-white hover:bg-nova-gold/10 cursor-pointer"
+                  onClick={() => navigate('/account')}
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  <span>{t('header.account')}</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="text-nova-white hover:bg-nova-gold/10 cursor-pointer"
+                  onClick={() => navigate('/account?tab=reservations')}
+                >
+                  <ShoppingCart className="mr-2 h-4 w-4" />
+                  <span>{t('header.myBookings')}</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="text-nova-white hover:bg-nova-gold/10 cursor-pointer"
+                  onClick={() => navigate('/account?tab=settings')}
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>{t('header.settings')}</span>
+                </DropdownMenuItem>
+                {user.role === 'admin' && (
+                  <DropdownMenuItem 
+                    className="text-nova-white hover:bg-nova-gold/10 cursor-pointer"
+                    onClick={() => navigate('/admin')}
+                  >
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>{t('header.admin')}</span>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator className="bg-nova-gold/20" />
+                <DropdownMenuItem 
+                  className="text-red-400 hover:bg-red-900/20 cursor-pointer"
+                  onClick={handleSignOut}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>{t('header.signOut')}</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <Link to="/login">
               <Button variant="secondary">{t('header.login')}</Button>
