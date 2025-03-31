@@ -3,7 +3,11 @@ import React from 'react';
 import { useLanguage } from '@/contexts/language-context';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Star } from 'lucide-react';
+import { Star, RotateCcw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/use-auth';
 
 interface LoyaltyCardProps {
   points: number;
@@ -14,10 +18,13 @@ interface LoyaltyCardProps {
     description: string;
     points: number;
   }[];
+  onPointsReset?: () => void;
 }
 
-export function LoyaltyCard({ points, level, nextLevelPoints, history = [] }: LoyaltyCardProps) {
+export function LoyaltyCard({ points, level, nextLevelPoints, history = [], onPointsReset }: LoyaltyCardProps) {
   const { t } = useLanguage();
+  const { toast } = useToast();
+  const { user } = useAuth();
   
   // Calculate progress towards next level
   const progress = Math.min(Math.round((points / nextLevelPoints) * 100), 100);
@@ -30,6 +37,32 @@ export function LoyaltyCard({ points, level, nextLevelPoints, history = [] }: Lo
       case 'gold': return 'bg-nova-gold';
       case 'platinum': return 'bg-blue-300';
       default: return 'bg-amber-800';
+    }
+  };
+
+  const handleResetPoints = async () => {
+    // In a real application, this would call an API to reset points
+    // For now, we'll just show a toast message and call the callback if provided
+    try {
+      // This is a placeholder for the actual API call to reset points
+      // In a complete implementation, this would update the database
+      
+      toast({
+        title: t('loyalty.pointsReset'),
+        description: t('loyalty.pointsResetDescription'),
+      });
+      
+      // Call the callback if provided (to update UI state)
+      if (onPointsReset) {
+        onPointsReset();
+      }
+    } catch (error) {
+      console.error('Error resetting points:', error);
+      toast({
+        title: t('loyalty.resetError'),
+        description: t('loyalty.resetErrorDescription'),
+        variant: 'destructive',
+      });
     }
   };
 
@@ -76,6 +109,18 @@ export function LoyaltyCard({ points, level, nextLevelPoints, history = [] }: Lo
             </div>
           </div>
         )}
+        
+        <div className="mt-6">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="w-full border-nova-gold/30 text-nova-gold hover:bg-nova-gold/10"
+            onClick={handleResetPoints}
+          >
+            <RotateCcw className="h-4 w-4 mr-2" />
+            {t('loyalty.resetPoints')}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
