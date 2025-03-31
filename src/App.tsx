@@ -11,7 +11,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { LanguageProvider } from '@/contexts/language-context';
 import { ThemeProvider } from '@/contexts/theme-context';
 import { Toaster } from '@/components/ui/toaster';
-import { useToast } from "@/hooks/use-toast";
 
 // Import pages
 import HomePage from './pages/HomePage';
@@ -37,7 +36,6 @@ import AdminDriversPage from './pages/drivers/AdminDriversPage';
 
 function App() {
   const [cookies, setCookie] = useCookies(['session_id']);
-  const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -49,12 +47,9 @@ function App() {
 
       // Set the session ID as a cookie
       setCookie('session_id', sessionId, { path: '/', maxAge: 3600 }); // Expires in 1 hour
-      toast({
-        title: 'New Session',
-        description: `A new session has been created with ID: ${sessionId}`,
-      });
+      // Toast notification removed
     }
-  }, [cookies.session_id, setCookie, toast]);
+  }, [cookies.session_id, setCookie]);
 
   // Prevent access to create-pin, verify-pin, and reset-pin pages if already on account page
   useEffect(() => {
