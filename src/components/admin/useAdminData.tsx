@@ -86,16 +86,16 @@ export const useAdminData = (isAuthorized: boolean, language: string) => {
       if (bookingsError) throw bookingsError;
       
       // Format bookings data
-      const formattedBookings = bookingsData.map(booking => ({
+      const formattedBookings = bookingsData ? bookingsData.map(booking => ({
         ...booking,
         user: booking.profiles,
         vehicle: booking.vehicles
-      }));
+      })) : [];
       
       setBookings(formattedBookings);
       
-      // Calculate monthly revenue
-      const totalRevenue = bookingsData.reduce((sum, booking) => sum + Number(booking.total_price), 0);
+      // Calculate monthly revenue from actual bookings
+      const totalRevenue = formattedBookings.reduce((sum, booking) => sum + Number(booking.total_price), 0);
       setMonthlyRevenue(totalRevenue);
       
       // Fetch vehicles
@@ -107,7 +107,7 @@ export const useAdminData = (isAuthorized: boolean, language: string) => {
       if (vehiclesError) throw vehiclesError;
       
       // Match Supabase vehicles with frontend vehicles for consistency
-      const mappedVehicles = vehiclesData.map(dbVehicle => {
+      const mappedVehicles = vehiclesData ? vehiclesData.map(dbVehicle => {
         // Find matching frontend vehicle for additional data
         const frontendMatch = frontendVehicles.find(v => v.name === dbVehicle.name);
         
@@ -118,12 +118,14 @@ export const useAdminData = (isAuthorized: boolean, language: string) => {
           // Ensure we have category data
           category: dbVehicle.category || 'SUV'
         };
-      });
+      }) : [];
       
       setVehicles(mappedVehicles);
       
       // Update vehicle availability based on current bookings
-      await updateVehicleAvailabilityFromBookings(bookingsData, mappedVehicles);
+      if (mappedVehicles.length > 0 && formattedBookings.length > 0) {
+        await updateVehicleAvailabilityFromBookings(formattedBookings, mappedVehicles);
+      }
       
       // Fetch profiles
       const { data: profilesData, error: profilesError } = await supabase
@@ -132,14 +134,16 @@ export const useAdminData = (isAuthorized: boolean, language: string) => {
         .order('created_at', { ascending: false });
       
       if (profilesError) throw profilesError;
-      setProfiles(profilesData);
+      setProfiles(profilesData || []);
       
-      toast({
-        title: language === 'fr' ? "Données mises à jour" : "Data Refreshed",
-        description: language === 'fr' 
-          ? "Les données ont été mises à jour avec succès" 
-          : "The data has been successfully refreshed"
-      });
+      if (formattedBookings.length > 0 || mappedVehicles.length > 0 || (profilesData && profilesData.length > 0)) {
+        toast({
+          title: language === 'fr' ? "Données mises à jour" : "Data Refreshed",
+          description: language === 'fr' 
+            ? "Les données ont été mises à jour avec succès" 
+            : "The data has been successfully refreshed"
+        });
+      }
       
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -215,10 +219,10 @@ export const useAdminData = (isAuthorized: boolean, language: string) => {
     monthlyRevenue,
     availableVehicles: vehicles.filter(v => v.available).length,
     percentChange: {
-      revenue: 12.5,
-      bookings: 8.2,
-      customers: 5.1,
-      vehicles: -2.3
+      revenue: 0,
+      bookings: 0,
+      customers: 0,
+      vehicles: 0
     },
     refreshData
   };

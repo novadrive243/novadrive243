@@ -2,6 +2,8 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookingsTable } from '@/components/admin/BookingsTable';
+import { Button } from '@/components/ui/button';
+import { PlusCircle, RefreshCw } from 'lucide-react';
 
 interface BookingsTabProps {
   bookings: any[];

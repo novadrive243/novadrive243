@@ -9,6 +9,8 @@ import {
   TableRow
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PlusCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface BookingsTableProps {
   bookings: any[];
@@ -63,8 +65,16 @@ export const BookingsTable = ({ bookings, language, formatDate, formatCurrency }
             </TableBody>
           </Table>
         ) : (
-          <div className="text-center p-8 text-nova-white/70">
-            {language === 'fr' ? 'Aucune réservation disponible. Commencez à ajouter des réservations.' : 'No bookings available. Start adding bookings.'}
+          <div className="text-center p-8 flex flex-col items-center justify-center">
+            <div className="text-nova-white/70 mb-6">
+              {language === 'fr' 
+                ? 'Aucune réservation pour le moment.' 
+                : 'No bookings available yet.'}
+            </div>
+            <Button variant="outline" className="border-nova-gold/30 text-nova-gold hover:bg-nova-gold/10 hover:text-nova-white">
+              <PlusCircle className="h-4 w-4 mr-2" />
+              {language === 'fr' ? 'Ajouter une réservation' : 'Add Booking'}
+            </Button>
           </div>
         )}
       </CardContent>
