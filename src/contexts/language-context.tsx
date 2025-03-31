@@ -18,7 +18,13 @@ const translations: Record<Language, TranslationData> = {
       pricing: 'Tarifs',
       contact: 'Contact',
       bookNow: 'Réserver maintenant',
-      drivers: 'Votre chauffeur'
+      drivers: 'Votre chauffeur',
+      book: 'Réservation',
+      login: 'Connexion',
+      register: 'Inscription',
+      signOut: 'Déconnexion',
+      account: 'Mon compte',
+      admin: 'Administration'
     },
     hero: {
       title: 'Le Pouvoir du Mouvement',
@@ -196,7 +202,13 @@ const translations: Record<Language, TranslationData> = {
       pricing: 'Pricing',
       contact: 'Contact',
       bookNow: 'Book Now',
-      drivers: 'Our Drivers'
+      drivers: 'Our Drivers',
+      book: 'Book',
+      login: 'Login',
+      register: 'Register',
+      signOut: 'Sign Out',
+      account: 'My Account',
+      admin: 'Admin'
     },
     hero: {
       title: 'The Power of Movement',
