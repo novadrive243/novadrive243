@@ -2,6 +2,7 @@
 import React from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import { fr, enUS } from 'date-fns/locale';
+import { DateRange } from 'react-day-picker';
 
 interface VehicleCalendarDisplayProps {
   bookedDates: Date[];
@@ -28,14 +29,21 @@ export const VehicleCalendarDisplay = ({
     );
   };
 
+  // Initial date range selection
+  const today = new Date();
+  const nextWeek = new Date(today);
+  nextWeek.setDate(today.getDate() + 7);
+  
+  const defaultSelected: DateRange = {
+    from: today,
+    to: nextWeek
+  };
+
   return (
     <div className="rounded-md border border-nova-gold/20 p-4 bg-nova-gray/10">
       <Calendar
         mode="range"
-        selected={{
-          from: new Date(),
-          to: new Date(new Date().setDate(new Date().getDate() + 7))
-        }}
+        selected={defaultSelected}
         className="rounded-md text-nova-white"
         classNames={{
           day_today: "bg-nova-gold/20 text-nova-white",
@@ -50,7 +58,7 @@ export const VehicleCalendarDisplay = ({
           booked: "bg-red-500/20 text-red-200 relative before:absolute before:inset-0 before:border-2 before:border-red-500/40 before:rounded-full before:scale-75"
         }}
         fromMonth={new Date()}
-        disabled={(date: Date) => isDateBooked(date)}
+        disabled={isDateBooked}
         fixedWeeks={true}
         weekStartsOn={1}
         locale={language === 'fr' ? fr : enUS}
