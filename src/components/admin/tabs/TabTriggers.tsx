@@ -18,6 +18,7 @@ export const TabTriggers = ({ activeTab }: TabTriggersProps) => {
       <TabsTrigger value="ai-assistant">AI Assistant</TabsTrigger>
       <TabsTrigger value="inventory">Inventory</TabsTrigger>
       <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
+      <TabsTrigger value="calendar">Calendar</TabsTrigger>
       <TabsTrigger value="ratings">Ratings</TabsTrigger>
       <TabsTrigger value="rides">Rides</TabsTrigger>
       <TabsTrigger value="sessions">Sessions</TabsTrigger>
