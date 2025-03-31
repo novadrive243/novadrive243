@@ -23,6 +23,9 @@ export function BookingCompletedModal({ open, onClose, bookingDetails }: Booking
   const { language } = useLanguage();
   const navigate = useNavigate();
   
+  // Only show the rating component if we have a valid booking ID
+  const showRating = open && bookingDetails.id && bookingDetails.id !== '';
+  
   const handleViewAccount = () => {
     navigate('/account');
     onClose();
@@ -90,12 +93,14 @@ export function BookingCompletedModal({ open, onClose, bookingDetails }: Booking
         </DialogContent>
       </Dialog>
       
-      {/* Rating form that appears after booking is completed */}
-      <BookingCompleteRating 
-        bookingId={bookingDetails.id}
-        vehicleName={bookingDetails.vehicleName}
-        onClose={onClose}
-      />
+      {/* Only show rating form if we have a completed booking with an ID */}
+      {showRating && (
+        <BookingCompleteRating 
+          bookingId={bookingDetails.id}
+          vehicleName={bookingDetails.vehicleName}
+          onClose={onClose}
+        />
+      )}
     </>
   );
 }

@@ -27,7 +27,7 @@ export function BookingForm() {
   const [duration, setDuration] = useState<number>(1); // Default: 1 hour
   const [days, setDays] = useState<number>(1); // Default: 1 day
   
-  // New state for completed booking
+  // Booking completion state - explicitly initialized to false
   const [bookingCompleted, setBookingCompleted] = useState(false);
   const [bookingDetails, setBookingDetails] = useState({
     id: '',
@@ -52,6 +52,9 @@ export function BookingForm() {
     if (locationParam) {
       setFromAddress(locationParam);
     }
+    
+    // Reset booking completed state when component mounts
+    setBookingCompleted(false);
   }, [searchParams]);
   
   const handleContinue = () => {
@@ -175,7 +178,7 @@ export function BookingForm() {
         </CardFooter>
       </Card>
       
-      {/* Show booking completed modal with rating form when booking is completed */}
+      {/* Only show booking completed modal when booking is completed */}
       {bookingCompleted && (
         <BookingCompletedModal
           open={bookingCompleted}
