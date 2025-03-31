@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
@@ -41,20 +40,18 @@ export function AdminLogin({ onToggleMode }: AdminLoginProps) {
           return Math.floor(100000 + Math.random() * 900000).toString();
         };
         
-        // Only generate a new PIN if one doesn't exist already
-        if (!localStorage.getItem('adminPin')) {
-          const adminPin = generatePin();
-          localStorage.setItem('adminPin', adminPin);
-          
-          // Show PIN to admin in toast
-          toast({
-            title: language === 'fr' ? "PIN créé" : "PIN created",
-            description: language === 'fr' 
-              ? `Votre nouveau PIN admin est: ${adminPin}` 
-              : `Your new admin PIN is: ${adminPin}`,
-            duration: 6000,
-          });
-        }
+        // Always generate a new PIN when admin logs in with credentials
+        const adminPin = generatePin();
+        localStorage.setItem('adminPin', adminPin);
+        
+        // Show PIN to admin in toast
+        toast({
+          title: language === 'fr' ? "PIN créé" : "PIN created",
+          description: language === 'fr' 
+            ? `Votre nouveau PIN admin est: ${adminPin}` 
+            : `Your new admin PIN is: ${adminPin}`,
+          duration: 6000,
+        });
         
         localStorage.setItem('adminAuth', 'true');
         navigate("/admin");
