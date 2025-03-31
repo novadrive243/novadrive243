@@ -76,11 +76,12 @@ const DriversPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 text-nova-white pb-20">
       <div className="container px-4 py-10 mx-auto relative">
-        <BackButton className="absolute top-5 left-4" />
-        
-        <h1 className="text-2xl md:text-3xl font-bold mb-6 text-white">
-          {language === 'fr' ? 'Nos Chauffeurs Professionnels' : 'Our Professional Drivers'}
-        </h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-white">
+            {language === 'fr' ? 'Nos Chauffeurs Professionnels' : 'Our Professional Drivers'}
+          </h1>
+          <BackButton />
+        </div>
         
         <DriversHeader />
         
