@@ -15,6 +15,7 @@ import { VehicleCalendar } from '@/components/admin/VehicleCalendar';
 import { VehicleRatings } from '@/components/admin/VehicleRatings';
 import { RidesHistory } from '@/components/admin/RidesHistory';
 import { SessionsTracker } from '@/components/admin/SessionsTracker';
+import { NotificationsManager } from '@/components/admin/NotificationsManager';
 import { useLanguage } from '@/contexts/language-context';
 
 interface AdminTabsProps {
@@ -69,6 +70,7 @@ export const AdminTabs = ({
         <TabsTrigger value="ratings">Ratings</TabsTrigger>
         <TabsTrigger value="rides">Rides</TabsTrigger>
         <TabsTrigger value="sessions">Sessions</TabsTrigger>
+        <TabsTrigger value="notifications">Notifications</TabsTrigger>
       </TabsList>
       
       {/* Dashboard */}
@@ -295,6 +297,23 @@ export const AdminTabs = ({
           <CardFooter className="text-xs text-gray-500">
             Data is refreshed automatically every 5 minutes
           </CardFooter>
+        </Card>
+      </TabsContent>
+      
+      {/* Notifications - New Tab */}
+      <TabsContent value="notifications">
+        <Card>
+          <CardHeader>
+            <CardTitle>{language === 'fr' ? 'Gestion des Notifications' : 'Notifications Management'}</CardTitle>
+            <CardDescription>
+              {language === 'fr' 
+                ? 'Créer et gérer les notifications système' 
+                : 'Create and manage system notifications'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <NotificationsManager language={language} />
+          </CardContent>
         </Card>
       </TabsContent>
     </Tabs>

@@ -23,9 +23,9 @@ export interface Notification {
 
 interface NotificationsCenterProps {
   notifications: Notification[];
-  onMarkAsRead: (id: string) => void;
-  onMarkAllAsRead: () => void;
-  onDeleteAll: () => void;
+  onMarkAsRead?: (id: string) => void;
+  onMarkAllAsRead?: () => void;
+  onDeleteAll?: () => void;
 }
 
 export function NotificationsCenter({ 

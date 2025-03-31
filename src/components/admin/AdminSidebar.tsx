@@ -15,7 +15,8 @@ import {
   Wrench,
   BadgePercent,
   History,
-  UserCheck
+  UserCheck,
+  Bell
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -104,6 +105,11 @@ export const AdminSidebar = ({
           id: "staff",
           title: language === 'fr' ? 'Personnel' : 'Staff',
           icon: Users2,
+        },
+        {
+          id: "notifications",
+          title: language === 'fr' ? 'Notifications' : 'Notifications',
+          icon: Bell,
         }
       ]
     }
