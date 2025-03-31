@@ -4,7 +4,8 @@ import {
   Route,
   Routes,
   useNavigate,
-  useLocation
+  useLocation,
+  Navigate
 } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import { v4 as uuidv4 } from 'uuid';
@@ -89,6 +90,8 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      {/* Add redirect from /home to the homepage */}
+      <Route path="/home" element={<Navigate to="/" replace />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/services" element={<ServicesPage />} />
       <Route path="/book" element={<BookingPage />} />

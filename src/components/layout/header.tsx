@@ -1,124 +1,150 @@
-
-import React from 'react';
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X, User, ShoppingCart, ChevronDown, LogOut } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { useLanguage } from "@/contexts/language-context";
-import { Menu, User } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { useTheme } from "@/contexts/theme-context";
+import { NotificationsCenter } from "@/components/notifications/notifications-center";
+import { useAuth } from '@/hooks/use-auth';
+import { ContactChatDrawer } from '@/components/contact/chat/ContactChatDrawer';
 
-export function Header() {
-  const { t } = useLanguage();
-  const isAdmin = localStorage.getItem('adminAuth') === 'true';
+export const Header = () => {
+  const { theme, setTheme } = useTheme();
+  const { language, t } = useLanguage();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  const [showUserMenu, setShowUserMenu] = useState(false);
   
-  const menuLinks = [
-    { href: "/home", label: t('header.home') || 'Home' },
-    { href: "/about", label: t('header.about') || 'About' },
-    { href: "/services", label: t('header.services') || 'Services' },
-    { href: "/pricing", label: t('header.pricing') || 'Pricing' },
-    { href: "/drivers", label: t('header.drivers') || 'Our Drivers' },
-    { href: "/contact", label: t('header.contact') || 'Contact' },
+  // Close menu when route changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
+
+  // Main navigation items
+  const navItems = [
+    { title: t('header.home'), path: '/' },
+    { title: t('header.about'), path: '/about' },
+    { title: t('header.services'), path: '/services' },
+    { title: t('header.book'), path: '/book' },
+    { title: t('header.pricing'), path: '/pricing' },
+    { title: t('header.contact'), path: '/contact' },
+    { title: t('header.drivers'), path: '/drivers' },
   ];
-  
+
+  // Toggle menu
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  // Toggle user menu
+  const toggleUserMenu = () => {
+    setShowUserMenu(!showUserMenu);
+  };
+
+  // Handle sign out
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-nova-black/80 backdrop-blur-md border-b border-nova-gold/20">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <Link to="/home" className="flex items-center">
-          <img 
-            src="/lovable-uploads/8cb4eea8-e077-4d5e-88ab-f53a7d31c997.png" 
-            alt="NovaDrive Logo" 
-            className="h-10 mr-2"
-            onError={(e) => {
-              console.log("Image failed to load");
-              e.currentTarget.style.display = 'none';
-            }}
-          />
-          <span className="font-sfpro text-2xl font-bold text-white px-3 py-1 rounded shadow-[0_0_10px_rgba(232,191,82,0.5)] bg-nova-black border border-nova-gold">NovaDrive</span>
+    <header className="bg-nova-black text-nova-white sticky top-0 z-10">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        {/* Logo and Brand */}
+        <Link to="/" className="text-lg font-bold">
+          NovaDrive
         </Link>
-        
-        <nav className="hidden md:flex items-center space-x-6">
-          {menuLinks.map((link) => (
-            <Link 
-              key={link.href} 
-              to={link.href}
-              className="text-nova-white hover:text-nova-gold transition-colors"
+
+        {/* Mobile Menu Button */}
+        <button
+          onClick={toggleMenu}
+          className="md:hidden text-nova-gold focus:outline-none"
+          aria-label="Toggle menu"
+        >
+          {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
+
+        {/* Main Navigation */}
+        <nav
+          className={`md:flex space-x-6 ${
+            isMenuOpen ? 'flex flex-col absolute top-full left-0 w-full bg-nova-black py-4 px-4 border-b border-nova-gold/20' : 'hidden'
+          } md:relative md:w-auto`}
+        >
+          {navItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className="hover:text-nova-gold transition-colors block md:inline-block"
             >
-              {link.label}
+              {item.title}
             </Link>
           ))}
-          
-          <Button asChild variant="default" className="gold-btn px-5 py-2 rounded-full ml-4">
-            <Link to="/book">{t('header.bookNow') || 'Book Now'}</Link>
-          </Button>
-
-          {isAdmin ? (
-            <Button asChild variant="outline" className="border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10 ml-2">
-              <Link to="/admin">
-                <User className="mr-2 h-4 w-4" />
-                Admin
-              </Link>
-            </Button>
-          ) : (
-            <Button asChild variant="ghost" className="text-nova-white hover:text-nova-gold ml-2">
-              <Link to="/login">
-                <User className="mr-2 h-4 w-4" />
-                {t('header.login') || 'Login'}
-              </Link>
-            </Button>
-          )}
-          
-          <LanguageSwitcher />
         </nav>
-        
-        <div className="md:hidden flex items-center">
-          <LanguageSwitcher className="mr-2" />
-          
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" className="text-nova-white hover:text-nova-gold">
-                <Menu />
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="bg-nova-black border-nova-gold/20">
-              <nav className="flex flex-col space-y-4 mt-10">
-                {menuLinks.map((link) => (
-                  <Link 
-                    key={link.href} 
-                    to={link.href}
-                    className="text-nova-white hover:text-nova-gold transition-colors py-2"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-                
-                <Button asChild variant="default" className="gold-btn w-full mt-4">
-                  <Link to="/book">{t('header.bookNow') || 'Book Now'}</Link>
-                </Button>
 
-                {isAdmin ? (
-                  <Button asChild variant="outline" className="border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10 w-full">
-                    <Link to="/admin">
-                      <User className="mr-2 h-4 w-4" />
-                      Admin
+        {/* User Actions */}
+        <div className="flex items-center space-x-4">
+          <LanguageSwitcher />
+          <NotificationsCenter />
+
+          {user ? (
+            <div className="relative">
+              <Button variant="secondary" className="gap-2 px-3" onClick={toggleUserMenu}>
+                <User className="h-4 w-4" />
+                {user.email}
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+              {showUserMenu && (
+                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-nova-black border border-nova-gold/20 z-10">
+                  <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                    <Link
+                      to="/account"
+                      className="block px-4 py-2 text-sm text-nova-white hover:bg-nova-gold/10 transition-colors"
+                      role="menuitem"
+                    >
+                      {t('header.account')}
                     </Link>
-                  </Button>
-                ) : (
-                  <Button asChild variant="ghost" className="text-nova-white hover:text-nova-gold w-full">
-                    <Link to="/login">
-                      <User className="mr-2 h-4 w-4" />
-                      {t('header.login') || 'Login'}
-                    </Link>
-                  </Button>
-                )}
-              </nav>
-            </SheetContent>
-          </Sheet>
+                    {user.role === 'admin' && (
+                      <Link
+                        to="/admin"
+                        className="block px-4 py-2 text-sm text-nova-white hover:bg-nova-gold/10 transition-colors"
+                        role="menuitem"
+                      >
+                        {t('header.admin')}
+                      </Link>
+                    )}
+                    <button
+                      onClick={handleSignOut}
+                      className="flex items-center px-4 py-2 text-sm text-nova-white hover:bg-nova-gold/10 transition-colors w-full text-left"
+                      role="menuitem"
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      {t('header.signOut')}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <Link to="/login">
+                <Button variant="secondary">{t('header.login')}</Button>
+              </Link>
+              <Link to="/register">
+                <Button>{t('header.register')}</Button>
+              </Link>
+            </>
+          )}
+
+          <ContactChatDrawer />
         </div>
       </div>
     </header>
   );
-}
+};
