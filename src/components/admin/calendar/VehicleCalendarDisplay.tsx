@@ -54,7 +54,7 @@ export const VehicleCalendarDisplay = ({
       fromMonth: new Date(),
       disabled: (date: Date) => false,
       fixedWeeks: true,
-      weekStartsOn: 1 as 0 | 1 | 2 | 3 | 4 | 5 | 6, // Fix: Explicitly type as required union type
+      weekStartsOn: 1 as 0 | 1 | 2 | 3 | 4 | 5 | 6,
       locale: language === 'fr' ? fr : enUS
     };
 
@@ -66,7 +66,6 @@ export const VehicleCalendarDisplay = ({
       <Calendar
         {...getCalendarConfig()}
       />
-      {/* We could add a note about the view mode here if needed */}
       {view !== 'month' && (
         <div className="mt-2 text-xs text-nova-white/50 text-center">
           {language === 'fr' 
