@@ -32,6 +32,14 @@ export const Dashboard = ({
   formatCurrency
 }: DashboardProps) => {
   const hasData = bookings.length > 0 || vehicles.length > 0 || profiles.length > 0;
+  
+  // Set all percentages to 0 when there's no data
+  const adjustedPercentChange = {
+    revenue: hasData ? percentChange.revenue : 0,
+    bookings: hasData ? percentChange.bookings : 0,
+    customers: hasData ? percentChange.customers : 0,
+    vehicles: hasData ? percentChange.vehicles : 0
+  };
 
   if (!hasData) {
     return (
@@ -76,10 +84,10 @@ export const Dashboard = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <StatCard 
-        title={language === 'fr' ? 'Revenus Mensuels' : 'Monthly Revenue'}
+        title={language === 'fr' ? 'Revenus' : 'Revenue'}
         value={formatCurrency(monthlyRevenue)}
         icon={<DollarSign className="h-6 w-6 text-nova-gold" />}
-        change={{ value: percentChange.revenue, positive: true }}
+        change={{ value: adjustedPercentChange.revenue, positive: adjustedPercentChange.revenue >= 0 }}
         language={language}
       />
       
@@ -87,7 +95,7 @@ export const Dashboard = ({
         title={language === 'fr' ? 'Réservations' : 'Bookings'}
         value={bookings.length}
         icon={<Calendar className="h-6 w-6 text-nova-gold" />}
-        change={{ value: percentChange.bookings, positive: true }}
+        change={{ value: adjustedPercentChange.bookings, positive: adjustedPercentChange.bookings >= 0 }}
         language={language}
       />
       
@@ -95,7 +103,7 @@ export const Dashboard = ({
         title={language === 'fr' ? 'Clients' : 'Customers'}
         value={profiles.length}
         icon={<Users className="h-6 w-6 text-nova-gold" />}
-        change={{ value: percentChange.customers, positive: true }}
+        change={{ value: adjustedPercentChange.customers, positive: adjustedPercentChange.customers >= 0 }}
         language={language}
       />
       
@@ -103,7 +111,7 @@ export const Dashboard = ({
         title={language === 'fr' ? 'Véhicules Disponibles' : 'Available Vehicles'}
         value={availableVehicles}
         icon={<CarFront className="h-6 w-6 text-nova-gold" />}
-        change={{ value: percentChange.vehicles, positive: false }}
+        change={{ value: adjustedPercentChange.vehicles, positive: adjustedPercentChange.vehicles >= 0 }}
         language={language}
       />
     </div>
