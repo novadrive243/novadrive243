@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useTimezone } from '@/hooks/use-timezone';
 
 export const useVehicleCalendar = (
   vehicles: any[], 
@@ -9,6 +10,7 @@ export const useVehicleCalendar = (
   language: string
 ) => {
   const { toast } = useToast();
+  const { toKinshasaTime } = useTimezone();
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
   const [bookedDates, setBookedDates] = useState<Date[]>([]);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -31,13 +33,13 @@ export const useVehicleCalendar = (
       const allBookedDates: Date[] = [];
       
       vehicleBookings.forEach(booking => {
-        const startDate = new Date(booking.start_date);
-        const endDate = new Date(booking.end_date);
+        const startDate = toKinshasaTime(new Date(booking.start_date));
+        const endDate = toKinshasaTime(new Date(booking.end_date));
         
         // Add all dates between start and end (inclusive)
         const currentDate = new Date(startDate);
         while (currentDate <= endDate) {
-          allBookedDates.push(new Date(currentDate));
+          allBookedDates.push(toKinshasaTime(new Date(currentDate)));
           currentDate.setDate(currentDate.getDate() + 1);
         }
       });
@@ -46,7 +48,7 @@ export const useVehicleCalendar = (
     } else {
       setBookedDates([]);
     }
-  }, [selectedVehicle, bookings]);
+  }, [selectedVehicle, bookings, toKinshasaTime]);
 
   // Update vehicle availability status in the database
   const updateVehicleAvailability = async (vehicleId: string, isAvailable: boolean) => {

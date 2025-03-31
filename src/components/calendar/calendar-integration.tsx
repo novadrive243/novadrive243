@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar as CalendarIcon, Plus, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useTimezone } from '@/hooks/use-timezone';
 
 export interface BookingEvent {
   id: string;
@@ -31,14 +32,15 @@ export function CalendarIntegration({
 }: CalendarIntegrationProps) {
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { formatKinshasaDate, toKinshasaTime } = useTimezone();
   
   // Get events for selected date
   const selectedDateEvents = events.filter(event => 
-    event.date.toDateString() === selectedDate.toDateString()
+    toKinshasaTime(event.date).toDateString() === toKinshasaTime(selectedDate).toDateString()
   );
   
-  // Get all dates that have events
-  const eventDates = events.map(event => event.date);
+  // Get all dates that have events in Kinshasa timezone
+  const eventDates = events.map(event => toKinshasaTime(event.date));
   
   // Function to handle adding event to calendar
   const handleAddToCalendar = (event: BookingEvent) => {
@@ -57,8 +59,8 @@ VERSION:2.0
 BEGIN:VEVENT
 SUMMARY:${event.title}
 LOCATION:${event.location}
-DTSTART:${event.date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/g, '')}
-DTEND:${new Date(event.date.getTime() + 3600000).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/g, '')}
+DTSTART:${toKinshasaTime(event.date).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/g, '')}
+DTEND:${new Date(toKinshasaTime(event.date).getTime() + 3600000).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/g, '')}
 END:VEVENT
 END:VCALENDAR`;
     

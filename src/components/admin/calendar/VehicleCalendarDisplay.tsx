@@ -6,6 +6,7 @@ import { DateRange } from 'react-day-picker';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Info } from 'lucide-react';
+import { useTimezone } from '@/hooks/use-timezone';
 
 interface VehicleCalendarDisplayProps {
   bookedDates: Date[];
@@ -18,13 +19,15 @@ export const VehicleCalendarDisplay = ({
   language,
   view = 'month'
 }: VehicleCalendarDisplayProps) => {
-  // Convert booked dates to Date objects if they're not already
+  const { toKinshasaTime } = useTimezone();
+  
+  // Convert booked dates to Date objects in Kinshasa timezone if they're not already
   const bookedDateObjects = bookedDates.map(date => 
-    date instanceof Date ? date : new Date(date)
+    date instanceof Date ? toKinshasaTime(date) : toKinshasaTime(new Date(date))
   );
   
   const [selectedRange, setSelectedRange] = useState<DateRange | undefined>({
-    from: new Date(),
+    from: toKinshasaTime(new Date()),
     to: undefined
   });
   

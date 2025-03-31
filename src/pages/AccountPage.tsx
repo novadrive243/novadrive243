@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -20,12 +19,13 @@ import { CalendarIntegration, BookingEvent } from '@/components/calendar/calenda
 import { EmergencyContact } from '@/components/emergency/emergency-contact';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
-import { format } from 'date-fns';
+import { useTimezone } from '@/hooks/use-timezone';
 
 const AccountPage = () => {
   const { t, language, setLanguage } = useLanguage();
   const { toast } = useToast();
   const { user } = useAuth();
+  const { formatKinshasaDate, getCurrentKinshasaTime } = useTimezone();
   
   // Get registration date from localStorage if available (for demo)
   // In a real app, this would come from the user's profile in the database
@@ -39,17 +39,16 @@ const AccountPage = () => {
         const userData = JSON.parse(userDataStr);
         // If we have a dateOfBirth in the format of ISO string, format it
         if (userData.dateOfBirth) {
-          const date = new Date(userData.dateOfBirth);
-          setRegistrationDate(format(date, 'dd/MM/yyyy'));
+          setRegistrationDate(formatKinshasaDate(new Date(userData.dateOfBirth), 'dd/MM/yyyy'));
         }
       } catch (error) {
         console.error('Error parsing user data:', error);
       }
     }
-  }, []);
+  }, [formatKinshasaDate]);
   
   // Sample data for features
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(getCurrentKinshasaTime());
   const [notifications, setNotifications] = useState<Notification[]>([
     {
       id: '1',
