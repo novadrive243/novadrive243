@@ -80,7 +80,7 @@ const DriversPage = () => {
           <h1 className="text-2xl md:text-3xl font-bold text-white">
             {language === 'fr' ? 'Nos Chauffeurs Professionnels' : 'Our Professional Drivers'}
           </h1>
-          <BackButton />
+          <BackButton className="relative static top-auto left-auto" />
         </div>
         
         <DriversHeader />
