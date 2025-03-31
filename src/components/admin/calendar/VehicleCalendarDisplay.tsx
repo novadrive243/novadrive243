@@ -50,7 +50,7 @@ export const VehicleCalendarDisplay = ({
           booked: "bg-red-500/20 text-red-200 relative before:absolute before:inset-0 before:border-2 before:border-red-500/40 before:rounded-full before:scale-75"
         }}
         fromMonth={new Date()}
-        disabled={(date: Date) => false}
+        disabled={(date: Date) => isDateBooked(date)}
         fixedWeeks={true}
         weekStartsOn={1}
         locale={language === 'fr' ? fr : enUS}
