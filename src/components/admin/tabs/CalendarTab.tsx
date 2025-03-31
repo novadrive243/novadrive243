@@ -19,8 +19,14 @@ export const CalendarTab = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Vehicle Calendar</CardTitle>
-        <CardDescription>View and manage vehicle availability</CardDescription>
+        <CardTitle>
+          {language === 'fr' ? 'Calendrier des Véhicules' : 'Vehicle Calendar'}
+        </CardTitle>
+        <CardDescription>
+          {language === 'fr' 
+            ? 'Consultez et gérez la disponibilité des véhicules' 
+            : 'View and manage vehicle availability'}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <VehicleCalendar
