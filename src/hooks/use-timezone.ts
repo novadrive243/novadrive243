@@ -1,6 +1,6 @@
 
 import { format, formatISO } from 'date-fns';
-import { zonedTimeToUtc, utcToZonedTime, formatInTimeZone } from 'date-fns-tz';
+import { fromZonedTime, toZonedTime, formatInTimeZone } from 'date-fns-tz';
 
 // Fuseau horaire de Kinshasa (GMT+1)
 export const KINSHASA_TIMEZONE = 'Africa/Kinshasa';
@@ -11,7 +11,7 @@ export const useTimezone = () => {
    */
   const toKinshasaTime = (date: Date | string | number): Date => {
     const dateObj = date instanceof Date ? date : new Date(date);
-    return utcToZonedTime(dateObj, KINSHASA_TIMEZONE);
+    return toZonedTime(dateObj, KINSHASA_TIMEZONE);
   };
 
   /**
@@ -19,7 +19,7 @@ export const useTimezone = () => {
    */
   const fromKinshasaTime = (date: Date | string | number): Date => {
     const dateObj = date instanceof Date ? date : new Date(date);
-    return zonedTimeToUtc(dateObj, KINSHASA_TIMEZONE);
+    return fromZonedTime(dateObj, KINSHASA_TIMEZONE);
   };
 
   /**
@@ -53,7 +53,7 @@ export const useTimezone = () => {
     // Créer une date locale
     const localDate = new Date(year, month, day, hour, minute, second);
     // Convertir en date UTC
-    return zonedTimeToUtc(localDate, KINSHASA_TIMEZONE);
+    return fromZonedTime(localDate, KINSHASA_TIMEZONE);
   };
 
   return {
