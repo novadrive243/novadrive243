@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Calendar } from '@/components/ui/calendar';
+import { fr, enUS } from 'date-fns/locale';
 
 interface VehicleCalendarDisplayProps {
   bookedDates: Date[];
@@ -53,7 +54,7 @@ export const VehicleCalendarDisplay = ({
         fixedWeeks
         weekStartsOn={1}
         view={view === 'month' ? 'month' : view === 'week' ? 'week' : 'day'}
-        locale={language === 'fr' ? 'fr' : 'en'}
+        locale={language === 'fr' ? fr : enUS}
       />
     </div>
   );
