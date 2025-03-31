@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Route,
@@ -13,7 +12,7 @@ import { LanguageProvider } from '@/contexts/language-context';
 import { ThemeProvider } from '@/contexts/theme-context';
 import { Toaster } from '@/components/ui/toaster';
 import { supabase } from "@/integrations/supabase/client";
-import { AuthProvider } from '@/hooks/use-auth';
+import { AuthProvider } from '@/contexts/auth-context';
 
 // Import pages
 import HomePage from './pages/HomePage';
