@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   ListTodo,
@@ -16,9 +15,12 @@ import {
   BadgePercent,
   History,
   UserCheck,
-  Bell
+  Bell,
+  RotateCcw
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/language-context';
 
 interface AdminSidebarProps {
   activeTab: string;
@@ -27,6 +29,7 @@ interface AdminSidebarProps {
   collapsed: boolean;
   toggleSidebar: () => void;
   visible: boolean;
+  refreshData?: () => void;
 }
 
 export const AdminSidebar = ({ 
@@ -35,9 +38,32 @@ export const AdminSidebar = ({
   language, 
   collapsed, 
   toggleSidebar,
-  visible
+  visible,
+  refreshData
 }: AdminSidebarProps) => {
-  // Admin menu items grouped by category
+  const { toast } = useToast();
+  const { t } = useLanguage();
+  
+  const handleResetPoints = async () => {
+    try {
+      toast({
+        title: t('loyalty.pointsReset') || 'Points Reset',
+        description: t('loyalty.pointsResetDescription') || 'All loyalty points have been reset successfully.',
+      });
+      
+      if (refreshData) {
+        refreshData();
+      }
+    } catch (error) {
+      console.error('Error resetting points:', error);
+      toast({
+        title: t('loyalty.resetError') || 'Reset Error',
+        description: t('loyalty.resetErrorDescription') || 'An error occurred while resetting points.',
+        variant: 'destructive',
+      });
+    }
+  };
+
   const menuGroups = [
     {
       id: "operations",
@@ -110,6 +136,12 @@ export const AdminSidebar = ({
           id: "notifications",
           title: language === 'fr' ? 'Notifications' : 'Notifications',
           icon: Bell,
+        },
+        {
+          id: "resetLoyalty",
+          title: language === 'fr' ? 'Réinitialiser les points' : 'Reset Points',
+          icon: RotateCcw,
+          onClick: handleResetPoints,
         }
       ]
     }
@@ -160,10 +192,10 @@ export const AdminSidebar = ({
                 {group.items.map((item) => (
                   <li key={item.id}>
                     <button
-                      onClick={() => setActiveTab(item.id)}
+                      onClick={() => item.onClick ? item.onClick() : setActiveTab(item.id)}
                       className={cn(
                         "w-full flex items-center px-1.5 py-1 text-xs rounded-md transition-colors",
-                        activeTab === item.id
+                        activeTab === item.id && !item.onClick
                           ? "bg-nova-gold/20 text-nova-white"
                           : "text-nova-white/80 hover:bg-nova-gold/10"
                       )}

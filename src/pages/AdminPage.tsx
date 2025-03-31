@@ -80,6 +80,7 @@ const AdminPage = () => {
           collapsed={sidebarCollapsed}
           toggleSidebar={toggleSidebar}
           visible={sidebarVisible}
+          refreshData={refreshData}
         />
         
         {/* Sidebar toggle button */}
