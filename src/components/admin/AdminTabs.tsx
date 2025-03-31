@@ -161,6 +161,7 @@ export const AdminTabs = ({
           <CardContent>
             <StaffManagement 
               language={language}
+              formatDate={formatDate}
             />
           </CardContent>
         </Card>
@@ -228,6 +229,7 @@ export const AdminTabs = ({
             <MaintenanceTracking
               vehicles={vehicles}
               language={language}
+              formatDate={formatDate}
             />
           </CardContent>
         </Card>
