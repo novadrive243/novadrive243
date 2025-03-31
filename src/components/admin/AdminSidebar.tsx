@@ -1,22 +1,8 @@
 
 import React from 'react';
 import {
-  ListTodo,
-  Settings,
-  Calendar,
-  Users,
-  BarChart3,
-  Users2,
-  Tag,
   ChevronLeft,
   ChevronRight,
-  Car,
-  ClipboardList,
-  Wrench,
-  BadgePercent,
-  History,
-  UserCheck,
-  Bell
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -37,83 +23,8 @@ export const AdminSidebar = ({
   toggleSidebar,
   visible
 }: AdminSidebarProps) => {
-  // Admin menu items grouped by category
-  const menuGroups = [
-    {
-      id: "operations",
-      title: language === 'fr' ? 'Opérations' : 'Operations',
-      items: [
-        {
-          id: "bookings",
-          title: language === 'fr' ? 'Réservations' : 'Bookings',
-          icon: ClipboardList,
-        },
-        {
-          id: "calendar",
-          title: language === 'fr' ? 'Calendrier' : 'Calendar',
-          icon: Calendar,
-        },
-        {
-          id: "rides",
-          title: language === 'fr' ? 'Courses' : 'Rides',
-          icon: History,
-        },
-      ]
-    },
-    {
-      id: "inventory",
-      title: language === 'fr' ? 'Inventaire' : 'Inventory',
-      items: [
-        {
-          id: "vehicles",
-          title: language === 'fr' ? 'Véhicules' : 'Vehicles',
-          icon: Car,
-        },
-        {
-          id: "maintenance",
-          title: language === 'fr' ? 'Maintenance' : 'Maintenance',
-          icon: Wrench,
-        },
-      ]
-    },
-    {
-      id: "customers",
-      title: language === 'fr' ? 'Clients' : 'Customers',
-      items: [
-        {
-          id: "customers",
-          title: language === 'fr' ? 'Clients' : 'Customers',
-          icon: Users,
-        },
-        {
-          id: "sessions",
-          title: language === 'fr' ? 'Sessions' : 'Sessions',
-          icon: UserCheck,
-        }
-      ]
-    },
-    {
-      id: "business",
-      title: language === 'fr' ? 'Entreprise' : 'Business',
-      items: [
-        {
-          id: "analytics",
-          title: language === 'fr' ? 'Analyses' : 'Analytics',
-          icon: BarChart3,
-        },
-        {
-          id: "staff",
-          title: language === 'fr' ? 'Personnel' : 'Staff',
-          icon: Users2,
-        },
-        {
-          id: "notifications",
-          title: language === 'fr' ? 'Notifications' : 'Notifications',
-          icon: Bell,
-        }
-      ]
-    }
-  ];
+  // Empty menu groups - all items have been removed
+  const menuGroups = [];
 
   return (
     <aside 
@@ -149,38 +60,7 @@ export const AdminSidebar = ({
         </div>
         
         <nav className="flex-1 overflow-y-auto px-1 py-1">
-          {menuGroups.map((group) => (
-            <div key={group.id} className="mb-3">
-              {!collapsed && (
-                <h3 className="text-xs uppercase tracking-wider text-nova-gold/70 font-medium mb-1 px-1">
-                  {group.title}
-                </h3>
-              )}
-              <ul className="space-y-1">
-                {group.items.map((item) => (
-                  <li key={item.id}>
-                    <button
-                      onClick={() => setActiveTab(item.id)}
-                      className={cn(
-                        "w-full flex items-center px-1.5 py-1 text-xs rounded-md transition-colors",
-                        activeTab === item.id
-                          ? "bg-nova-gold/20 text-nova-white"
-                          : "text-nova-white/80 hover:bg-nova-gold/10"
-                      )}
-                      title={collapsed ? item.title : undefined}
-                      aria-label={item.title}
-                    >
-                      <item.icon className={cn(
-                        "h-3.5 w-3.5 text-nova-gold",
-                        collapsed ? "mx-auto" : "mr-1.5"
-                      )} />
-                      {!collapsed && <span className="text-xs">{item.title}</span>}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {/* Menu groups have been removed */}
         </nav>
         
         <div className="p-2 mt-auto border-t border-nova-gold/10">

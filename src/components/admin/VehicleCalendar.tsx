@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoadingState } from './LoadingState';
 import { VehicleSelector } from './calendar/VehicleSelector';
 import { VehicleInfo } from './calendar/VehicleInfo';
@@ -9,7 +8,7 @@ import { BookingStats } from './calendar/BookingStats';
 import { useVehicleCalendar } from './calendar/useVehicleCalendar';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Button } from '@/components/ui/button';
-import { Calendar, ChevronDown, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 
 interface VehicleCalendarProps {
   vehicles: any[];
@@ -37,13 +36,7 @@ export const VehicleCalendar = ({ vehicles, bookings, language, isLoading }: Veh
   
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Calendar className="h-6 w-6 text-nova-gold" />
-          <h2 className="text-xl font-bold text-nova-white">
-            {language === 'fr' ? 'Calendrier des Véhicules' : 'Vehicle Calendar'}
-          </h2>
-        </div>
+      <div className="flex items-center justify-end">
         <VehicleSelector 
           vehicles={vehicles}
           selectedVehicle={selectedVehicle}
