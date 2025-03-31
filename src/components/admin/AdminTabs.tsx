@@ -14,7 +14,6 @@ import { AnalyticsTab } from './tabs/AnalyticsTab';
 import { AIAssistantTab } from './tabs/AIAssistantTab';
 import { InventoryTab } from './tabs/InventoryTab';
 import { MaintenanceTab } from './tabs/MaintenanceTab';
-import { CalendarTab } from './tabs/CalendarTab';
 import { RatingsTab } from './tabs/RatingsTab';
 import { RidesTab } from './tabs/RidesTab';
 import { SessionsTab } from './tabs/SessionsTab';
@@ -146,16 +145,6 @@ export const AdminTabs = ({
           vehicles={vehicles}
           language={language}
           formatDate={formatDate}
-        />
-      </TabsContent>
-      
-      {/* Calendar */}
-      <TabsContent value="calendar">
-        <CalendarTab 
-          vehicles={vehicles}
-          bookings={bookings}
-          language={language}
-          isLoading={isLoading}
         />
       </TabsContent>
       
