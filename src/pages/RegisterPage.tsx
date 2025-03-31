@@ -16,15 +16,15 @@ const RegisterPage = () => {
       <div className="w-full max-w-lg">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">
-            <span className="gold-gradient-text">NovaDrive</span>
+            <span className="text-white border border-nova-gold px-3 py-1 rounded shadow-[0_0_10px_rgba(232,191,82,0.5)]">NovaDrive</span>
           </h1>
-          <p className="text-nova-white/70">
+          <p className="text-white/70">
             {t('register.slogan') || 'Le Pouvoir du Mouvement'}
           </p>
         </div>
         
         <div className="bg-nova-black/40 border border-nova-gold/20 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-nova-white mb-6">
+          <h2 className="text-xl font-semibold text-white mb-6">
             {t('register.title') || 'Create Your Account'}
           </h2>
           
@@ -32,7 +32,7 @@ const RegisterPage = () => {
         </div>
         
         <div className="text-center mt-6">
-          <p className="text-nova-white/50 text-sm">
+          <p className="text-white/50 text-sm">
             &copy; {new Date().getFullYear()} NovaDrive. {t('register.rights') || 'All rights reserved.'}
           </p>
         </div>
