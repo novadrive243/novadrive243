@@ -1,18 +1,17 @@
 
 import React from 'react';
-import { Loader2 } from 'lucide-react';
 
-interface LoadingStateProps {
-  language: string;
+export interface LoadingStateProps {
+  language?: string;
 }
 
-export const LoadingState = ({ language }: LoadingStateProps) => {
+export const LoadingState = ({ language = 'en' }: LoadingStateProps) => {
   return (
-    <div className="flex flex-col items-center justify-center h-64">
-      <Loader2 className="h-8 w-8 animate-spin text-nova-gold mb-2" />
-      <span className="text-nova-white">
+    <div className="flex flex-col items-center justify-center w-full py-10">
+      <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-nova-gold"></div>
+      <p className="mt-4 text-nova-white">
         {language === 'fr' ? 'Chargement...' : 'Loading...'}
-      </span>
+      </p>
     </div>
   );
 };

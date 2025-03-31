@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
@@ -35,8 +36,9 @@ export const RidesHistory = () => {
   const fetchRides = async () => {
     setLoading(true);
     try {
+      // Using completed_rides instead of rides which doesn't exist
       const { data, error } = await supabase
-        .from('rides')
+        .from('completed_rides')
         .select('*')
         .order('start_time', { ascending: false })
         .limit(50);
@@ -46,7 +48,8 @@ export const RidesHistory = () => {
         return;
       }
 
-      setRides(data as Ride[]);
+      // Type assertion to properly map the data
+      setRides(data as unknown as Ride[]);
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -69,7 +72,7 @@ export const RidesHistory = () => {
       </CardHeader>
       <CardContent className="p-4">
         {loading ? (
-          <LoadingState />
+          <LoadingState language="en" />
         ) : (
           <div className="space-y-3">
             {rides.map((ride) => (

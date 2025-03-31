@@ -1,154 +1,237 @@
 
-import React from 'react';
-import { BookingsTable } from './BookingsTable';
-import { VehiclesTable } from './VehiclesTable';
-import { CustomersTable } from './CustomersTable';
-import { AnalyticsCard } from './AnalyticsCard';
-import { VehicleCalendar } from './VehicleCalendar';
-import { AdvancedAnalytics } from './AdvancedAnalytics';
-import { MaintenanceTracking } from './MaintenanceTracking';
-import { StaffManagement } from './StaffManagement';
-import { InventoryManager } from './InventoryManager';
-import { Button } from '@/components/ui/button';
-import { RefreshCw } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { VehicleRatings } from './VehicleRatings';
-import { SessionsTracker } from './SessionsTracker';
-import { RidesHistory } from './RidesHistory';
+import { useState, useEffect } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dashboard } from '@/components/admin/Dashboard';
+import { VehiclesTable } from '@/components/admin/VehiclesTable';
+import { BookingsTable } from '@/components/admin/BookingsTable';
+import { CustomersTable } from '@/components/admin/CustomersTable';
+import { StaffManagement } from '@/components/admin/StaffManagement';
+import { AdvancedAnalytics } from '@/components/admin/AdvancedAnalytics';
+import { AdminAIAssistant } from '@/components/admin/AdminAIAssistant';
+import { InventoryManager } from '@/components/admin/InventoryManager';
+import { MaintenanceTracking } from '@/components/admin/MaintenanceTracking';
+import { VehicleCalendar } from '@/components/admin/VehicleCalendar';
+import { VehicleRatings } from '@/components/admin/VehicleRatings';
+import { RidesHistory } from '@/components/admin/RidesHistory';
+import { SessionsTracker } from '@/components/admin/SessionsTracker';
+import { useLanguage } from '@/contexts/language-context';
 
-interface AdminTabsProps {
-  activeTab: string;
-  bookings: any[];
-  vehicles: any[];
-  profiles: any[];
-  language: string;
-  formatDate: (dateString: string) => string;
-  formatCurrency: (amount: number) => string;
-  getVehicleDailyPrice: (vehicleName: string) => number;
-  isLoading: boolean;
-  monthlyRevenue?: number;
-  refreshData: () => void;
-}
+export const AdminTabs = () => {
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const { language } = useLanguage();
 
-export const AdminTabs = ({ 
-  activeTab,
-  bookings, 
-  vehicles, 
-  profiles, 
-  language, 
-  formatDate, 
-  formatCurrency,
-  getVehicleDailyPrice,
-  isLoading,
-  monthlyRevenue = 0,
-  refreshData
-}: AdminTabsProps) => {
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat(language === 'fr' ? 'fr-FR' : 'en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(amount);
+  };
+
+  // Handle tab change
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    // Update URL hash without page reload
+    window.history.pushState(null, '', `#${value}`);
+  };
+
+  // Initialize tab from URL hash on mount
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash) {
+      setActiveTab(hash);
+    }
+  }, []);
+
   return (
-    <div className="mt-8">
-      <div className="flex justify-end mb-4">
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={refreshData}
-          className="border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10"
-          disabled={isLoading}
-        >
-          <RefreshCw className="h-4 w-4 mr-2" />
-          {language === 'fr' ? 'Actualiser' : 'Refresh'}
-        </Button>
-      </div>
+    <Tabs defaultValue="dashboard" value={activeTab} onValueChange={handleTabChange} className="w-full">
+      <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-1">
+        <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+        <TabsTrigger value="vehicles">Vehicles</TabsTrigger>
+        <TabsTrigger value="bookings">Bookings</TabsTrigger>
+        <TabsTrigger value="customers">Customers</TabsTrigger>
+        <TabsTrigger value="staff">Staff</TabsTrigger>
+        <TabsTrigger value="analytics">Analytics</TabsTrigger>
+        <TabsTrigger value="ai-assistant">AI Assistant</TabsTrigger>
+        <TabsTrigger value="inventory">Inventory</TabsTrigger>
+        <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
+        <TabsTrigger value="calendar">Calendar</TabsTrigger>
+        <TabsTrigger value="ratings">Ratings</TabsTrigger>
+        <TabsTrigger value="rides">Rides</TabsTrigger>
+        <TabsTrigger value="sessions">Sessions</TabsTrigger>
+      </TabsList>
       
-      {/* Content based on active tab */}
-      <div className="mt-4">
-        {activeTab === "bookings" && (
-          <BookingsTable 
-            bookings={bookings} 
-            language={language} 
-            formatDate={formatDate} 
-            formatCurrency={formatCurrency} 
-          />
-        )}
-        
-        {activeTab === "vehicles" && (
-          <InventoryManager
-            vehicles={vehicles}
-            language={language}
-            formatCurrency={formatCurrency}
-          />
-        )}
-        
-        {activeTab === "calendar" && (
-          <VehicleCalendar 
-            vehicles={vehicles}
-            bookings={bookings}
-            language={language}
-            isLoading={isLoading}
-          />
-        )}
-        
-        {activeTab === "customers" && (
-          <CustomersTable 
-            profiles={profiles} 
-            language={language} 
-            formatDate={formatDate}
-          />
-        )}
-        
-        {activeTab === "analytics" && (
-          <div className="space-y-8">
-            <AnalyticsCard 
-              language={language} 
-              bookings={bookings}
-              vehicles={vehicles}
-              profiles={profiles}
-              monthlyRevenue={monthlyRevenue}
-            />
-            
-            <AdvancedAnalytics 
-              bookings={bookings}
-              vehicles={vehicles}
-              profiles={profiles}
-              language={language}
-              formatCurrency={formatCurrency}
-            />
-          </div>
-        )}
-        
-        {activeTab === "ratings" && (
-          <VehicleRatings
-            language={language}
-            formatDate={formatDate}
-          />
-        )}
-        
-        {activeTab === "maintenance" && (
-          <MaintenanceTracking 
-            vehicles={vehicles}
-            language={language}
-            formatDate={formatDate}
-          />
-        )}
-        
-        {activeTab === "staff" && (
-          <StaffManagement 
-            language={language}
-            formatDate={formatDate}
-          />
-        )}
-        
-        {activeTab === "sessions" && (
-          <SessionsTracker
-            language={language}
-          />
-        )}
-        
-        {activeTab === "rides" && (
-          <RidesHistory
-            language={language}
-            formatCurrency={formatCurrency}
-          />
-        )}
-      </div>
-    </div>
+      {/* Dashboard */}
+      <TabsContent value="dashboard">
+        <Card>
+          <CardHeader>
+            <CardTitle>Dashboard</CardTitle>
+            <CardDescription>Overview of all NovaDrive operations</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Dashboard language={language} />
+          </CardContent>
+        </Card>
+      </TabsContent>
+      
+      {/* Vehicles */}
+      <TabsContent value="vehicles">
+        <Card>
+          <CardHeader>
+            <CardTitle>Vehicles</CardTitle>
+            <CardDescription>Manage your fleet of vehicles</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <VehiclesTable language={language} formatCurrency={formatCurrency} />
+          </CardContent>
+        </Card>
+      </TabsContent>
+      
+      {/* Bookings */}
+      <TabsContent value="bookings">
+        <Card>
+          <CardHeader>
+            <CardTitle>Bookings</CardTitle>
+            <CardDescription>Manage customer bookings and reservations</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <BookingsTable />
+          </CardContent>
+        </Card>
+      </TabsContent>
+      
+      {/* Customers */}
+      <TabsContent value="customers">
+        <Card>
+          <CardHeader>
+            <CardTitle>Customers</CardTitle>
+            <CardDescription>Manage customer accounts and information</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CustomersTable />
+          </CardContent>
+        </Card>
+      </TabsContent>
+      
+      {/* Staff */}
+      <TabsContent value="staff">
+        <Card>
+          <CardHeader>
+            <CardTitle>Staff Management</CardTitle>
+            <CardDescription>Manage employees and their permissions</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <StaffManagement />
+          </CardContent>
+        </Card>
+      </TabsContent>
+      
+      {/* Analytics */}
+      <TabsContent value="analytics">
+        <Card>
+          <CardHeader>
+            <CardTitle>Advanced Analytics</CardTitle>
+            <CardDescription>Detailed business analytics and insights</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AdvancedAnalytics />
+          </CardContent>
+        </Card>
+      </TabsContent>
+      
+      {/* AI Assistant */}
+      <TabsContent value="ai-assistant">
+        <Card>
+          <CardHeader>
+            <CardTitle>AI Assistant</CardTitle>
+            <CardDescription>Get help with administrative tasks</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AdminAIAssistant />
+          </CardContent>
+        </Card>
+      </TabsContent>
+      
+      {/* Inventory */}
+      <TabsContent value="inventory">
+        <Card>
+          <CardHeader>
+            <CardTitle>Inventory Management</CardTitle>
+            <CardDescription>Manage parts and supplies inventory</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <InventoryManager />
+          </CardContent>
+        </Card>
+      </TabsContent>
+      
+      {/* Maintenance */}
+      <TabsContent value="maintenance">
+        <Card>
+          <CardHeader>
+            <CardTitle>Maintenance Tracking</CardTitle>
+            <CardDescription>Track vehicle maintenance and service history</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <MaintenanceTracking />
+          </CardContent>
+        </Card>
+      </TabsContent>
+      
+      {/* Calendar */}
+      <TabsContent value="calendar">
+        <Card>
+          <CardHeader>
+            <CardTitle>Vehicle Calendar</CardTitle>
+            <CardDescription>View and manage vehicle availability</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <VehicleCalendar />
+          </CardContent>
+        </Card>
+      </TabsContent>
+      
+      {/* Ratings */}
+      <TabsContent value="ratings">
+        <Card>
+          <CardHeader>
+            <CardTitle>Ratings & Reviews</CardTitle>
+            <CardDescription>View customer ratings and feedback</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <VehicleRatings />
+          </CardContent>
+        </Card>
+      </TabsContent>
+      
+      {/* Rides */}
+      <TabsContent value="rides">
+        <Card>
+          <CardHeader>
+            <CardTitle>Rides History</CardTitle>
+            <CardDescription>View completed ride history</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RidesHistory />
+          </CardContent>
+        </Card>
+      </TabsContent>
+      
+      {/* Sessions */}
+      <TabsContent value="sessions">
+        <Card>
+          <CardHeader>
+            <CardTitle>User Sessions</CardTitle>
+            <CardDescription>Track user login activity</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <SessionsTracker />
+          </CardContent>
+          <CardFooter className="text-xs text-gray-500">
+            Data is refreshed automatically every 5 minutes
+          </CardFooter>
+        </Card>
+      </TabsContent>
+    </Tabs>
   );
 };
