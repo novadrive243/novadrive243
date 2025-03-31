@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoadingState } from './LoadingState';
 import { VehicleSelector } from './calendar/VehicleSelector';
@@ -7,9 +7,9 @@ import { VehicleInfo } from './calendar/VehicleInfo';
 import { VehicleCalendarDisplay } from './calendar/VehicleCalendarDisplay';
 import { BookingStats } from './calendar/BookingStats';
 import { useVehicleCalendar } from './calendar/useVehicleCalendar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Button } from '@/components/ui/button';
-import { ChevronDown } from 'lucide-react';
+import { Calendar, ChevronDown, RefreshCw } from 'lucide-react';
 
 interface VehicleCalendarProps {
   vehicles: any[];
@@ -24,10 +24,10 @@ export const VehicleCalendar = ({ vehicles, bookings, language, isLoading }: Veh
     setSelectedVehicle,
     bookedDates,
     isUpdating,
-    updateVehicleAvailability
+    updateVehicleAvailability,
+    calendarView,
+    setCalendarView
   } = useVehicleCalendar(vehicles, bookings, language);
-
-  const [view, setView] = useState('month');
 
   if (isLoading) {
     return <LoadingState language={language} />;
@@ -36,46 +36,13 @@ export const VehicleCalendar = ({ vehicles, bookings, language, isLoading }: Veh
   const selectedVehicleData = vehicles.find(v => v.id === selectedVehicle);
   
   return (
-    <Card className="bg-nova-gray/30 border-nova-gold/30">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div className="space-y-1">
-          <CardTitle className="text-nova-white text-xl">
-            {language === 'fr' ? 'Calendrier de Disponibilité' : 'Availability Calendar'}
-          </CardTitle>
-          <div className="mt-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  className="border-nova-gold/30 text-nova-white hover:bg-nova-gold/10 flex items-center gap-2"
-                  size="sm"
-                >
-                  {language === 'fr' ? 'Options du calendrier' : 'Calendar options'}
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-nova-black border-nova-gold/30 text-nova-white">
-                <DropdownMenuItem 
-                  className="hover:bg-nova-gold/10 cursor-pointer"
-                  onClick={() => setView('month')}
-                >
-                  {language === 'fr' ? 'Vue mensuelle' : 'Monthly view'}
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="hover:bg-nova-gold/10 cursor-pointer"
-                  onClick={() => setView('week')}
-                >
-                  {language === 'fr' ? 'Vue hebdomadaire' : 'Weekly view'}
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="hover:bg-nova-gold/10 cursor-pointer"
-                  onClick={() => setView('day')}
-                >
-                  {language === 'fr' ? 'Vue journalière' : 'Daily view'}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Calendar className="h-6 w-6 text-nova-gold" />
+          <h2 className="text-xl font-bold text-nova-white">
+            {language === 'fr' ? 'Calendrier des Véhicules' : 'Vehicle Calendar'}
+          </h2>
         </div>
         <VehicleSelector 
           vehicles={vehicles}
@@ -83,34 +50,52 @@ export const VehicleCalendar = ({ vehicles, bookings, language, isLoading }: Veh
           setSelectedVehicle={setSelectedVehicle}
           language={language}
         />
-      </CardHeader>
-      <CardContent>
-        {selectedVehicleData ? (
-          <div className="space-y-6">
-            <VehicleInfo 
-              selectedVehicleData={selectedVehicleData}
-              language={language}
-              isUpdating={isUpdating}
-              updateVehicleAvailability={updateVehicleAvailability}
-            />
+      </div>
+      
+      {selectedVehicleData ? (
+        <div className="space-y-4">
+          <VehicleInfo 
+            selectedVehicleData={selectedVehicleData}
+            language={language}
+            isUpdating={isUpdating}
+            updateVehicleAvailability={updateVehicleAvailability}
+          />
+          
+          <div className="flex justify-between items-center">
+            <ToggleGroup type="single" value={calendarView} onValueChange={(value) => value && setCalendarView(value as 'month' | 'week' | 'day')}>
+              <ToggleGroupItem value="month" className="text-nova-white border-nova-gold/30 data-[state=on]:bg-nova-gold/20">
+                {language === 'fr' ? 'Mois' : 'Month'}
+              </ToggleGroupItem>
+              <ToggleGroupItem value="week" className="text-nova-white border-nova-gold/30 data-[state=on]:bg-nova-gold/20">
+                {language === 'fr' ? 'Semaine' : 'Week'}
+              </ToggleGroupItem>
+              <ToggleGroupItem value="day" className="text-nova-white border-nova-gold/30 data-[state=on]:bg-nova-gold/20">
+                {language === 'fr' ? 'Jour' : 'Day'}
+              </ToggleGroupItem>
+            </ToggleGroup>
             
-            <VehicleCalendarDisplay 
-              bookedDates={bookedDates}
-              language={language}
-              view={view}
-            />
-            
-            <BookingStats 
-              bookedDatesCount={bookedDates.length}
-              language={language}
-            />
+            <Button variant="outline" size="sm" className="text-nova-white border-nova-gold/30 hover:bg-nova-gold/10">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              {language === 'fr' ? 'Rafraîchir' : 'Refresh'}
+            </Button>
           </div>
-        ) : (
-          <div className="text-center p-8 text-nova-white/70">
-            {language === 'fr' ? 'Aucun véhicule sélectionné' : 'No vehicle selected'}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+          
+          <VehicleCalendarDisplay 
+            bookedDates={bookedDates}
+            language={language}
+            view={calendarView}
+          />
+          
+          <BookingStats 
+            bookedDatesCount={bookedDates.length}
+            language={language}
+          />
+        </div>
+      ) : (
+        <div className="text-center p-8 text-nova-white/70">
+          {language === 'fr' ? 'Aucun véhicule sélectionné' : 'No vehicle selected'}
+        </div>
+      )}
+    </div>
   );
 };

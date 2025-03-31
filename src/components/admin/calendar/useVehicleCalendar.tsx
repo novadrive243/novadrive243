@@ -12,6 +12,7 @@ export const useVehicleCalendar = (
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
   const [bookedDates, setBookedDates] = useState<Date[]>([]);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [calendarView, setCalendarView] = useState<'month' | 'week' | 'day'>('month');
 
   // Set first vehicle as selected by default when vehicles are loaded
   useEffect(() => {
@@ -87,6 +88,8 @@ export const useVehicleCalendar = (
     setSelectedVehicle,
     bookedDates,
     isUpdating,
-    updateVehicleAvailability
+    updateVehicleAvailability,
+    calendarView,
+    setCalendarView
   };
 };

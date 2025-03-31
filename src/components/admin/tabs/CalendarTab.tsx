@@ -17,7 +17,7 @@ export const CalendarTab = ({
   isLoading
 }: CalendarTabProps) => {
   return (
-    <Card className="shadow-md">
+    <Card className="shadow-md bg-nova-black border-nova-gold/20">
       <CardHeader className="pb-3">
         <CardTitle className="text-2xl font-bold text-nova-white">
           {language === 'fr' ? 'Calendrier des Véhicules' : 'Vehicle Calendar'}
