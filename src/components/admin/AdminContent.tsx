@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Dashboard } from '@/components/admin/Dashboard';
 import { AdminTabs } from '@/components/admin/AdminTabs';
 import { LoadingState } from '@/components/admin/LoadingState';
 
@@ -47,33 +46,20 @@ export const AdminContent = ({
       {isLoading ? (
         <LoadingState language={language} />
       ) : (
-        <>
-          <Dashboard 
-            bookings={bookings}
-            vehicles={vehicles}
-            profiles={profiles}
-            monthlyRevenue={monthlyRevenue}
-            availableVehicles={availableVehicles}
-            percentChange={percentChange}
-            language={language}
-            formatCurrency={formatCurrency}
-          />
-          
-          <AdminTabs 
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            bookings={bookings}
-            vehicles={vehicles}
-            profiles={profiles}
-            language={language}
-            formatDate={formatDate}
-            formatCurrency={formatCurrency}
-            getVehicleDailyPrice={getVehicleDailyPrice}
-            isLoading={isLoading}
-            monthlyRevenue={monthlyRevenue}
-            refreshData={refreshData}
-          />
-        </>
+        <AdminTabs 
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          bookings={bookings}
+          vehicles={vehicles}
+          profiles={profiles}
+          language={language}
+          formatDate={formatDate}
+          formatCurrency={formatCurrency}
+          getVehicleDailyPrice={getVehicleDailyPrice}
+          isLoading={isLoading}
+          monthlyRevenue={monthlyRevenue}
+          refreshData={refreshData}
+        />
       )}
     </div>
   );

@@ -5,17 +5,13 @@ import { useLanguage } from '@/contexts/language-context';
 
 // Tab components
 import { TabTriggers } from './tabs/TabTriggers';
-import { DashboardTab } from './tabs/DashboardTab';
 import { VehiclesTab } from './tabs/VehiclesTab';
 import { BookingsTab } from './tabs/BookingsTab';
 import { CustomersTab } from './tabs/CustomersTab';
 import { StaffTab } from './tabs/StaffTab';
 import { AnalyticsTab } from './tabs/AnalyticsTab';
-import { AIAssistantTab } from './tabs/AIAssistantTab';
 import { InventoryTab } from './tabs/InventoryTab';
 import { MaintenanceTab } from './tabs/MaintenanceTab';
-import { CalendarTab } from './tabs/CalendarTab';
-import { RatingsTab } from './tabs/RatingsTab';
 import { RidesTab } from './tabs/RidesTab';
 import { SessionsTab } from './tabs/SessionsTab';
 import { NotificationsTab } from './tabs/NotificationsTab';
@@ -56,24 +52,23 @@ export const AdminTabs = ({
     window.history.pushState(null, '', `#${value}`);
   };
 
+  // Use bookings as default tab if no tab is selected
+  useEffect(() => {
+    if (activeTab === "dashboard") {
+      setActiveTab("bookings");
+    }
+  }, [activeTab, setActiveTab]);
+
   return (
-    <Tabs defaultValue="dashboard" value={activeTab} onValueChange={handleTabChange} className="w-full">
+    <Tabs defaultValue="bookings" value={activeTab} onValueChange={handleTabChange} className="w-full">
       <TabTriggers activeTab={activeTab} />
       
-      {/* Dashboard */}
-      <TabsContent value="dashboard">
-        <DashboardTab 
+      {/* Bookings */}
+      <TabsContent value="bookings">
+        <BookingsTab 
           bookings={bookings}
-          vehicles={vehicles}
-          profiles={profiles}
-          monthlyRevenue={monthlyRevenue}
-          percentChange={{
-            revenue: 12.5,
-            bookings: 8.2,
-            customers: 5.1,
-            vehicles: -2.3
-          }}
           language={language}
+          formatDate={formatDate}
           formatCurrency={formatCurrency}
         />
       </TabsContent>
@@ -85,16 +80,6 @@ export const AdminTabs = ({
           language={language}
           formatCurrency={formatCurrency}
           getVehicleDailyPrice={getVehicleDailyPrice}
-        />
-      </TabsContent>
-      
-      {/* Bookings */}
-      <TabsContent value="bookings">
-        <BookingsTab 
-          bookings={bookings}
-          language={language}
-          formatDate={formatDate}
-          formatCurrency={formatCurrency}
         />
       </TabsContent>
       
@@ -126,11 +111,6 @@ export const AdminTabs = ({
         />
       </TabsContent>
       
-      {/* AI Assistant */}
-      <TabsContent value="ai-assistant">
-        <AIAssistantTab language={language} />
-      </TabsContent>
-      
       {/* Inventory */}
       <TabsContent value="inventory">
         <InventoryTab 
@@ -144,24 +124,6 @@ export const AdminTabs = ({
       <TabsContent value="maintenance">
         <MaintenanceTab 
           vehicles={vehicles}
-          language={language}
-          formatDate={formatDate}
-        />
-      </TabsContent>
-      
-      {/* Calendar */}
-      <TabsContent value="calendar">
-        <CalendarTab 
-          vehicles={vehicles}
-          bookings={bookings}
-          language={language}
-          isLoading={isLoading}
-        />
-      </TabsContent>
-      
-      {/* Ratings */}
-      <TabsContent value="ratings">
-        <RatingsTab 
           language={language}
           formatDate={formatDate}
         />
