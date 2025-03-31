@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, User, ShoppingCart, ChevronDown, LogOut } from 'lucide-react';
@@ -135,14 +136,9 @@ export const Header = () => {
               )}
             </div>
           ) : (
-            <>
-              <Link to="/login">
-                <Button variant="secondary">{t('header.login')}</Button>
-              </Link>
-              <Link to="/register">
-                <Button>{t('header.register')}</Button>
-              </Link>
-            </>
+            <Link to="/login">
+              <Button variant="secondary">{t('header.login')}</Button>
+            </Link>
           )}
 
           <ContactChatDrawer />

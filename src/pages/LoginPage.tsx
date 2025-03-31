@@ -27,24 +27,7 @@ const LoginPage = () => {
         </div>
         
         <div className="bg-nova-black/40 border border-nova-gold/20 rounded-lg p-6">
-          {/* Removed the translation here since we're handling it directly in LoginForm */}
           <LoginForm />
-        </div>
-        
-        <div className="text-center mt-6">
-          <Button 
-            onClick={() => navigate('/register')}
-            variant="outline" 
-            className="border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10"
-          >
-            {t('login.register') || 'Create Account'}
-          </Button>
-        </div>
-        
-        <div className="text-center mt-6">
-          <p className="text-nova-white/50 text-sm">
-            &copy; 2025 NovaDrive243. {t('login.rights') || 'All rights reserved.'}
-          </p>
         </div>
       </div>
     </div>
