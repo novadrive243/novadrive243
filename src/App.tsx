@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { LanguageProvider } from '@/contexts/language-context';
 import { ThemeProvider } from '@/contexts/theme-context';
 import { Toaster } from '@/components/ui/toaster';
+import { supabase } from "@/integrations/supabase/client";
 
 // Import pages
 import HomePage from './pages/HomePage';
@@ -47,7 +48,30 @@ function App() {
 
       // Set the session ID as a cookie
       setCookie('session_id', sessionId, { path: '/', maxAge: 3600 }); // Expires in 1 hour
-      // Toast notification removed
+      
+      // Store session information in Supabase
+      const storeSessionInfo = async () => {
+        try {
+          // Get browser info
+          const deviceInfo = {
+            userAgent: navigator.userAgent,
+            language: navigator.language,
+            platform: navigator.platform,
+            screenSize: `${window.screen.width}x${window.screen.height}`
+          };
+          
+          // Store anonymous session (will be linked to user when they log in)
+          await supabase.from('user_sessions').insert({
+            session_id: sessionId,
+            device_info: JSON.stringify(deviceInfo),
+            is_active: true
+          });
+        } catch (error) {
+          console.error('Error storing session:', error);
+        }
+      };
+      
+      storeSessionInfo();
     }
   }, [cookies.session_id, setCookie]);
 

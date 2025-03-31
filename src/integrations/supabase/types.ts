@@ -123,6 +123,85 @@ export type Database = {
           },
         ]
       }
+      completed_rides: {
+        Row: {
+          booking_id: string | null
+          created_at: string | null
+          distance: number | null
+          driver_id: string | null
+          end_location: string | null
+          end_time: string
+          fare: number
+          feedback: string | null
+          id: string
+          payment_method: string | null
+          rating: number | null
+          start_location: string | null
+          start_time: string
+          status: string | null
+          user_id: string | null
+          vehicle_id: string | null
+        }
+        Insert: {
+          booking_id?: string | null
+          created_at?: string | null
+          distance?: number | null
+          driver_id?: string | null
+          end_location?: string | null
+          end_time: string
+          fare: number
+          feedback?: string | null
+          id?: string
+          payment_method?: string | null
+          rating?: number | null
+          start_location?: string | null
+          start_time: string
+          status?: string | null
+          user_id?: string | null
+          vehicle_id?: string | null
+        }
+        Update: {
+          booking_id?: string | null
+          created_at?: string | null
+          distance?: number | null
+          driver_id?: string | null
+          end_location?: string | null
+          end_time?: string
+          fare?: number
+          feedback?: string | null
+          id?: string
+          payment_method?: string | null
+          rating?: number | null
+          start_location?: string | null
+          start_time?: string
+          status?: string | null
+          user_id?: string | null
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "completed_rides_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "completed_rides_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "completed_rides_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       drivers: {
         Row: {
           certifications: string[]
@@ -213,6 +292,39 @@ export type Database = {
           name?: string
           price?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      user_sessions: {
+        Row: {
+          device_info: string | null
+          id: string
+          ip_address: string | null
+          is_active: boolean | null
+          login_timestamp: string | null
+          logout_timestamp: string | null
+          session_id: string
+          user_id: string | null
+        }
+        Insert: {
+          device_info?: string | null
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean | null
+          login_timestamp?: string | null
+          logout_timestamp?: string | null
+          session_id: string
+          user_id?: string | null
+        }
+        Update: {
+          device_info?: string | null
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean | null
+          login_timestamp?: string | null
+          logout_timestamp?: string | null
+          session_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }

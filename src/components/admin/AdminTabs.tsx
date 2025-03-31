@@ -13,6 +13,8 @@ import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { VehicleRatings } from './VehicleRatings';
+import { SessionsTracker } from './SessionsTracker';
+import { RidesHistory } from './RidesHistory';
 
 interface AdminTabsProps {
   activeTab: string;
@@ -131,6 +133,19 @@ export const AdminTabs = ({
           <StaffManagement 
             language={language}
             formatDate={formatDate}
+          />
+        )}
+        
+        {activeTab === "sessions" && (
+          <SessionsTracker
+            language={language}
+          />
+        )}
+        
+        {activeTab === "rides" && (
+          <RidesHistory
+            language={language}
+            formatCurrency={formatCurrency}
           />
         )}
       </div>

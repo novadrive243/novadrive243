@@ -13,7 +13,9 @@ import {
   Car,
   ClipboardList,
   Wrench,
-  BadgePercent
+  BadgePercent,
+  History,
+  UserCheck
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -50,6 +52,11 @@ export const AdminSidebar = ({
           title: language === 'fr' ? 'Calendrier' : 'Calendar',
           icon: Calendar,
         },
+        {
+          id: "rides",
+          title: language === 'fr' ? 'Courses' : 'Rides',
+          icon: History,
+        },
       ]
     },
     {
@@ -76,6 +83,11 @@ export const AdminSidebar = ({
           id: "customers",
           title: language === 'fr' ? 'Clients' : 'Customers',
           icon: Users,
+        },
+        {
+          id: "sessions",
+          title: language === 'fr' ? 'Sessions' : 'Sessions',
+          icon: UserCheck,
         }
       ]
     },
