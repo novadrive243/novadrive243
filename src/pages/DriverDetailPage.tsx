@@ -10,6 +10,7 @@ import { ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Driver } from '@/types/drivers';
 import { useToast } from '@/hooks/use-toast';
+import { BackButton } from '@/components/ui/back-button';
 
 const DriverDetailPage = () => {
   const { driverId } = useParams<{ driverId: string }>();
@@ -80,7 +81,9 @@ const DriverDetailPage = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-black to-gray-900 text-nova-white">
       <Header />
       
-      <main className="flex-grow py-24 px-4">
+      <main className="flex-grow py-24 px-4 relative">
+        <BackButton />
+        
         <div className="container mx-auto">
           <Button 
             variant="outline" 
