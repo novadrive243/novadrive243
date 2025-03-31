@@ -23,6 +23,7 @@ const DriversPage = () => {
     const fetchDrivers = async () => {
       try {
         setLoading(true);
+        // We need to explicitly cast the response to match our Driver type
         const { data, error } = await supabase
           .from('drivers')
           .select('*');
@@ -32,7 +33,8 @@ const DriversPage = () => {
         }
         
         if (data) {
-          setDrivers(data);
+          // Cast the data to Driver[] type
+          setDrivers(data as unknown as Driver[]);
         }
       } catch (error) {
         console.error('Error fetching drivers:', error);

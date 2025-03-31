@@ -36,12 +36,14 @@ const DriverDetailPage = () => {
         }
         
         if (data) {
+          // Cast the data to the Driver type and add mock data for fields not in DB yet
+          const driverData = data as unknown as Driver;
           setDriver({
-            ...data,
+            ...driverData,
             // Add mock data for fields that are not in the database yet
             bio: language === 'fr' 
-              ? `Chauffeur professionnel avec ${data.experience} d'expérience, spécialisé dans la conduite de véhicules de luxe.`
-              : `Professional driver with ${data.experience} of experience, specialized in driving luxury vehicles.`,
+              ? `Chauffeur professionnel avec ${driverData.experience} d'expérience, spécialisé dans la conduite de véhicules de luxe.`
+              : `Professional driver with ${driverData.experience} of experience, specialized in driving luxury vehicles.`,
             availability: language === 'fr' ? 'Disponible 7j/7, 24h/24' : 'Available 24/7',
             location: 'Paris, France',
             specialties: ['VIP', 'Events', 'Airport']

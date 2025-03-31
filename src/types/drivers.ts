@@ -12,4 +12,6 @@ export interface Driver {
   availability?: string;
   location?: string;
   specialties?: string[];
+  created_at?: string;
+  updated_at?: string;
 }
