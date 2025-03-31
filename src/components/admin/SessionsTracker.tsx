@@ -6,7 +6,7 @@ import {
   CardTitle,
   CardContent
 } from "@/components/ui/card";
-import { RefreshCw, User, Clock, DeviceTablet } from 'lucide-react';
+import { RefreshCw, User, Clock, Tablet } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { supabase } from '@/integrations/supabase/client';
 import { LoadingState } from '@/components/admin/LoadingState';
@@ -124,7 +124,7 @@ export const SessionsTracker = () => {
                         {formatDate(session.login_timestamp)}
                       </div>
                       <div className="flex items-center text-xs text-gray-500">
-                        <DeviceTablet className="h-3 w-3 mr-1" />
+                        <Tablet className="h-3 w-3 mr-1" />
                         {session.device_info ? formatDeviceInfo(session.device_info) : 'Unknown device'}
                       </div>
                     </div>

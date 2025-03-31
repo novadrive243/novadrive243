@@ -17,31 +17,41 @@ import { RidesHistory } from '@/components/admin/RidesHistory';
 import { SessionsTracker } from '@/components/admin/SessionsTracker';
 import { useLanguage } from '@/contexts/language-context';
 
-export const AdminTabs = () => {
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const { language } = useLanguage();
+interface AdminTabsProps {
+  activeTab: string;
+  setActiveTab: (value: string) => void;
+  bookings: any[];
+  vehicles: any[];
+  profiles: any[];
+  language: string;
+  formatDate: (dateString: string) => string;
+  formatCurrency: (amount: number) => string;
+  getVehicleDailyPrice: (vehicleName: string) => number;
+  isLoading: boolean;
+  monthlyRevenue: number;
+  refreshData: () => void;
+}
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat(language === 'fr' ? 'fr-FR' : 'en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
-
+export const AdminTabs = ({
+  activeTab,
+  setActiveTab,
+  bookings,
+  vehicles,
+  profiles,
+  language,
+  formatDate,
+  formatCurrency,
+  getVehicleDailyPrice,
+  isLoading,
+  monthlyRevenue,
+  refreshData
+}: AdminTabsProps) => {
   // Handle tab change
   const handleTabChange = (value: string) => {
     setActiveTab(value);
     // Update URL hash without page reload
     window.history.pushState(null, '', `#${value}`);
   };
-
-  // Initialize tab from URL hash on mount
-  useEffect(() => {
-    const hash = window.location.hash.replace('#', '');
-    if (hash) {
-      setActiveTab(hash);
-    }
-  }, []);
 
   return (
     <Tabs defaultValue="dashboard" value={activeTab} onValueChange={handleTabChange} className="w-full">
@@ -69,7 +79,21 @@ export const AdminTabs = () => {
             <CardDescription>Overview of all NovaDrive operations</CardDescription>
           </CardHeader>
           <CardContent>
-            <Dashboard language={language} />
+            <Dashboard 
+              bookings={bookings}
+              vehicles={vehicles}
+              profiles={profiles}
+              monthlyRevenue={monthlyRevenue}
+              availableVehicles={vehicles.filter(v => v.available).length}
+              percentChange={{
+                revenue: 12.5,
+                bookings: 8.2,
+                customers: 5.1,
+                vehicles: -2.3
+              }}
+              language={language}
+              formatCurrency={formatCurrency}
+            />
           </CardContent>
         </Card>
       </TabsContent>
@@ -82,7 +106,12 @@ export const AdminTabs = () => {
             <CardDescription>Manage your fleet of vehicles</CardDescription>
           </CardHeader>
           <CardContent>
-            <VehiclesTable language={language} formatCurrency={formatCurrency} />
+            <VehiclesTable 
+              vehicles={vehicles} 
+              language={language} 
+              formatCurrency={formatCurrency} 
+              getVehicleDailyPrice={getVehicleDailyPrice}
+            />
           </CardContent>
         </Card>
       </TabsContent>
@@ -95,7 +124,12 @@ export const AdminTabs = () => {
             <CardDescription>Manage customer bookings and reservations</CardDescription>
           </CardHeader>
           <CardContent>
-            <BookingsTable />
+            <BookingsTable 
+              bookings={bookings}
+              language={language}
+              formatDate={formatDate}
+              formatCurrency={formatCurrency}
+            />
           </CardContent>
         </Card>
       </TabsContent>
@@ -108,7 +142,11 @@ export const AdminTabs = () => {
             <CardDescription>Manage customer accounts and information</CardDescription>
           </CardHeader>
           <CardContent>
-            <CustomersTable />
+            <CustomersTable 
+              profiles={profiles}
+              language={language}
+              formatDate={formatDate}
+            />
           </CardContent>
         </Card>
       </TabsContent>
@@ -121,7 +159,9 @@ export const AdminTabs = () => {
             <CardDescription>Manage employees and their permissions</CardDescription>
           </CardHeader>
           <CardContent>
-            <StaffManagement />
+            <StaffManagement 
+              language={language}
+            />
           </CardContent>
         </Card>
       </TabsContent>
@@ -134,7 +174,13 @@ export const AdminTabs = () => {
             <CardDescription>Detailed business analytics and insights</CardDescription>
           </CardHeader>
           <CardContent>
-            <AdvancedAnalytics />
+            <AdvancedAnalytics 
+              bookings={bookings}
+              vehicles={vehicles}
+              profiles={profiles}
+              language={language}
+              formatCurrency={formatCurrency}
+            />
           </CardContent>
         </Card>
       </TabsContent>
@@ -147,7 +193,9 @@ export const AdminTabs = () => {
             <CardDescription>Get help with administrative tasks</CardDescription>
           </CardHeader>
           <CardContent>
-            <AdminAIAssistant />
+            <AdminAIAssistant
+              language={language}
+            />
           </CardContent>
         </Card>
       </TabsContent>
@@ -160,7 +208,11 @@ export const AdminTabs = () => {
             <CardDescription>Manage parts and supplies inventory</CardDescription>
           </CardHeader>
           <CardContent>
-            <InventoryManager />
+            <InventoryManager
+              vehicles={vehicles}
+              language={language}
+              formatCurrency={formatCurrency}
+            />
           </CardContent>
         </Card>
       </TabsContent>
@@ -173,7 +225,10 @@ export const AdminTabs = () => {
             <CardDescription>Track vehicle maintenance and service history</CardDescription>
           </CardHeader>
           <CardContent>
-            <MaintenanceTracking />
+            <MaintenanceTracking
+              vehicles={vehicles}
+              language={language}
+            />
           </CardContent>
         </Card>
       </TabsContent>
@@ -186,7 +241,12 @@ export const AdminTabs = () => {
             <CardDescription>View and manage vehicle availability</CardDescription>
           </CardHeader>
           <CardContent>
-            <VehicleCalendar />
+            <VehicleCalendar
+              vehicles={vehicles}
+              bookings={bookings}
+              language={language}
+              isLoading={isLoading}
+            />
           </CardContent>
         </Card>
       </TabsContent>
@@ -199,7 +259,10 @@ export const AdminTabs = () => {
             <CardDescription>View customer ratings and feedback</CardDescription>
           </CardHeader>
           <CardContent>
-            <VehicleRatings />
+            <VehicleRatings
+              language={language}
+              formatDate={formatDate}
+            />
           </CardContent>
         </Card>
       </TabsContent>
