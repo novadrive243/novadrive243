@@ -19,8 +19,14 @@ export const BookingsTab = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Bookings</CardTitle>
-        <CardDescription>Manage customer bookings and reservations</CardDescription>
+        <CardTitle>
+          {language === 'fr' ? 'Réservations' : 'Bookings'}
+        </CardTitle>
+        <CardDescription>
+          {language === 'fr' 
+            ? 'Gérer les réservations et les réservations des clients' 
+            : 'Manage customer bookings and reservations'}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <BookingsTable 

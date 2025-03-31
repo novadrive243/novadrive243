@@ -64,7 +64,7 @@ export const AdminTabs = ({
       <TabTriggers activeTab={activeTab} />
       
       {/* Bookings */}
-      <TabsContent value="bookings">
+      <TabsContent value="bookings" className="mt-4">
         <BookingsTab 
           bookings={bookings}
           language={language}
@@ -74,7 +74,7 @@ export const AdminTabs = ({
       </TabsContent>
       
       {/* Vehicles */}
-      <TabsContent value="vehicles">
+      <TabsContent value="vehicles" className="mt-4">
         <VehiclesTab 
           vehicles={vehicles}
           language={language}
@@ -84,7 +84,7 @@ export const AdminTabs = ({
       </TabsContent>
       
       {/* Customers */}
-      <TabsContent value="customers">
+      <TabsContent value="customers" className="mt-4">
         <CustomersTab 
           profiles={profiles}
           language={language}
@@ -93,7 +93,7 @@ export const AdminTabs = ({
       </TabsContent>
       
       {/* Staff */}
-      <TabsContent value="staff">
+      <TabsContent value="staff" className="mt-4">
         <StaffTab 
           language={language}
           formatDate={formatDate}
@@ -101,7 +101,7 @@ export const AdminTabs = ({
       </TabsContent>
       
       {/* Analytics */}
-      <TabsContent value="analytics">
+      <TabsContent value="analytics" className="mt-4">
         <AnalyticsTab 
           bookings={bookings}
           vehicles={vehicles}
@@ -112,7 +112,7 @@ export const AdminTabs = ({
       </TabsContent>
       
       {/* Inventory */}
-      <TabsContent value="inventory">
+      <TabsContent value="inventory" className="mt-4">
         <InventoryTab 
           vehicles={vehicles}
           language={language}
@@ -121,7 +121,7 @@ export const AdminTabs = ({
       </TabsContent>
       
       {/* Maintenance */}
-      <TabsContent value="maintenance">
+      <TabsContent value="maintenance" className="mt-4">
         <MaintenanceTab 
           vehicles={vehicles}
           language={language}
@@ -130,17 +130,17 @@ export const AdminTabs = ({
       </TabsContent>
       
       {/* Rides */}
-      <TabsContent value="rides">
+      <TabsContent value="rides" className="mt-4">
         <RidesTab />
       </TabsContent>
       
       {/* Sessions */}
-      <TabsContent value="sessions">
+      <TabsContent value="sessions" className="mt-4">
         <SessionsTab />
       </TabsContent>
       
       {/* Notifications */}
-      <TabsContent value="notifications">
+      <TabsContent value="notifications" className="mt-4">
         <NotificationsTab language={language} />
       </TabsContent>
     </Tabs>
