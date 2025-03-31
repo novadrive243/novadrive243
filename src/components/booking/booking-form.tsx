@@ -9,6 +9,7 @@ import { BookingStepOne } from './steps/booking-step-one';
 import { BookingStepTwo } from './steps/booking-step-two';
 import { calculateVehiclePrice, generateDurationOptions } from './utils/booking-utils';
 import { format } from 'date-fns';
+import { BookingCompletedModal } from './BookingCompletedModal';
 
 export function BookingForm() {
   const { t } = useLanguage();
@@ -25,6 +26,16 @@ export function BookingForm() {
   const [durationType, setDurationType] = useState<'hourly' | 'daily'>('hourly');
   const [duration, setDuration] = useState<number>(1); // Default: 1 hour
   const [days, setDays] = useState<number>(1); // Default: 1 day
+  
+  // New state for completed booking
+  const [bookingCompleted, setBookingCompleted] = useState(false);
+  const [bookingDetails, setBookingDetails] = useState({
+    id: '',
+    vehicleName: '',
+    date: '',
+    duration: '',
+    totalPrice: ''
+  });
   
   // Generate duration options
   const { hourOptions, dayOptions } = generateDurationOptions();
@@ -55,40 +66,40 @@ export function BookingForm() {
       
       // Simulate API call
       setTimeout(() => {
-        const bookingDetails = {
-          fromAddress,
-          toAddress,
-          bookingType,
-          date: date ? format(date, 'yyyy-MM-dd') : null,
-          time: bookingType === 'schedule' ? time : null,
-          vehicle: selectedVehicle,
-          vehicleName: vehicles.find(v => v.id === selectedVehicle)?.name,
-          durationType,
-          duration: getDurationValue(),
-          price: getSelectedVehiclePrice(),
+        const selectedVehicleObj = vehicles.find(v => v.id === selectedVehicle);
+        const durationText = durationType === 'hourly' 
+          ? `${duration} ${duration > 1 ? 'hours' : 'hour'}` 
+          : `${days} ${days > 1 ? 'days' : 'day'}`;
+        
+        const bookingData = {
+          id: Math.random().toString(36).substring(2, 15), // Generate a random ID for demo
+          vehicleName: selectedVehicleObj?.name || '',
+          date: date ? format(date, 'yyyy-MM-dd') + (bookingType === 'schedule' ? ` ${time}` : '') : '',
+          duration: durationText,
+          totalPrice: getSelectedVehiclePrice().toString()
         };
         
-        console.log('Booking confirmed:', bookingDetails);
+        // Set booking details for the modal
+        setBookingDetails(bookingData);
         
-        // Show success notification
-        toast({
-          title: t('booking.successTitle') || "Booking successful!",
-          description: t('booking.successMessage') || "A confirmation will be sent to you.",
-          variant: "default",
-        });
-        
-        // Reset form
+        // Mark booking as completed to show rating modal
+        setBookingCompleted(true);
         setIsProcessing(false);
-        setFromAddress('');
-        setToAddress('');
-        setBookingType('now');
-        setSelectedVehicle(null);
-        setBookingStep(1);
-        setDurationType('hourly');
-        setDuration(1);
-        setDays(1);
       }, 2000);
     }
+  };
+  
+  const handleCloseModal = () => {
+    // Reset the form after closing the modal
+    setBookingCompleted(false);
+    setFromAddress('');
+    setToAddress('');
+    setBookingType('now');
+    setSelectedVehicle(null);
+    setBookingStep(1);
+    setDurationType('hourly');
+    setDuration(1);
+    setDays(1);
   };
   
   const getDurationValue = () => {
@@ -106,61 +117,72 @@ export function BookingForm() {
   };
 
   return (
-    <Card className="nova-card max-w-3xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">
-          <span className="gold-gradient-text">{t('booking.title')}</span>
-        </CardTitle>
-        <CardDescription>
-          {bookingStep === 1 
-            ? t('booking.enterDetails') || "Enter your trip details" 
-            : t('booking.selectVehicle') || "Select your preferred vehicle"}
-        </CardDescription>
-      </CardHeader>
+    <>
+      <Card className="nova-card max-w-3xl mx-auto">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">
+            <span className="gold-gradient-text">{t('booking.title')}</span>
+          </CardTitle>
+          <CardDescription>
+            {bookingStep === 1 
+              ? t('booking.enterDetails') || "Enter your trip details" 
+              : t('booking.selectVehicle') || "Select your preferred vehicle"}
+          </CardDescription>
+        </CardHeader>
+        
+        <CardContent>
+          {bookingStep === 1 ? (
+            <BookingStepOne 
+              fromAddress={fromAddress}
+              setFromAddress={setFromAddress}
+              toAddress={toAddress}
+              setToAddress={setToAddress}
+              bookingType={bookingType}
+              setBookingType={setBookingType}
+              date={date}
+              setDate={setDate}
+              time={time}
+              setTime={setTime}
+              durationType={durationType}
+              setDurationType={setDurationType}
+              duration={duration}
+              setDuration={setDuration}
+              days={days}
+              setDays={setDays}
+              hourOptions={hourOptions}
+              dayOptions={dayOptions}
+              handleContinue={handleContinue}
+              selectedVehicle={selectedVehicle}
+            />
+          ) : (
+            <BookingStepTwo 
+              vehicles={vehicles}
+              selectedVehicle={selectedVehicle}
+              setSelectedVehicle={setSelectedVehicle}
+              durationType={durationType}
+              duration={duration}
+              days={days}
+              getSelectedVehiclePrice={getSelectedVehiclePrice}
+              handleBookNow={handleBookNow}
+              isProcessing={isProcessing}
+              setBookingStep={setBookingStep}
+            />
+          )}
+        </CardContent>
+        
+        <CardFooter>
+          <div /> {/* Empty div to maintain layout */}
+        </CardFooter>
+      </Card>
       
-      <CardContent>
-        {bookingStep === 1 ? (
-          <BookingStepOne 
-            fromAddress={fromAddress}
-            setFromAddress={setFromAddress}
-            toAddress={toAddress}
-            setToAddress={setToAddress}
-            bookingType={bookingType}
-            setBookingType={setBookingType}
-            date={date}
-            setDate={setDate}
-            time={time}
-            setTime={setTime}
-            durationType={durationType}
-            setDurationType={setDurationType}
-            duration={duration}
-            setDuration={setDuration}
-            days={days}
-            setDays={setDays}
-            hourOptions={hourOptions}
-            dayOptions={dayOptions}
-            handleContinue={handleContinue}
-            selectedVehicle={selectedVehicle}
-          />
-        ) : (
-          <BookingStepTwo 
-            vehicles={vehicles}
-            selectedVehicle={selectedVehicle}
-            setSelectedVehicle={setSelectedVehicle}
-            durationType={durationType}
-            duration={duration}
-            days={days}
-            getSelectedVehiclePrice={getSelectedVehiclePrice}
-            handleBookNow={handleBookNow}
-            isProcessing={isProcessing}
-            setBookingStep={setBookingStep}
-          />
-        )}
-      </CardContent>
-      
-      <CardFooter>
-        <div /> {/* Empty div to maintain layout */}
-      </CardFooter>
-    </Card>
+      {/* Show booking completed modal with rating form when booking is completed */}
+      {bookingCompleted && (
+        <BookingCompletedModal
+          open={bookingCompleted}
+          onClose={handleCloseModal}
+          bookingDetails={bookingDetails}
+        />
+      )}
+    </>
   );
 }
