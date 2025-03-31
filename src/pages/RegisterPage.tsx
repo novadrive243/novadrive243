@@ -19,7 +19,7 @@ const RegisterPage = () => {
             <span className="text-white border border-nova-gold px-3 py-1 rounded shadow-[0_0_10px_rgba(232,191,82,0.5)]">NovaDrive</span>
           </h1>
           <p className="text-white/70">
-            {t('register.slogan') || 'Le Pouvoir du Mouvement'}
+            Le Pouvoir du Mouvement
           </p>
         </div>
         
