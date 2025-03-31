@@ -18,7 +18,7 @@ export function EmailField({ form, label, placeholder }: EmailFieldProps) {
       name="email"
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="text-nova-white">{label}</FormLabel>
+          <FormLabel className="text-nova-white">{label} *</FormLabel>
           <FormControl>
             <div className="relative">
               <Input 

@@ -25,7 +25,7 @@ export function PasswordField({ form, label, placeholder }: PasswordFieldProps) 
       name="password"
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="text-nova-white">{label}</FormLabel>
+          <FormLabel className="text-nova-white">{label} *</FormLabel>
           <FormControl>
             <div className="relative">
               <Input 
