@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { User, Star, Phone, Languages } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface DriverProfileCardProps {
   driver: {
@@ -24,6 +25,7 @@ interface DriverProfileCardProps {
 
 export function DriverProfileCard({ driver, onContactClick, onViewProfileClick }: DriverProfileCardProps) {
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   // Generate stars based on rating
   const renderStars = (rating: number) => {
@@ -33,6 +35,13 @@ export function DriverProfileCard({ driver, onContactClick, onViewProfileClick }
         className={`h-4 w-4 ${i < rating ? 'text-nova-gold fill-nova-gold' : 'text-gray-300'}`} 
       />
     ));
+  };
+
+  const handleViewProfile = () => {
+    if (onViewProfileClick) {
+      onViewProfileClick(driver.id);
+    }
+    navigate(`/drivers/${driver.id}`);
   };
 
   return (
@@ -88,7 +97,7 @@ export function DriverProfileCard({ driver, onContactClick, onViewProfileClick }
           variant="outline" 
           size="sm"
           className="border-nova-gold/20 text-nova-white hover:bg-nova-gold/10"
-          onClick={() => onViewProfileClick?.(driver.id)}
+          onClick={handleViewProfile}
         >
           {t('drivers.viewProfile')}
         </Button>

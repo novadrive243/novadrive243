@@ -8,4 +8,8 @@ export interface Driver {
   languages: string[];
   certifications: string[];
   phone?: string;
+  bio?: string;
+  availability?: string;
+  location?: string;
+  specialties?: string[];
 }

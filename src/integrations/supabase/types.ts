@@ -123,6 +123,45 @@ export type Database = {
           },
         ]
       }
+      drivers: {
+        Row: {
+          certifications: string[]
+          created_at: string
+          experience: string
+          id: string
+          image: string | null
+          languages: string[]
+          name: string
+          phone: string | null
+          rating: number
+          updated_at: string
+        }
+        Insert: {
+          certifications: string[]
+          created_at?: string
+          experience: string
+          id?: string
+          image?: string | null
+          languages: string[]
+          name: string
+          phone?: string | null
+          rating: number
+          updated_at?: string
+        }
+        Update: {
+          certifications?: string[]
+          created_at?: string
+          experience?: string
+          id?: string
+          image?: string | null
+          languages?: string[]
+          name?: string
+          phone?: string | null
+          rating?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
