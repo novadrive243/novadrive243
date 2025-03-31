@@ -9,6 +9,7 @@ import { RecruitmentSection } from './drivers/RecruitmentSection';
 import { supabase } from '@/integrations/supabase/client';
 import { Driver } from '@/types/drivers';
 import { useToast } from '@/hooks/use-toast';
+import { BackButton } from '@/components/ui/back-button';
 
 const DriversPage = () => {
   const { language } = useLanguage();
@@ -74,7 +75,9 @@ const DriversPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 text-nova-white pb-20">
-      <div className="container px-4 py-10 mx-auto">
+      <div className="container px-4 py-10 mx-auto relative">
+        <BackButton className="absolute top-5 left-4" />
+        
         <h1 className="text-2xl md:text-3xl font-bold mb-6 text-white">
           {language === 'fr' ? 'Nos Chauffeurs Professionnels' : 'Our Professional Drivers'}
         </h1>
