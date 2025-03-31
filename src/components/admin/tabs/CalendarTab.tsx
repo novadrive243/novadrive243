@@ -18,7 +18,7 @@ export const CalendarTab = ({
 }: CalendarTabProps) => {
   return (
     <Card className="shadow-md">
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-3">
         <CardTitle className="text-2xl font-bold text-nova-white">
           {language === 'fr' ? 'Calendrier des Véhicules' : 'Vehicle Calendar'}
         </CardTitle>
