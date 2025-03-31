@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { useLanguage } from "@/contexts/language-context";
@@ -19,10 +19,34 @@ import { RatingForm } from '@/components/ratings/rating-form';
 import { CalendarIntegration, BookingEvent } from '@/components/calendar/calendar-integration';
 import { EmergencyContact } from '@/components/emergency/emergency-contact';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/use-auth';
+import { format } from 'date-fns';
 
 const AccountPage = () => {
   const { t, language, setLanguage } = useLanguage();
   const { toast } = useToast();
+  const { user } = useAuth();
+  
+  // Get registration date from localStorage if available (for demo)
+  // In a real app, this would come from the user's profile in the database
+  const [registrationDate, setRegistrationDate] = useState<string>('');
+  
+  useEffect(() => {
+    // Try to get user data from localStorage (from registration demo flow)
+    const userDataStr = localStorage.getItem('userData');
+    if (userDataStr) {
+      try {
+        const userData = JSON.parse(userDataStr);
+        // If we have a dateOfBirth in the format of ISO string, format it
+        if (userData.dateOfBirth) {
+          const date = new Date(userData.dateOfBirth);
+          setRegistrationDate(format(date, 'dd/MM/yyyy'));
+        }
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+      }
+    }
+  }, []);
   
   // Sample data for features
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -175,14 +199,17 @@ const AccountPage = () => {
                 </Avatar>
                 
                 <h2 className="text-xl font-bold text-nova-white">
-                  {t('account.userName')}
+                  {user?.email ? user.email.split('@')[0] : t('account.userName')}
                 </h2>
-                <p className="text-nova-white/70 mb-6">user@example.com</p>
+                <p className="text-nova-white/70 mb-6">{user?.email || 'user@example.com'}</p>
                 
                 <div className="space-y-4 w-full">
                   <div className="flex items-center gap-3 text-nova-white/70">
                     <User className="h-5 w-5 text-nova-gold" />
-                    <span>{t('account.member')}</span>
+                    <span>
+                      {t('account.member')} 
+                      {registrationDate && <span className="ml-1">({registrationDate})</span>}
+                    </span>
                   </div>
                   <div className="flex items-center gap-3 text-nova-white/70">
                     <Car className="h-5 w-5 text-nova-gold" />
