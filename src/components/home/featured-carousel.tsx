@@ -25,7 +25,7 @@ export const FeaturedCarousel = () => {
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-3">
             <Award className="inline-block mr-2 text-nova-gold h-8 w-8" />
-            <span className="text-nova-white">
+            <span className="border border-nova-gold px-3 py-1 rounded shadow-[0_0_10px_rgba(232,191,82,0.5)]">
               {language === 'fr' ? 'Véhicules Premium' : 'Premium Vehicles'}
             </span>
           </h2>

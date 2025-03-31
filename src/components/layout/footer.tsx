@@ -6,7 +6,7 @@ import { useLanguage } from "@/contexts/language-context";
 export function Footer() {
   const { t } = useLanguage();
   
-  const currentYear = new Date().getFullYear();
+  const currentYear = 2025; // Updating to 2025 instead of dynamic year
   
   const footerSections = [
     {
@@ -69,7 +69,7 @@ export function Footer() {
         <div className="border-t border-nova-gold/20 pt-6 mt-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-nova-white/50 text-sm">
-              &copy; {currentYear} NovaDrive. {t('footer.rights')}
+              &copy; {currentYear} NovaDrive243. {t('footer.rights')}
             </p>
             <div className="flex space-x-4 mt-4 md:mt-0">
               <a href="https://www.instagram.com/novadrive243" target="_blank" rel="noopener noreferrer" className="text-nova-white/70 hover:text-nova-gold">

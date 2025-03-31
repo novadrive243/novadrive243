@@ -43,7 +43,7 @@ const LoginPage = () => {
         
         <div className="text-center mt-6">
           <p className="text-nova-white/50 text-sm">
-            &copy; {new Date().getFullYear()} NovaDrive. {t('login.rights') || 'All rights reserved.'}
+            &copy; 2025 NovaDrive243. {t('login.rights') || 'All rights reserved.'}
           </p>
         </div>
       </div>

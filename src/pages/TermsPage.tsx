@@ -10,14 +10,20 @@ const TermsPage = () => {
   // Déterminer quel contenu afficher en fonction de la langue
   const content = language === 'fr' ? frenchContent : englishContent;
   
+  // Get current date in DD/MM/YYYY format
+  const today = new Date();
+  const formattedDate = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
+  
   return (
     <div className="flex flex-col min-h-screen bg-nova-black text-nova-white">
       <Header />
       
       <main className="flex-grow pt-24 pb-16">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center bg-gold-gradient text-transparent bg-clip-text">
-            {language === 'fr' ? 'Conditions d\'utilisation & Politique de confidentialité' : 'Terms of Use & Privacy Policy'}
+          <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+            <span className="text-nova-white border border-nova-gold px-3 py-1 rounded shadow-[0_0_10px_rgba(232,191,82,0.5)]">
+              {language === 'fr' ? 'Conditions d\'utilisation & Politique de confidentialité' : 'Terms of Use & Privacy Policy'}
+            </span>
           </h1>
           
           <div className="space-y-12 nova-card p-6 md:p-8">
@@ -51,7 +57,7 @@ const TermsPage = () => {
             
             <div className="text-center mt-8 pt-8 border-t border-nova-gold/20">
               <p className="text-nova-white/70">
-                {content.lastUpdate}
+                {language === 'fr' ? `Dernière mise à jour : ${formattedDate}` : `Last updated: ${formattedDate}`}
               </p>
             </div>
           </div>
