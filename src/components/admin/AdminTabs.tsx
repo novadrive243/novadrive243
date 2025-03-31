@@ -60,11 +60,11 @@ export const AdminTabs = ({
   }, [activeTab, setActiveTab]);
 
   return (
-    <Tabs defaultValue="bookings" value={activeTab} onValueChange={handleTabChange} className="w-full">
+    <Tabs defaultValue="bookings" value={activeTab} onValueChange={handleTabChange} className="w-full space-y-6">
       <TabTriggers activeTab={activeTab} />
       
-      {/* Bookings */}
-      <TabsContent value="bookings" className="mt-4">
+      {/* Tabs content with increased top margin for better spacing */}
+      <TabsContent value="bookings" className="mt-6">
         <BookingsTab 
           bookings={bookings}
           language={language}
@@ -73,8 +73,7 @@ export const AdminTabs = ({
         />
       </TabsContent>
       
-      {/* Vehicles */}
-      <TabsContent value="vehicles" className="mt-4">
+      <TabsContent value="vehicles" className="mt-6">
         <VehiclesTab 
           vehicles={vehicles}
           language={language}
@@ -83,8 +82,7 @@ export const AdminTabs = ({
         />
       </TabsContent>
       
-      {/* Customers */}
-      <TabsContent value="customers" className="mt-4">
+      <TabsContent value="customers" className="mt-6">
         <CustomersTab 
           profiles={profiles}
           language={language}
@@ -92,16 +90,14 @@ export const AdminTabs = ({
         />
       </TabsContent>
       
-      {/* Staff */}
-      <TabsContent value="staff" className="mt-4">
+      <TabsContent value="staff" className="mt-6">
         <StaffTab 
           language={language}
           formatDate={formatDate}
         />
       </TabsContent>
       
-      {/* Analytics */}
-      <TabsContent value="analytics" className="mt-4">
+      <TabsContent value="analytics" className="mt-6">
         <AnalyticsTab 
           bookings={bookings}
           vehicles={vehicles}
@@ -111,8 +107,7 @@ export const AdminTabs = ({
         />
       </TabsContent>
       
-      {/* Inventory */}
-      <TabsContent value="inventory" className="mt-4">
+      <TabsContent value="inventory" className="mt-6">
         <InventoryTab 
           vehicles={vehicles}
           language={language}
@@ -120,8 +115,7 @@ export const AdminTabs = ({
         />
       </TabsContent>
       
-      {/* Maintenance */}
-      <TabsContent value="maintenance" className="mt-4">
+      <TabsContent value="maintenance" className="mt-6">
         <MaintenanceTab 
           vehicles={vehicles}
           language={language}
@@ -129,18 +123,15 @@ export const AdminTabs = ({
         />
       </TabsContent>
       
-      {/* Rides */}
-      <TabsContent value="rides" className="mt-4">
+      <TabsContent value="rides" className="mt-6">
         <RidesTab />
       </TabsContent>
       
-      {/* Sessions */}
-      <TabsContent value="sessions" className="mt-4">
+      <TabsContent value="sessions" className="mt-6">
         <SessionsTab />
       </TabsContent>
       
-      {/* Notifications */}
-      <TabsContent value="notifications" className="mt-4">
+      <TabsContent value="notifications" className="mt-6">
         <NotificationsTab language={language} />
       </TabsContent>
     </Tabs>
