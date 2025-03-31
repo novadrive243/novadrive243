@@ -13,6 +13,7 @@ import { LanguageProvider } from '@/contexts/language-context';
 import { ThemeProvider } from '@/contexts/theme-context';
 import { Toaster } from '@/components/ui/toaster';
 import { supabase } from "@/integrations/supabase/client";
+import { AuthProvider } from '@/hooks/use-auth';
 
 // Import pages
 import HomePage from './pages/HomePage';
@@ -117,8 +118,10 @@ function RootApp() {
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-react-theme">
       <LanguageProvider>
-        <App />
-        <Toaster />
+        <AuthProvider>
+          <App />
+          <Toaster />
+        </AuthProvider>
       </LanguageProvider>
     </ThemeProvider>
   );

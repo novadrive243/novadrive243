@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, User, ShoppingCart, ChevronDown, LogOut } from 'lucide-react';
@@ -7,7 +8,7 @@ import { useLanguage } from "@/contexts/language-context";
 import { useTheme } from "@/contexts/theme-context";
 import { NotificationsCenter } from "@/components/notifications/notifications-center";
 import { useAuth } from '@/hooks/use-auth';
-import { ContactChatDrawer } from '@/components/contact/chat/ContactChatDrawer';
+import ContactChatDrawer from '@/components/contact/chat/ContactChatDrawer';
 
 export const Header = () => {
   const { theme, setTheme } = useTheme();
@@ -17,6 +18,7 @@ export const Header = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   
   // Close menu when route changes
   useEffect(() => {
@@ -52,6 +54,19 @@ export const Header = () => {
     } catch (error) {
       console.error('Error signing out:', error);
     }
+  };
+
+  // Notification handlers (dummy for now)
+  const handleMarkAsRead = (id: string) => {
+    console.log('Marked as read:', id);
+  };
+
+  const handleMarkAllAsRead = () => {
+    console.log('Marked all as read');
+  };
+
+  const handleDeleteAll = () => {
+    console.log('Deleted all notifications');
   };
 
   return (
@@ -91,7 +106,12 @@ export const Header = () => {
         {/* User Actions */}
         <div className="flex items-center space-x-4">
           <LanguageSwitcher />
-          <NotificationsCenter />
+          <NotificationsCenter 
+            notifications={[]}
+            onMarkAsRead={handleMarkAsRead}
+            onMarkAllAsRead={handleMarkAllAsRead}
+            onDeleteAll={handleDeleteAll}
+          />
 
           {user ? (
             <div className="relative">

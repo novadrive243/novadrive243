@@ -1,209 +1,213 @@
 
 import React, { useState, useEffect } from 'react';
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
-import { format } from 'date-fns';
-import { fr, enUS } from 'date-fns/locale';
-import { Star } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { Refresh, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
-interface CompletedRide {
-  id: string;
-  booking_id: string | null;
-  user_id: string | null;
-  driver_id: string | null;
-  vehicle_id: string | null;
-  start_location: string | null;
-  end_location: string | null;
-  start_time: string;
-  end_time: string;
-  distance: number | null;
-  fare: number;
-  payment_method: string | null;
-  status: string | null;
-  rating: number | null;
-  feedback: string | null;
-  created_at: string;
-  driver_name?: string;
-  vehicle_name?: string;
-  user_name?: string;
-}
+type SortField = 'start_time' | 'end_time' | 'fare' | 'rating';
+type SortDirection = 'asc' | 'desc';
 
 export const RidesHistory = ({ 
-  language, 
-  formatCurrency 
+  language,
+  formatCurrency
 }: { 
   language: string;
   formatCurrency: (amount: number) => string;
 }) => {
-  const [rides, setRides] = useState<CompletedRide[]>([]);
+  const [rides, setRides] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [sortField, setSortField] = useState<SortField>('start_time');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const { toast } = useToast();
 
+  // Function to fetch rides data
+  const fetchRides = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('completed_rides')
+        .select(`
+          *,
+          users:user_id (email),
+          drivers:driver_id (name),
+          vehicles:vehicle_id (name)
+        `)
+        .order(sortField, { ascending: sortDirection === 'asc' });
+
+      if (error) throw error;
+      
+      setRides(data || []);
+    } catch (error: any) {
+      console.error('Error fetching rides:', error);
+      toast({
+        title: language === 'fr' ? 'Erreur' : 'Error',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Subscribe to real-time changes
   useEffect(() => {
-    const fetchRides = async () => {
-      setIsLoading(true);
-      try {
-        // Fetch completed rides with joined data
-        const { data, error } = await supabase
-          .from('completed_rides')
-          .select(`
-            *,
-            drivers:driver_id (name),
-            vehicles:vehicle_id (name),
-            profiles:user_id (full_name)
-          `)
-          .order('end_time', { ascending: false })
-          .limit(50);
-
-        if (error) throw error;
-        
-        // Transform the data to include the joined fields
-        const transformedData = data?.map(ride => ({
-          ...ride,
-          driver_name: ride.drivers?.name,
-          vehicle_name: ride.vehicles?.name,
-          user_name: ride.profiles?.full_name
-        })) || [];
-        
-        setRides(transformedData);
-      } catch (error) {
-        console.error('Error fetching rides:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchRides();
-    
-    // Set up real-time subscription for new rides
-    const channel = supabase
-      .channel('rides-changes')
+
+    // Set up the subscription
+    const subscription = supabase
+      .channel('completed_rides_changes')
       .on('postgres_changes', { 
-        event: 'INSERT', 
+        event: '*', 
         schema: 'public', 
         table: 'completed_rides' 
-      }, (payload) => {
-        // When a new ride is added, refetch to get the joined data
+      }, () => {
         fetchRides();
       })
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      subscription.unsubscribe();
     };
-  }, []);
+  }, [sortField, sortDirection]);
 
-  const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      return format(date, language === 'fr' ? 'dd MMM yyyy HH:mm' : 'MMM dd, yyyy HH:mm', {
-        locale: language === 'fr' ? fr : enUS
-      });
-    } catch (error) {
-      return 'Invalid date';
+  // Handle sorting
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
     }
   };
 
-  const renderRating = (rating: number | null) => {
-    if (!rating) return 'N/A';
-    
-    return (
-      <div className="flex items-center">
-        {[...Array(5)].map((_, i) => (
-          <Star 
-            key={i}
-            className={`h-4 w-4 ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'}`}
-          />
-        ))}
-      </div>
-    );
+  // Get sort icon
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) return <ArrowUpDown className="h-4 w-4 ml-1" />;
+    return sortDirection === 'asc' 
+      ? <ArrowUp className="h-4 w-4 ml-1" /> 
+      : <ArrowDown className="h-4 w-4 ml-1" />;
+  };
+
+  // Format date with time
+  const formatDateTime = (dateString: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleString(language === 'fr' ? 'fr-FR' : 'en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold text-nova-gold">
-        {language === 'fr' ? 'Historique des Courses' : 'Ride History'}
-      </h2>
-      
-      {isLoading ? (
-        <div className="flex justify-center py-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-nova-gold"></div>
-        </div>
-      ) : (
-        <div className="border border-nova-gold/20 rounded-lg overflow-hidden">
-          <Table>
-            <TableCaption>
-              {language === 'fr' 
-                ? 'Historique des courses récentes' 
-                : 'Recent ride history'}
-            </TableCaption>
-            <TableHeader>
-              <TableRow className="bg-nova-gold/10">
-                <TableHead className="text-nova-gold">
-                  {language === 'fr' ? 'Client' : 'Customer'}
-                </TableHead>
-                <TableHead className="text-nova-gold">
-                  {language === 'fr' ? 'Chauffeur' : 'Driver'}
-                </TableHead>
-                <TableHead className="text-nova-gold">
-                  {language === 'fr' ? 'Véhicule' : 'Vehicle'}
-                </TableHead>
-                <TableHead className="text-nova-gold">
-                  {language === 'fr' ? 'Date' : 'Date'}
-                </TableHead>
-                <TableHead className="text-nova-gold">
-                  {language === 'fr' ? 'Tarif' : 'Fare'}
-                </TableHead>
-                <TableHead className="text-nova-gold">
-                  {language === 'fr' ? 'Évaluation' : 'Rating'}
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rides.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-nova-white/60">
-                    {language === 'fr' 
-                      ? 'Aucune course trouvée' 
-                      : 'No rides found'}
-                  </TableCell>
-                </TableRow>
+    <div className="bg-nova-black border border-nova-gold/30 rounded-md p-4">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold text-nova-gold">
+          {language === 'fr' ? 'Historique des Courses' : 'Rides History'}
+        </h2>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={fetchRides}
+          className="border-nova-gold/50 text-nova-gold hover:bg-nova-gold/10"
+          disabled={isLoading}
+        >
+          <Refresh className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+          {language === 'fr' ? 'Actualiser' : 'Refresh'}
+        </Button>
+      </div>
+
+      <ScrollArea className="h-[500px] rounded-md">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="text-xs text-nova-gold uppercase border-b border-nova-gold/30">
+              <tr>
+                <th className="px-4 py-3">ID</th>
+                <th className="px-4 py-3">
+                  <button 
+                    className="flex items-center text-nova-gold"
+                    onClick={() => handleSort('start_time')}
+                  >
+                    {language === 'fr' ? 'Début' : 'Start Time'}
+                    {getSortIcon('start_time')}
+                  </button>
+                </th>
+                <th className="px-4 py-3">
+                  <button 
+                    className="flex items-center text-nova-gold"
+                    onClick={() => handleSort('end_time')}
+                  >
+                    {language === 'fr' ? 'Fin' : 'End Time'}
+                    {getSortIcon('end_time')}
+                  </button>
+                </th>
+                <th className="px-4 py-3">{language === 'fr' ? 'Client' : 'Customer'}</th>
+                <th className="px-4 py-3">{language === 'fr' ? 'Chauffeur' : 'Driver'}</th>
+                <th className="px-4 py-3">{language === 'fr' ? 'Véhicule' : 'Vehicle'}</th>
+                <th className="px-4 py-3">
+                  <button 
+                    className="flex items-center text-nova-gold"
+                    onClick={() => handleSort('fare')}
+                  >
+                    {language === 'fr' ? 'Prix' : 'Fare'}
+                    {getSortIcon('fare')}
+                  </button>
+                </th>
+                <th className="px-4 py-3">
+                  <button 
+                    className="flex items-center text-nova-gold"
+                    onClick={() => handleSort('rating')}
+                  >
+                    {language === 'fr' ? 'Évaluation' : 'Rating'}
+                    {getSortIcon('rating')}
+                  </button>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={8} className="px-4 py-5 text-center">
+                    <div className="flex justify-center">
+                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-t-transparent border-nova-gold"></div>
+                    </div>
+                  </td>
+                </tr>
+              ) : rides.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="px-4 py-5 text-center text-nova-white/50">
+                    {language === 'fr' ? 'Aucune course trouvée' : 'No rides found'}
+                  </td>
+                </tr>
               ) : (
-                rides.map(ride => (
-                  <TableRow key={ride.id} className="hover:bg-nova-black/40">
-                    <TableCell className="font-medium text-nova-white">
-                      {ride.user_name || 'Anonymous'}
-                    </TableCell>
-                    <TableCell className="text-nova-white/80">
-                      {ride.driver_name || 'N/A'}
-                    </TableCell>
-                    <TableCell className="text-nova-white/80">
-                      {ride.vehicle_name || 'N/A'}
-                    </TableCell>
-                    <TableCell className="text-nova-white/80">
-                      {formatDate(ride.end_time)}
-                    </TableCell>
-                    <TableCell className="text-nova-white/80">
-                      {formatCurrency(ride.fare)}
-                    </TableCell>
-                    <TableCell>
-                      {renderRating(ride.rating)}
-                    </TableCell>
-                  </TableRow>
+                rides.map((ride) => (
+                  <tr key={ride.id} className="border-b border-nova-gold/10 hover:bg-nova-gold/5">
+                    <td className="px-4 py-3 text-xs opacity-50">{ride.id.substring(0, 8)}...</td>
+                    <td className="px-4 py-3">{formatDateTime(ride.start_time)}</td>
+                    <td className="px-4 py-3">{formatDateTime(ride.end_time)}</td>
+                    <td className="px-4 py-3">{ride.users?.email || '—'}</td>
+                    <td className="px-4 py-3">{ride.drivers?.name || '—'}</td>
+                    <td className="px-4 py-3">{ride.vehicles?.name || '—'}</td>
+                    <td className="px-4 py-3">{formatCurrency(ride.fare || 0)}</td>
+                    <td className="px-4 py-3">
+                      {ride.rating ? (
+                        <div className="flex items-center">
+                          <span className="text-nova-gold">★</span>
+                          <span className="ml-1">{ride.rating}/5</span>
+                        </div>
+                      ) : '—'}
+                    </td>
+                  </tr>
                 ))
               )}
-            </TableBody>
-          </Table>
+            </tbody>
+          </table>
         </div>
-      )}
+      </ScrollArea>
     </div>
   );
 };
