@@ -1,6 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
 import {
-  BrowserRouter as Router,
   Route,
   Routes,
   useNavigate,
@@ -68,26 +68,26 @@ function App() {
   }, [location.pathname, navigate]);
 
   return (
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/services" element={<ServicesPage />} />
-            <Route path="/book" element={<BookingPage />} />
-            <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/create-pin" element={<CreatePinPage />} />
-            <Route path="/verify-pin" element={<VerifyPinPage />} />
-            <Route path="/reset-pin" element={<ResetPinPage />} />
-            <Route path="/account" element={<AccountPage />} />
-            <Route path="/admin" element={<AdminPage />} />
-            <Route path="/drivers" element={<DriversPage />} />
-            <Route path="/drivers/:driverId" element={<DriverDetailPage />} />
-            <Route path="/admin/drivers" element={<AdminDriversPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/services" element={<ServicesPage />} />
+      <Route path="/book" element={<BookingPage />} />
+      <Route path="/pricing" element={<PricingPage />} />
+      <Route path="/contact" element={<ContactPage />} />
+      <Route path="/terms" element={<TermsPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/create-pin" element={<CreatePinPage />} />
+      <Route path="/verify-pin" element={<VerifyPinPage />} />
+      <Route path="/reset-pin" element={<ResetPinPage />} />
+      <Route path="/account" element={<AccountPage />} />
+      <Route path="/admin" element={<AdminPage />} />
+      <Route path="/drivers" element={<DriversPage />} />
+      <Route path="/drivers/:driverId" element={<DriverDetailPage />} />
+      <Route path="/admin/drivers" element={<AdminDriversPage />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 
@@ -95,9 +95,7 @@ function RootApp() {
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-react-theme">
       <LanguageProvider>
-        <Router>
-          <App />
-        </Router>
+        <App />
         <Toaster />
       </LanguageProvider>
     </ThemeProvider>
