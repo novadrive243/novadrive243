@@ -36,6 +36,26 @@ export function AdminLogin({ onToggleMode }: AdminLoginProps) {
       console.log("Admin login attempt:", data);
       
       if (data.email === "admin@novadrive.com" && data.password === "admin123") {
+        // Generate a random 6-digit PIN for quick login next time
+        const generatePin = () => {
+          return Math.floor(100000 + Math.random() * 900000).toString();
+        };
+        
+        // Only generate a new PIN if one doesn't exist already
+        if (!localStorage.getItem('adminPin')) {
+          const adminPin = generatePin();
+          localStorage.setItem('adminPin', adminPin);
+          
+          // Show PIN to admin in toast
+          toast({
+            title: language === 'fr' ? "PIN créé" : "PIN created",
+            description: language === 'fr' 
+              ? `Votre nouveau PIN admin est: ${adminPin}` 
+              : `Your new admin PIN is: ${adminPin}`,
+            duration: 6000,
+          });
+        }
+        
         localStorage.setItem('adminAuth', 'true');
         navigate("/admin");
       } else {
