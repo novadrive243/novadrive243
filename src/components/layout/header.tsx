@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { useLanguage } from "@/contexts/language-context";
 import { useTheme } from "@/contexts/theme-context";
-import { NotificationsCenter } from "@/components/notifications/notifications-center";
+import { NotificationsCenter, Notification } from "@/components/notifications/notifications-center";
 import { useAuth } from '@/hooks/use-auth';
 import ContactChatDrawer from '@/components/contact/chat/ContactChatDrawer';
 
@@ -18,7 +18,34 @@ export const Header = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [notifications, setNotifications] = useState([]);
+  
+  // Example notifications
+  const [notifications, setNotifications] = useState<Notification[]>([
+    {
+      id: '1',
+      type: 'booking',
+      title: 'New booking confirmed',
+      message: 'Your booking #1234 has been confirmed',
+      date: '2023-09-15 10:30',
+      read: false
+    },
+    {
+      id: '2',
+      type: 'promotion',
+      title: 'Weekend special offer',
+      message: 'Get 20% off on all weekend bookings',
+      date: '2023-09-14 15:45',
+      read: true
+    },
+    {
+      id: '3',
+      type: 'system',
+      title: 'System maintenance',
+      message: 'System will be down for maintenance on Sunday',
+      date: '2023-09-13 09:15',
+      read: false
+    }
+  ]);
   
   // Close menu when route changes
   useEffect(() => {
@@ -56,17 +83,21 @@ export const Header = () => {
     }
   };
 
-  // Notification handlers (dummy for now)
+  // Notification handlers
   const handleMarkAsRead = (id: string) => {
-    console.log('Marked as read:', id);
+    setNotifications(prev => 
+      prev.map(n => n.id === id ? { ...n, read: true } : n)
+    );
   };
 
   const handleMarkAllAsRead = () => {
-    console.log('Marked all as read');
+    setNotifications(prev => 
+      prev.map(n => ({ ...n, read: true }))
+    );
   };
 
   const handleDeleteAll = () => {
-    console.log('Deleted all notifications');
+    setNotifications([]);
   };
 
   return (
@@ -107,7 +138,7 @@ export const Header = () => {
         <div className="flex items-center space-x-4">
           <LanguageSwitcher />
           <NotificationsCenter 
-            notifications={[]}
+            notifications={notifications}
             onMarkAsRead={handleMarkAsRead}
             onMarkAllAsRead={handleMarkAllAsRead}
             onDeleteAll={handleDeleteAll}
