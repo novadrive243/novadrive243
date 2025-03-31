@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -179,7 +180,7 @@ const AccountPage = () => {
       
       <main className="flex-grow pt-20">
         <div className="container mx-auto px-4 py-12">
-          <h1 className="text-3xl font-bold mb-8">
+          <h1 className="text-3xl font-bold mb-8 text-white">
             <span className="gold-gradient-text">{t('account.title')}</span>
           </h1>
           
@@ -187,7 +188,7 @@ const AccountPage = () => {
             {/* Profile section */}
             <Card className="bg-nova-black/40 border-nova-gold/20">
               <CardHeader>
-                <CardTitle>{t('account.profile')}</CardTitle>
+                <CardTitle className="text-white">{t('account.profile')}</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col items-center">
                 <Avatar className="h-24 w-24 mb-4">
@@ -197,34 +198,34 @@ const AccountPage = () => {
                   </AvatarFallback>
                 </Avatar>
                 
-                <h2 className="text-xl font-bold text-nova-white">
+                <h2 className="text-xl font-bold text-white">
                   {user?.email ? user.email.split('@')[0] : t('account.userName')}
                 </h2>
-                <p className="text-nova-white/70 mb-6">{user?.email || 'user@example.com'}</p>
+                <p className="text-white mb-6">{user?.email || 'user@example.com'}</p>
                 
                 <div className="space-y-4 w-full">
-                  <div className="flex items-center gap-3 text-nova-white/70">
+                  <div className="flex items-center gap-3 text-white">
                     <User className="h-5 w-5 text-nova-gold" />
                     <span>
                       {t('account.member')} 
                       {registrationDate && <span className="ml-1">({registrationDate})</span>}
                     </span>
                   </div>
-                  <div className="flex items-center gap-3 text-nova-white/70">
+                  <div className="flex items-center gap-3 text-white">
                     <Car className="h-5 w-5 text-nova-gold" />
                     <span>{t('account.favoriteVehicle')}</span>
                   </div>
-                  <div className="flex items-center gap-3 text-nova-white/70">
+                  <div className="flex items-center gap-3 text-white">
                     <Languages className="h-5 w-5 text-nova-gold" />
                     <div className="flex gap-2">
                       <button 
-                        className={`px-2 py-1 rounded ${language === 'fr' ? 'bg-nova-gold text-nova-black' : 'bg-nova-black/50 text-nova-white'}`}
+                        className={`px-2 py-1 rounded ${language === 'fr' ? 'bg-nova-gold text-nova-black' : 'bg-nova-black/50 text-white'}`}
                         onClick={() => setLanguage('fr')}
                       >
                         FR
                       </button>
                       <button 
-                        className={`px-2 py-1 rounded ${language === 'en' ? 'bg-nova-gold text-nova-black' : 'bg-nova-black/50 text-nova-white'}`}
+                        className={`px-2 py-1 rounded ${language === 'en' ? 'bg-nova-gold text-nova-black' : 'bg-nova-black/50 text-white'}`}
                         onClick={() => setLanguage('en')}
                       >
                         EN
@@ -248,35 +249,35 @@ const AccountPage = () => {
             <div className="lg:col-span-2">
               <Tabs defaultValue="reservations">
                 <TabsList className="bg-nova-black/40 border border-nova-gold/20 overflow-x-auto flex-wrap">
-                  <TabsTrigger value="reservations">
+                  <TabsTrigger value="reservations" className="text-white">
                     <Clock className="h-4 w-4 mr-1" />
                     {t('account.reservations')}
                   </TabsTrigger>
-                  <TabsTrigger value="loyalty">
+                  <TabsTrigger value="loyalty" className="text-white">
                     <Star className="h-4 w-4 mr-1" />
                     {t('account.loyaltyProgram')}
                   </TabsTrigger>
-                  <TabsTrigger value="drivers">
+                  <TabsTrigger value="drivers" className="text-white">
                     <User className="h-4 w-4 mr-1" />
                     {t('account.favoriteDrivers')}
                   </TabsTrigger>
-                  <TabsTrigger value="notifications">
+                  <TabsTrigger value="notifications" className="text-white">
                     <Bell className="h-4 w-4 mr-1" />
                     {t('account.notifications')}
                   </TabsTrigger>
-                  <TabsTrigger value="ratings">
+                  <TabsTrigger value="ratings" className="text-white">
                     <Star className="h-4 w-4 mr-1" />
                     {t('account.myRatings')}
                   </TabsTrigger>
-                  <TabsTrigger value="calendar">
+                  <TabsTrigger value="calendar" className="text-white">
                     <Calendar className="h-4 w-4 mr-1" />
                     {t('account.calendarSync')}
                   </TabsTrigger>
-                  <TabsTrigger value="emergency">
+                  <TabsTrigger value="emergency" className="text-white">
                     <PhoneCall className="h-4 w-4 mr-1" />
                     {t('account.emergencyContacts')}
                   </TabsTrigger>
-                  <TabsTrigger value="contact">
+                  <TabsTrigger value="contact" className="text-white">
                     <Mail className="h-4 w-4 mr-1" />
                     {t('account.contact')}
                   </TabsTrigger>
@@ -285,12 +286,12 @@ const AccountPage = () => {
                 <TabsContent value="reservations" className="pt-4">
                   <Card className="bg-nova-black/40 border-nova-gold/20">
                     <CardHeader>
-                      <CardTitle>{t('account.reservationHistory')}</CardTitle>
+                      <CardTitle className="text-white">{t('account.reservationHistory')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-center py-8">
                         <Clock className="h-12 w-12 text-nova-gold/40 mx-auto mb-4" />
-                        <p className="text-nova-white/50">
+                        <p className="text-white">
                           {t('account.noReservations')}
                         </p>
                       </div>
@@ -356,7 +357,7 @@ const AccountPage = () => {
                 <TabsContent value="contact" className="pt-4">
                   <Card className="bg-nova-black/40 border-nova-gold/20">
                     <CardHeader>
-                      <CardTitle>{t('account.contactUs')}</CardTitle>
+                      <CardTitle className="text-white">{t('account.contactUs')}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
                       <div className="flex items-center gap-4">
@@ -364,8 +365,8 @@ const AccountPage = () => {
                           <Phone className="h-5 w-5 text-nova-gold" />
                         </div>
                         <div>
-                          <p className="text-nova-white/50 text-sm">{t('account.phone')}</p>
-                          <p className="text-nova-white">+243 855971610</p>
+                          <p className="text-white/50 text-sm">{t('account.phone')}</p>
+                          <p className="text-white">+243 855971610</p>
                         </div>
                       </div>
                       
@@ -374,8 +375,8 @@ const AccountPage = () => {
                           <Mail className="h-5 w-5 text-nova-gold" />
                         </div>
                         <div>
-                          <p className="text-nova-white/50 text-sm">{t('account.email')}</p>
-                          <p className="text-nova-white">novadrive243@gmail.com</p>
+                          <p className="text-white/50 text-sm">{t('account.email')}</p>
+                          <p className="text-white">novadrive243@gmail.com</p>
                         </div>
                       </div>
                       
@@ -384,8 +385,8 @@ const AccountPage = () => {
                           <Instagram className="h-5 w-5 text-nova-gold" />
                         </div>
                         <div>
-                          <p className="text-nova-white/50 text-sm">{t('account.instagram')}</p>
-                          <p className="text-nova-white">@novadrive243</p>
+                          <p className="text-white/50 text-sm">{t('account.instagram')}</p>
+                          <p className="text-white">@novadrive243</p>
                         </div>
                       </div>
                     </CardContent>
