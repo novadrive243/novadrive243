@@ -19,8 +19,10 @@ export const UserSearchField = ({ userName, setUserName, userId, setUserId, lang
   const handleSearch = async (query: string) => {
     setUserName(query);
     
+    // Clear the user ID when starting a new search
     if (query.length < 2) {
       setSearchResults([]);
+      setUserId(null);
       return;
     }
     
