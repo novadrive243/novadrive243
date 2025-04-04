@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { useLanguage } from '@/contexts/language-context';
@@ -97,6 +96,7 @@ export const AdminTabs = ({
           language={language}
           formatDate={formatDate}
           formatCurrency={formatCurrency}
+          refreshData={refreshData}
         />
       </TabsContent>
       

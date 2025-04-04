@@ -17,9 +17,16 @@ interface BookingsTableProps {
   language: string;
   formatDate: (dateString: string) => string;
   formatCurrency: (amount: number) => string;
+  onAddBooking?: () => void;
 }
 
-export const BookingsTable = ({ bookings, language, formatDate, formatCurrency }: BookingsTableProps) => {
+export const BookingsTable = ({ 
+  bookings, 
+  language, 
+  formatDate, 
+  formatCurrency,
+  onAddBooking
+}: BookingsTableProps) => {
   return (
     <Card className="bg-nova-gray/30 border-nova-gold/30">
       <CardHeader>
@@ -71,7 +78,11 @@ export const BookingsTable = ({ bookings, language, formatDate, formatCurrency }
                 ? 'Aucune réservation pour le moment.' 
                 : 'No bookings available yet.'}
             </div>
-            <Button variant="outline" className="border-nova-gold/30 text-nova-gold hover:bg-nova-gold/10 hover:text-nova-white">
+            <Button 
+              variant="outline" 
+              className="border-nova-gold/30 text-nova-gold hover:bg-nova-gold/10 hover:text-nova-white"
+              onClick={onAddBooking}
+            >
               <PlusCircle className="h-4 w-4 mr-2" />
               {language === 'fr' ? 'Ajouter une réservation' : 'Add Booking'}
             </Button>
