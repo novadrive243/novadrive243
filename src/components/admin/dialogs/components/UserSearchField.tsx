@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { searchUsers } from '../utils/booking-dialog-utils';
+import { Check } from 'lucide-react';
 
 interface UserSearchFieldProps {
   userName: string;
@@ -72,14 +73,17 @@ export const UserSearchField = ({ userName, setUserName, userId, setUserId, lang
         )}
         
         {!isSearching && searchResults.length > 0 && (
-          <div className="absolute inset-x-0 top-full mt-1 py-1 bg-nova-black rounded-md shadow-lg z-10">
+          <div className="absolute inset-x-0 top-full mt-1 py-1 bg-nova-black rounded-md shadow-lg z-10 border border-nova-gold/20">
             {searchResults.map((result) => (
               <div
                 key={result.id}
                 onClick={() => selectUser(result)}
-                className="px-3 py-2 hover:bg-nova-gold/10 cursor-pointer text-nova-white"
+                className="px-3 py-2 hover:bg-nova-gold/10 cursor-pointer text-nova-white flex items-center justify-between"
               >
                 {result.full_name}
+                {userId === result.id && (
+                  <Check size={16} className="text-nova-gold ml-2" />
+                )}
               </div>
             ))}
           </div>
@@ -87,7 +91,8 @@ export const UserSearchField = ({ userName, setUserName, userId, setUserId, lang
       </div>
       
       {userId && (
-        <div className="text-xs text-nova-gold">
+        <div className="text-xs text-nova-gold flex items-center mt-1">
+          <Check size={12} className="mr-1" />
           {language === 'fr' ? 'Client sélectionné' : 'Customer selected'}
         </div>
       )}
