@@ -1,5 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 /**
  * Updates vehicle availability status based on current bookings
@@ -18,6 +19,8 @@ export const updateVehicleAvailabilityFromBookings = async (
       vehicleAvailabilityMap.set(vehicle.id, true); // Default to available
     });
     
+    let updated = false;
+    
     // Mark vehicles as unavailable if they have active bookings
     for (const booking of fetchedBookings) {
       const startDate = new Date(booking.start_date);
@@ -33,6 +36,9 @@ export const updateVehicleAvailabilityFromBookings = async (
             .from('bookings')
             .update({ status: 'active' })
             .eq('id', booking.id);
+          
+          console.log(`Booking ${booking.id} status changed to 'active'`);
+          updated = true;
         }
       }
       
@@ -42,6 +48,9 @@ export const updateVehicleAvailabilityFromBookings = async (
           .from('bookings')
           .update({ status: 'completed' })
           .eq('id', booking.id);
+        
+        console.log(`Booking ${booking.id} status changed to 'completed'`);
+        updated = true;
       }
     }
     
@@ -56,11 +65,22 @@ export const updateVehicleAvailabilityFromBookings = async (
           .update({ available: isAvailable })
           .eq('id', vehicleId);
           
-        // Log the vehicle status change
         console.log(`Vehicle ${vehicle.name} availability changed to ${isAvailable ? 'available' : 'unavailable'}`);
+        updated = true;
       }
     }
+
+    // Only show sync notification if updates occurred
+    if (updated) {
+      toast.success('Synchronisation terminée', {
+        description: 'La disponibilité des véhicules et le statut des réservations ont été mis à jour'
+      });
+    }
+    
   } catch (error) {
     console.error('Error updating vehicle availability:', error);
+    toast.error('Erreur de synchronisation', {
+      description: 'Impossible de mettre à jour la disponibilité des véhicules'
+    });
   }
 };

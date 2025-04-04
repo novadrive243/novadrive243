@@ -65,17 +65,19 @@ export const createBookingNotification = async (
   language: string
 ) => {
   try {
+    if (!startDate || !endDate) return;
+    
     const selectedVehicle = vehicles.find(v => v.id === vehicleId);
     const vehicleName = selectedVehicle ? selectedVehicle.name : 'Vehicle';
     
     // Format dates for notification message
     const formattedStartDate = format(
-      startDate || new Date(), 
+      startDate, 
       'PP', 
       { locale: language === 'fr' ? fr : undefined }
     );
     const formattedEndDate = format(
-      endDate || new Date(), 
+      endDate, 
       'PP', 
       { locale: language === 'fr' ? fr : undefined }
     );
@@ -92,7 +94,8 @@ export const createBookingNotification = async (
     // Use toast for notification
     console.log("Creating notification:", notificationTitle, notificationMessage);
     toast.success(notificationTitle, {
-      description: notificationMessage
+      description: notificationMessage,
+      duration: 5000
     });
     
   } catch (error) {
@@ -146,12 +149,16 @@ export const updateVehicleAvailability = async (vehicleId: string, startDate: Da
     // Update vehicle availability if needed
     if (hasCurrentBooking && vehicle.available) {
       console.log("Marking vehicle as unavailable:", vehicleId);
-      await supabase
+      const { error: updateError } = await supabase
         .from('vehicles')
         .update({ available: false })
         .eq('id', vehicleId);
-      
-      console.log(`Vehicle ${vehicleId} marked as unavailable due to current booking`);
+        
+      if (updateError) {
+        console.error("Error updating vehicle availability:", updateError);
+      } else {
+        console.log(`Vehicle ${vehicleId} marked as unavailable due to current booking`);
+      }
     }
     
     // Log the number of bookings in this period

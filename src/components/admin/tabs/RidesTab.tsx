@@ -8,10 +8,12 @@ export const RidesTab = () => {
   const { t } = useLanguage();
   
   return (
-    <Card>
+    <Card className="shadow-md bg-nova-black border-nova-gold/20">
       <CardHeader>
-        <CardTitle>{t('account.reservationHistory')}</CardTitle>
-        <CardDescription>{t('account.reservationHistory')}</CardDescription>
+        <CardTitle className="text-xl text-nova-white">{t('account.reservationHistory')}</CardTitle>
+        <CardDescription className="text-nova-white/70">
+          {t('account.viewReservations')}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <RidesHistory />
