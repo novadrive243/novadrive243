@@ -52,7 +52,7 @@ export const fetchAdminData = async (language: string, toast: any) => {
     
     // Update vehicle availability based on current bookings
     if (mappedVehicles.length > 0 && formattedBookings.length > 0) {
-      await updateVehicleAvailabilityFromBookings(formattedBookings, mappedVehicles);
+      await updateVehicleAvailabilityFromBookings(formattedBookings, mappedVehicles, language);
     }
     
     // Fetch profiles

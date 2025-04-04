@@ -11,6 +11,23 @@ export const calculateTotalPrice = (vehicleId: string, startDate: Date, endDate:
   return dailyRate * days;
 };
 
+// Function to search users by name
+export const searchUsers = async (query: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .ilike('full_name', `%${query}%`)
+      .limit(5);
+      
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error('Error searching users:', error);
+    return [];
+  }
+};
+
 // Create a notification for a new booking
 export const createBookingNotification = async (
   userName: string,
@@ -38,16 +55,13 @@ export const createBookingNotification = async (
       ? `Nouvelle réservation: ${vehicleName} pour ${userName} du ${formattedStartDate} au ${formattedEndDate}`
       : `New booking: ${vehicleName} for ${userName} from ${formattedStartDate} to ${formattedEndDate}`;
       
-    // Insert notification into the database
-    await supabase
-      .from('notifications')
-      .insert({
-        type: 'booking',
-        message,
-        is_read: false
-      });
-      
-    console.log('Booking notification created');
+    // Instead of directly inserting into a notifications table (which doesn't exist),
+    // we'll log the notification to console
+    console.log('Booking notification:', message);
+    
+    // In a real app, you would store this in a notifications table or use some notification service
+    // For now, we'll just show a toast notification through the booking dialog itself
+    
   } catch (error) {
     console.error('Error creating booking notification:', error);
   }
