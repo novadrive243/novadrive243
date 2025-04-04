@@ -64,40 +64,50 @@ export const useBookingDialog = (language: string, onClose: () => void, refreshD
       const totalPrice = calculateTotalPrice(vehicleId, startDate, endDate);
       console.log("Calculated price:", totalPrice);
       
+      // First, create a temporary profile for test bookings if needed
+      let bookingUserId = userId;
+      
+      if (!bookingUserId) {
+        // For test bookings, create a temporary profile
+        console.log("Creating temporary profile for test booking");
+        
+        const { data: newProfile, error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            full_name: userName || 'Test User',
+            phone: 'Test Phone'
+          })
+          .select()
+          .single();
+          
+        if (profileError) {
+          console.error("Error creating test profile:", profileError);
+          throw new Error(language === 'fr' 
+            ? 'Erreur lors de la création du profil de test' 
+            : 'Error creating test profile');
+        }
+        
+        if (newProfile) {
+          bookingUserId = newProfile.id;
+          console.log("Created test profile with ID:", bookingUserId);
+        }
+      }
+      
+      if (!bookingUserId) {
+        throw new Error(language === 'fr'
+          ? 'Impossible de créer une réservation sans utilisateur'
+          : 'Unable to create booking without a user');
+      }
+      
       // Create booking in Supabase
-      const bookingData: any = {
+      const bookingData = {
         vehicle_id: vehicleId,
+        user_id: bookingUserId,
         start_date: startDate.toISOString().split('T')[0],
         end_date: endDate.toISOString().split('T')[0],
         total_price: totalPrice,
         status: 'pending'
       };
-      
-      // Add user_id only if it's available, otherwise use a default test user_id
-      if (userId) {
-        bookingData.user_id = userId;
-      } else {
-        // For test bookings, we need to provide a user_id value
-        // Use a default test ID from the profiles table or create a temporary one
-        const { data: testUser } = await supabase
-          .from('profiles')
-          .select('id')
-          .limit(1)
-          .single();
-          
-        // If we have at least one user in the database, use that ID
-        if (testUser && testUser.id) {
-          bookingData.user_id = testUser.id;
-          console.log("Using test user ID:", testUser.id);
-        } else {
-          // If there are no users in the database, we can't create a booking
-          toast.error(language === 'fr' 
-            ? 'Impossible de créer une réservation sans utilisateur. Veuillez d\'abord créer un compte utilisateur.' 
-            : 'Unable to create booking without a user. Please create a user account first.');
-          setLoading(false);
-          return;
-        }
-      }
       
       console.log("Booking data being sent:", bookingData);
       
@@ -139,7 +149,7 @@ export const useBookingDialog = (language: string, onClose: () => void, refreshD
       
       // Create notification for the new booking
       await createBookingNotification(
-        userId ? userName : 'Client Test', 
+        userName || 'Client Test', 
         vehicleId, 
         startDate, 
         endDate, 

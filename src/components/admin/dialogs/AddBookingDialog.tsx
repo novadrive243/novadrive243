@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useBookingDialog } from './hooks/useBookingDialog';
 import { BookingForm } from './components/BookingForm';
@@ -14,6 +14,16 @@ interface AddBookingDialogProps {
 export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: AddBookingDialogProps) => {
   console.log("AddBookingDialog rendered, refreshData:", !!refreshData);
   
+  // Create a memoized callback for refreshData to prevent unnecessary rerenders
+  const handleRefreshData = useCallback(() => {
+    console.log("Calling refreshData from AddBookingDialog");
+    if (typeof refreshData === 'function') {
+      refreshData();
+    } else {
+      console.error("refreshData is not a function in AddBookingDialog");
+    }
+  }, [refreshData]);
+  
   const {
     userName,
     setUserName,
@@ -27,7 +37,7 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
     setEndDate,
     loading,
     handleSubmit
-  } = useBookingDialog(language, onClose, refreshData);
+  } = useBookingDialog(language, onClose, handleRefreshData);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
