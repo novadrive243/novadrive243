@@ -72,15 +72,53 @@ export const updateVehicleAvailabilityFromBookings = async (
 
     // Only show sync notification if updates occurred
     if (updated) {
-      toast.success('Synchronisation terminée', {
-        description: 'La disponibilité des véhicules et le statut des réservations ont été mis à jour'
+      toast.success(language === 'fr' ? 'Synchronisation terminée' : 'Synchronization complete', {
+        description: language === 'fr' 
+          ? 'La disponibilité des véhicules et le statut des réservations ont été mis à jour'
+          : 'Vehicle availability and booking status have been updated'
       });
     }
     
   } catch (error) {
     console.error('Error updating vehicle availability:', error);
-    toast.error('Erreur de synchronisation', {
-      description: 'Impossible de mettre à jour la disponibilité des véhicules'
+    toast.error(language === 'fr' ? 'Erreur de synchronisation' : 'Synchronization error', {
+      description: language === 'fr'
+        ? 'Impossible de mettre à jour la disponibilité des véhicules'
+        : 'Unable to update vehicle availability'
     });
+  }
+};
+
+/**
+ * Function to update vehicle availability for a single booking
+ */
+export const forceRefreshVehicleAvailability = async (language: string) => {
+  try {
+    // Fetch all bookings and vehicles
+    const { data: bookings, error: bookingsError } = await supabase
+      .from('bookings')
+      .select('*');
+      
+    if (bookingsError) throw bookingsError;
+    
+    const { data: vehicles, error: vehiclesError } = await supabase
+      .from('vehicles')
+      .select('*');
+      
+    if (vehiclesError) throw vehiclesError;
+    
+    // Update availability based on fetched data
+    await updateVehicleAvailabilityFromBookings(bookings || [], vehicles || []);
+    
+    // Show success notification
+    toast.success(language === 'fr' ? 'Synchronisation forcée réussie' : 'Forced synchronization successful', {
+      description: language === 'fr'
+        ? 'La disponibilité des véhicules a été mise à jour'
+        : 'Vehicle availability has been updated'
+    });
+    
+  } catch (error) {
+    console.error('Error in force refresh:', error);
+    toast.error(language === 'fr' ? 'Erreur de synchronisation' : 'Synchronization error');
   }
 };

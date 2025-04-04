@@ -48,7 +48,7 @@ export const useBookingDialog = (language: string, onClose: () => void, refreshD
       return;
     }
     
-    // Si userId est null mais que le champ userName contient du texte, nous créons une réservation de test
+    // If userId is null but userName contains text, we create a test booking
     const isTestBooking = !userId && userName.trim() !== '';
     
     setLoading(true);
@@ -67,15 +67,30 @@ export const useBookingDialog = (language: string, onClose: () => void, refreshD
         status: 'pending'
       };
       
-      // Ajouter user_id seulement s'il est disponible
+      // Add user_id only if it's available, otherwise use a default test user_id
       if (userId) {
         bookingData.user_id = userId;
-      } else if (isTestBooking) {
-        // Pour les réservations de test, nous stockons le nom dans les métadonnées
-        bookingData.metadata = { test_booking: true, customer_name: userName };
       } else {
-        // Si aucun utilisateur n'est sélectionné, créer un utilisateur de test
-        bookingData.metadata = { test_booking: true, customer_name: 'Client Test' };
+        // For test bookings, we need to provide a user_id value
+        // Use a default test ID from the profiles table or create a temporary one
+        const { data: testUser } = await supabase
+          .from('profiles')
+          .select('id')
+          .limit(1)
+          .single();
+          
+        // If we have at least one user in the database, use that ID
+        if (testUser && testUser.id) {
+          bookingData.user_id = testUser.id;
+        } else {
+          // If there are no users in the database, we can't create a booking
+          // This is because the database schema requires a user_id
+          toast.error(language === 'fr' 
+            ? 'Impossible de créer une réservation sans utilisateur. Veuillez d\'abord créer un compte utilisateur.' 
+            : 'Unable to create booking without a user. Please create a user account first.');
+          setLoading(false);
+          return;
+        }
       }
       
       const { data, error } = await supabase

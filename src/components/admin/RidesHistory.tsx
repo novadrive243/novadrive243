@@ -35,6 +35,18 @@ export const RidesHistory = () => {
 
   useEffect(() => {
     fetchRides();
+    
+    // Listen for refetch events from parent components
+    const handleRefetch = () => {
+      console.log("Refetching rides from event");
+      fetchRides();
+    };
+    
+    window.addEventListener('refetch-rides', handleRefetch);
+    
+    return () => {
+      window.removeEventListener('refetch-rides', handleRefetch);
+    };
   }, []);
 
   const fetchRides = async () => {
@@ -128,11 +140,11 @@ export const RidesHistory = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-sm font-semibold">
-                        {ride.vehicle?.name || language === 'fr' ? 'Véhicule inconnu' : 'Unknown vehicle'}
+                        {ride.vehicle?.name || (language === 'fr' ? 'Véhicule inconnu' : 'Unknown vehicle')}
                       </h3>
                       <p className="text-xs text-gray-500">
                         {language === 'fr' ? 'Client: ' : 'Client: '}
-                        {ride.profiles?.full_name || language === 'fr' ? 'Client test' : 'Test client'}
+                        {ride.profiles?.full_name || (language === 'fr' ? 'Client test' : 'Test client')}
                       </p>
                       <p className="text-xs text-gray-500">
                         {new Date(ride.start_date).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US')}
