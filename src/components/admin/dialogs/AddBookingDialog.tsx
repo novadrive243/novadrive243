@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useBookingDialog } from './hooks/useBookingDialog';
 import { BookingForm } from './components/BookingForm';
 
@@ -34,6 +34,11 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
           <DialogTitle className="text-nova-white">
             {language === 'fr' ? 'Ajouter une réservation' : 'Add Booking'}
           </DialogTitle>
+          <DialogDescription className="text-nova-white/70">
+            {language === 'fr' 
+              ? 'Remplissez le formulaire pour créer une nouvelle réservation'
+              : 'Fill out the form to create a new booking'}
+          </DialogDescription>
         </DialogHeader>
         
         <BookingForm

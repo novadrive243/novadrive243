@@ -1,9 +1,10 @@
 
-import React, { useState } from 'react';
-import { Input } from '@/components/ui/input';
+import React, { useState, useEffect } from 'react';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { searchUsers } from '../utils/booking-dialog-utils';
-import { Check } from 'lucide-react';
+import { Check, User } from 'lucide-react';
 
 interface UserSearchFieldProps {
   userName: string;
@@ -13,87 +14,113 @@ interface UserSearchFieldProps {
   language: string;
 }
 
-export const UserSearchField = ({ userName, setUserName, userId, setUserId, language }: UserSearchFieldProps) => {
+export const UserSearchField = ({ 
+  userName, 
+  setUserName, 
+  userId, 
+  setUserId, 
+  language 
+}: UserSearchFieldProps) => {
+  const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-
-  const handleSearch = async (query: string) => {
-    setUserName(query);
+  const [showResults, setShowResults] = useState(false);
+  
+  useEffect(() => {
+    const delaySearch = setTimeout(async () => {
+      if (searchQuery.trim().length >= 2) {
+        setIsSearching(true);
+        const results = await searchUsers(searchQuery);
+        console.log("Search results:", results);
+        setSearchResults(results);
+        setIsSearching(false);
+        setShowResults(true);
+      } else {
+        setSearchResults([]);
+        setShowResults(false);
+      }
+    }, 500);
     
-    // Clear the user ID when starting a new search
-    if (query.length < 2) {
-      setSearchResults([]);
-      setUserId(null);
-      return;
-    }
-    
-    setIsSearching(true);
-    
-    try {
-      const results = await searchUsers(query);
-      console.log("Search results:", results);
-      setSearchResults(results);
-    } catch (error) {
-      console.error('Error searching users:', error);
-    } finally {
-      setIsSearching(false);
-    }
+    return () => clearTimeout(delaySearch);
+  }, [searchQuery]);
+  
+  const handleSelectUser = (user: any) => {
+    setUserId(user.id);
+    setUserName(user.full_name);
+    setSearchQuery(user.full_name);
+    setShowResults(false);
   };
-
-  const selectUser = (result: any) => {
-    console.log("User selected:", result);
-    setUserName(result.full_name);
-    setUserId(result.id);
-    setSearchResults([]);
+  
+  const handleClearUser = () => {
+    setUserId(null);
+    setUserName('');
+    setSearchQuery('');
   };
-
+  
   return (
     <div className="space-y-2">
-      <Label htmlFor="userName" className="text-nova-white">
-        {language === 'fr' ? 'Client' : 'Customer'}
-      </Label>
+      <Label htmlFor="user">{language === 'fr' ? 'Utilisateur' : 'User'}</Label>
       
       <div className="relative">
         <Input
-          id="userName"
-          value={userName}
-          onChange={(e) => handleSearch(e.target.value)}
-          placeholder={language === 'fr' ? 'Rechercher un client...' : 'Search for a customer...'}
-          className="bg-nova-black text-nova-white border-nova-gold/20"
-          autoComplete="off"
+          id="user"
+          value={searchQuery}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            if (userId) {
+              // Clear user selection if input changes
+              setUserId(null);
+              setUserName(e.target.value);
+            }
+          }}
+          placeholder={language === 'fr' 
+            ? "Rechercher un utilisateur..." 
+            : "Search for a user..."}
+          className="pr-10 bg-nova-gray/20 text-nova-white border-nova-gold/30"
         />
         
-        {/* Search results dropdown */}
-        {isSearching && (
-          <div className="absolute inset-x-0 top-full mt-1 py-1 bg-nova-black rounded-md shadow-lg z-10">
-            <div className="px-3 py-2 text-sm text-nova-white/70">
-              {language === 'fr' ? 'Recherche...' : 'Searching...'}
-            </div>
-          </div>
+        {userId && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="absolute right-0 top-0 h-full px-3 text-nova-gold"
+            onClick={handleClearUser}
+          >
+            <Check className="w-4 h-4 mr-1" />
+            {language === 'fr' ? 'Sélectionné' : 'Selected'}
+          </Button>
         )}
         
-        {!isSearching && searchResults.length > 0 && (
-          <div className="absolute inset-x-0 top-full mt-1 py-1 bg-nova-black rounded-md shadow-lg z-10 border border-nova-gold/20">
-            {searchResults.map((result) => (
+        {showResults && searchResults.length > 0 && (
+          <div className="absolute z-10 w-full mt-1 bg-nova-gray border border-nova-gold/30 rounded-md shadow-lg max-h-60 overflow-auto">
+            {searchResults.map((user) => (
               <div
-                key={result.id}
-                onClick={() => selectUser(result)}
-                className="px-3 py-2 hover:bg-nova-gold/10 cursor-pointer text-nova-white flex items-center justify-between"
+                key={user.id}
+                className="px-4 py-2 cursor-pointer hover:bg-nova-gold/10 flex items-center"
+                onClick={() => handleSelectUser(user)}
               >
-                {result.full_name}
-                {userId === result.id && (
-                  <Check size={16} className="text-nova-gold ml-2" />
-                )}
+                <User className="w-4 h-4 mr-2 text-nova-gold" />
+                <span>{user.full_name}</span>
               </div>
             ))}
           </div>
         )}
+        
+        {showResults && searchResults.length === 0 && !isSearching && (
+          <div className="absolute z-10 w-full mt-1 bg-nova-gray border border-nova-gold/30 rounded-md shadow-lg p-3 text-center text-nova-white/70">
+            {language === 'fr' 
+              ? "Aucun utilisateur trouvé. Vous pouvez créer une réservation test." 
+              : "No users found. You can create a test booking."}
+          </div>
+        )}
       </div>
       
-      {userId && (
-        <div className="text-xs text-nova-gold flex items-center mt-1">
-          <Check size={12} className="mr-1" />
-          {language === 'fr' ? 'Client sélectionné' : 'Customer selected'}
+      {userId === null && searchQuery && (
+        <div className="text-sm text-nova-gold/80">
+          {language === 'fr' 
+            ? "Utilisateur test: " + searchQuery 
+            : "Test user: " + searchQuery}
         </div>
       )}
     </div>

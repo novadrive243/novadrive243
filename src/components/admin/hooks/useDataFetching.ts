@@ -2,7 +2,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { vehicles as frontendVehicles } from '@/data/vehicles';
 import { updateVehicleAvailabilityFromBookings } from './useVehicleAvailability';
-import { Toast } from '@/components/ui/toast';
 
 export const fetchAdminData = async (language: string, toast: any) => {
   try {

@@ -82,6 +82,7 @@ export const useBookingDialog = (language: string, onClose: () => void, refreshD
         // If we have at least one user in the database, use that ID
         if (testUser && testUser.id) {
           bookingData.user_id = testUser.id;
+          console.log("Using test user ID:", testUser.id);
         } else {
           // If there are no users in the database, we can't create a booking
           // This is because the database schema requires a user_id
@@ -92,6 +93,8 @@ export const useBookingDialog = (language: string, onClose: () => void, refreshD
           return;
         }
       }
+      
+      console.log("Booking data being sent:", bookingData);
       
       const { data, error } = await supabase
         .from('bookings')
