@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,6 +33,18 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
   const [loading, setLoading] = useState(false);
   const [userOptions, setUserOptions] = useState<{id: string, full_name: string}[]>([]);
   const [searchingUsers, setSearchingUsers] = useState(false);
+
+  // Reset form when dialog is opened
+  useEffect(() => {
+    if (isOpen) {
+      setUserName('');
+      setUserId(null);
+      setVehicleId('');
+      setStartDate(new Date());
+      setEndDate(new Date(new Date().setDate(new Date().getDate() + 3)));
+      setUserOptions([]);
+    }
+  }, [isOpen]);
 
   // Fonction pour chercher des utilisateurs
   const searchUsers = async (query: string) => {
@@ -84,6 +96,7 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
         toast.error(language === 'fr' 
           ? 'Veuillez remplir tous les champs requis' 
           : 'Please fill in all required fields');
+        setLoading(false);
         return;
       }
       
@@ -103,7 +116,10 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
         })
         .select();
         
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
       
       // Afficher une notification de succès
       toast.success(language === 'fr' 
@@ -183,7 +199,7 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
               </SelectTrigger>
               <SelectContent className="bg-nova-gray border-nova-gold/30">
                 {vehicles.map((vehicle) => (
-                  <SelectItem key={vehicle.id} value={vehicle.id}>
+                  <SelectItem key={vehicle.id} value={vehicle.id} className="text-nova-white hover:bg-nova-gold/20">
                     {vehicle.name}
                   </SelectItem>
                 ))}
@@ -201,6 +217,7 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
                 <Button
                   variant="outline"
                   className="w-full bg-nova-black/50 border-nova-gold/30 text-nova-white justify-between"
+                  type="button"
                 >
                   {startDate ? format(startDate, 'PPP', { locale: language === 'fr' ? fr : undefined }) : 
                   language === 'fr' ? 'Sélectionner une date' : 'Select a date'}
@@ -229,6 +246,7 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
                 <Button
                   variant="outline"
                   className="w-full bg-nova-black/50 border-nova-gold/30 text-nova-white justify-between"
+                  type="button"
                 >
                   {endDate ? format(endDate, 'PPP', { locale: language === 'fr' ? fr : undefined }) : 
                   language === 'fr' ? 'Sélectionner une date' : 'Select a date'}

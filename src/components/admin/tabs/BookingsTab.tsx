@@ -29,6 +29,10 @@ export const BookingsTab = ({
     }
   };
 
+  const openAddDialog = () => {
+    setIsAddDialogOpen(true);
+  };
+
   return (
     <>
       <Card>
@@ -61,7 +65,7 @@ export const BookingsTab = ({
               variant="outline" 
               size="sm" 
               className="border-nova-gold/30 text-nova-gold hover:bg-nova-gold/10 hover:text-nova-white"
-              onClick={() => setIsAddDialogOpen(true)}
+              onClick={openAddDialog}
             >
               <PlusCircle className="h-4 w-4 mr-2" />
               {language === 'fr' ? 'Ajouter' : 'Add'}
@@ -74,6 +78,7 @@ export const BookingsTab = ({
             language={language}
             formatDate={formatDate}
             formatCurrency={formatCurrency}
+            onAddBooking={openAddDialog}
           />
         </CardContent>
       </Card>
