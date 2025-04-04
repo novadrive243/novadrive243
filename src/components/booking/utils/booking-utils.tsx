@@ -159,28 +159,32 @@ export const generateDurationOptions = () => {
 
 /**
  * Render star rating component
+ * Updated to properly display half stars
  */
 export const renderStars = (rating: number): JSX.Element[] => {
   const stars: JSX.Element[] = [];
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 !== 0;
   
+  // Add full stars
   for (let i = 0; i < fullStars; i++) {
     stars.push(<Star key={`full-${i}`} className="fill-nova-gold text-nova-gold h-4 w-4" />);
   }
   
+  // Add half star if needed
   if (hasHalfStar) {
     stars.push(
       <span key="half" className="relative">
-        <Star className="text-nova-gold/30 h-4 w-4" />
+        <Star className="text-nova-white/30 h-4 w-4" />
         <Star className="absolute top-0 left-0 fill-nova-gold text-nova-gold h-4 w-4 clip-path-half" />
       </span>
     );
   }
   
+  // Add empty stars
   const emptyStars = 5 - Math.ceil(rating);
   for (let i = 0; i < emptyStars; i++) {
-    stars.push(<Star key={`empty-${i}`} className="text-nova-gold/30 h-4 w-4" />);
+    stars.push(<Star key={`empty-${i}`} className="text-nova-white/30 h-4 w-4" />);
   }
   
   return stars;
