@@ -42,11 +42,28 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
     e.preventDefault();
     console.log("Form submitted with:", { userId, vehicleId, startDate, endDate });
     
-    if (!userId || !vehicleId || !startDate || !endDate) {
-      console.error("Missing required fields:", { userId, vehicleId, startDate, endDate });
+    // Validate required fields
+    if (!userId) {
+      console.error("Missing required field: userId is null");
       toast.error(language === 'fr' 
-        ? 'Veuillez remplir tous les champs requis' 
-        : 'Please fill in all required fields');
+        ? 'Veuillez sélectionner un client' 
+        : 'Please select a customer');
+      return;
+    }
+    
+    if (!vehicleId) {
+      console.error("Missing required field: vehicleId is empty");
+      toast.error(language === 'fr' 
+        ? 'Veuillez sélectionner un véhicule' 
+        : 'Please select a vehicle');
+      return;
+    }
+    
+    if (!startDate || !endDate) {
+      console.error("Missing required field: dates are undefined", { startDate, endDate });
+      toast.error(language === 'fr' 
+        ? 'Veuillez sélectionner les dates de réservation' 
+        : 'Please select booking dates');
       return;
     }
     
@@ -113,7 +130,12 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
       
       // Close dialog and refresh data
       onClose();
-      refreshData();
+      if (typeof refreshData === 'function') {
+        console.log("Refreshing data after booking creation");
+        refreshData();
+      } else {
+        console.error("refreshData is not a function:", refreshData);
+      }
     } catch (error: any) {
       console.error('Error creating booking:', error);
       toast.error(language === 'fr' 

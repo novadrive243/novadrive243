@@ -26,14 +26,21 @@ export const BookingsTab = ({
 
   const handleRefresh = () => {
     console.log("Refresh button clicked");
-    if (refreshData) {
+    if (typeof refreshData === 'function') {
       refreshData();
+    } else {
+      console.error("refreshData is not a function:", refreshData);
     }
   };
 
   const openAddDialog = () => {
     console.log("Opening add booking dialog");
     setIsAddDialogOpen(true);
+  };
+  
+  const closeDialog = () => {
+    console.log("Closing add booking dialog");
+    setIsAddDialogOpen(false);
   };
 
   return (
@@ -89,7 +96,7 @@ export const BookingsTab = ({
       {isAddDialogOpen && (
         <AddBookingDialog 
           isOpen={isAddDialogOpen}
-          onClose={() => setIsAddDialogOpen(false)}
+          onClose={closeDialog}
           refreshData={refreshData || (() => console.log("No refresh function provided"))}
           language={language}
         />
