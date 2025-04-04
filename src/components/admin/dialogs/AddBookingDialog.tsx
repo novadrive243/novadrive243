@@ -40,20 +40,22 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Form submitted with:", { userId, vehicleId, startDate, endDate });
+    
+    if (!userId || !vehicleId || !startDate || !endDate) {
+      console.error("Missing required fields:", { userId, vehicleId, startDate, endDate });
+      toast.error(language === 'fr' 
+        ? 'Veuillez remplir tous les champs requis' 
+        : 'Please fill in all required fields');
+      return;
+    }
+    
     setLoading(true);
     
     try {
-      // Verify all required fields
-      if (!userId || !vehicleId || !startDate || !endDate) {
-        toast.error(language === 'fr' 
-          ? 'Veuillez remplir tous les champs requis' 
-          : 'Please fill in all required fields');
-        setLoading(false);
-        return;
-      }
-      
       // Calculate total price
       const totalPrice = calculateTotalPrice(vehicleId, startDate, endDate);
+      console.log("Calculated price:", totalPrice);
       
       // Create booking in Supabase
       const { data, error } = await supabase
@@ -72,6 +74,8 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
         console.error('Supabase error:', error);
         throw error;
       }
+      
+      console.log("Booking created:", data);
       
       // Log the admin activity using the edge function
       try {

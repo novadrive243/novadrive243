@@ -25,12 +25,14 @@ export const BookingsTab = ({
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const handleRefresh = () => {
+    console.log("Refresh button clicked");
     if (refreshData) {
       refreshData();
     }
   };
 
   const openAddDialog = () => {
+    console.log("Opening add booking dialog");
     setIsAddDialogOpen(true);
   };
 
@@ -84,12 +86,14 @@ export const BookingsTab = ({
         </CardContent>
       </Card>
 
-      <AddBookingDialog 
-        isOpen={isAddDialogOpen}
-        onClose={() => setIsAddDialogOpen(false)}
-        refreshData={handleRefresh}
-        language={language}
-      />
+      {isAddDialogOpen && (
+        <AddBookingDialog 
+          isOpen={isAddDialogOpen}
+          onClose={() => setIsAddDialogOpen(false)}
+          refreshData={refreshData || (() => console.log("No refresh function provided"))}
+          language={language}
+        />
+      )}
     </>
   );
 };

@@ -82,7 +82,10 @@ export const BookingsTable = ({
               <Button 
                 variant="outline" 
                 className="border-nova-gold/30 text-nova-gold hover:bg-nova-gold/10 hover:text-nova-white"
-                onClick={onAddBooking}
+                onClick={() => {
+                  console.log("Add booking button clicked in table");
+                  onAddBooking();
+                }}
               >
                 <PlusCircle className="h-4 w-4 mr-2" />
                 {language === 'fr' ? 'Ajouter une réservation' : 'Add Booking'}

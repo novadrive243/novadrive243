@@ -67,6 +67,8 @@ const AdminPage = () => {
     return null; // Don't render anything while checking authorization
   }
 
+  console.log("AdminPage refreshData function exists:", !!refreshData);
+
   return (
     <div className="min-h-screen flex flex-col bg-nova-black text-nova-white">
       <Header />

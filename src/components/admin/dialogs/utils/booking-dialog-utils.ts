@@ -19,6 +19,7 @@ export const calculateTotalPrice = (
   const daysDiff = Math.max(1, Math.ceil(
     (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
   ));
+  console.log(`Days difference: ${daysDiff}`);
   
   return calculateVehiclePrice(
     selectedVehicle,
@@ -89,6 +90,7 @@ export const createBookingNotification = async (
       : `Booking created for ${userName} from ${formattedStartDate} to ${formattedEndDate}`;
     
     // Use toast for notification
+    console.log("Creating notification:", notificationTitle, notificationMessage);
     toast.success(notificationTitle, {
       description: notificationMessage
     });
@@ -103,6 +105,8 @@ export const updateVehicleAvailability = async (vehicleId: string, startDate: Da
   try {
     if (!vehicleId || !startDate || !endDate) return;
     
+    console.log("Updating vehicle availability for:", vehicleId);
+    
     // Update vehicle availability based on booking dates
     const { data: vehicle, error: vehicleError } = await supabase
       .from('vehicles')
@@ -110,7 +114,10 @@ export const updateVehicleAvailability = async (vehicleId: string, startDate: Da
       .eq('id', vehicleId)
       .single();
     
-    if (vehicleError) throw vehicleError;
+    if (vehicleError) {
+      console.error("Error fetching vehicle:", vehicleError);
+      throw vehicleError;
+    }
     
     // Check if there are any existing bookings for this vehicle in this date range
     const { data: existingBookings, error: checkError } = await supabase
@@ -120,7 +127,10 @@ export const updateVehicleAvailability = async (vehicleId: string, startDate: Da
       .neq('status', 'cancelled')
       .or(`start_date.lte.${endDate.toISOString().split('T')[0]},end_date.gte.${startDate.toISOString().split('T')[0]}`);
     
-    if (checkError) throw checkError;
+    if (checkError) {
+      console.error("Error checking existing bookings:", checkError);
+      throw checkError;
+    }
     
     // If there are bookings (including this new one) that overlap with today,
     // we should mark the vehicle as unavailable
@@ -135,6 +145,7 @@ export const updateVehicleAvailability = async (vehicleId: string, startDate: Da
     
     // Update vehicle availability if needed
     if (hasCurrentBooking && vehicle.available) {
+      console.log("Marking vehicle as unavailable:", vehicleId);
       await supabase
         .from('vehicles')
         .update({ available: false })
@@ -156,6 +167,7 @@ export const searchUsers = async (query: string) => {
   if (query.length < 2) return [];
   
   try {
+    console.log("Searching users with query:", query);
     const { data, error } = await supabase
       .from('profiles')
       .select('id, full_name')
@@ -163,6 +175,7 @@ export const searchUsers = async (query: string) => {
       .limit(5);
       
     if (error) throw error;
+    console.log("Search results:", data);
     return data || [];
   } catch (error) {
     console.error('Error searching users:', error);
