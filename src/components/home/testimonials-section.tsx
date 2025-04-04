@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,32 +11,28 @@ const testimonials = [
     name: "James Wilson",
     role: "Business Executive",
     rating: 5,
-    comment: "NovaDrive exceeded all my expectations. The luxury vehicle was immaculate and the service was top-notch. My go-to for business trips now.",
-    image: "https://randomuser.me/api/portraits/men/32.jpg"
+    comment: "NovaDrive exceeded all my expectations. The luxury vehicle was immaculate and the service was top-notch. My go-to for business trips now."
   },
   {
     id: 2,
     name: "Sophia Chen",
     role: "Travel Blogger",
     rating: 5,
-    comment: "I've rented cars all over the world, but NovaDrive's attention to detail and customer service is unmatched. Highly recommend!",
-    image: "https://randomuser.me/api/portraits/women/44.jpg"
+    comment: "I've rented cars all over the world, but NovaDrive's attention to detail and customer service is unmatched. Highly recommend!"
   },
   {
     id: 3,
     name: "Marcus Johnson",
     role: "Film Producer",
     rating: 5,
-    comment: "When we needed luxury vehicles for our film shoot, NovaDrive delivered beyond our expectations. Professional, punctual, and perfect cars.",
-    image: "https://randomuser.me/api/portraits/men/22.jpg"
+    comment: "When we needed luxury vehicles for our film shoot, NovaDrive delivered beyond our expectations. Professional, punctual, and perfect cars."
   },
   {
     id: 4,
     name: "Emma Laurent",
     role: "Wedding Planner",
     rating: 5,
-    comment: "My clients always request the best for their special day, and NovaDrive never disappoints. Elegant cars and seamless service.",
-    image: "https://randomuser.me/api/portraits/women/29.jpg"
+    comment: "My clients always request the best for their special day, and NovaDrive never disappoints. Elegant cars and seamless service."
   },
 ];
 
@@ -45,32 +42,28 @@ const frenchTestimonials = [
     name: "James Wilson",
     role: "Cadre d'Entreprise",
     rating: 5,
-    comment: "NovaDrive a dépassé toutes mes attentes. Le véhicule de luxe était impeccable et le service était de premier ordre. C'est maintenant mon choix privilégié pour mes voyages d'affaires.",
-    image: "https://randomuser.me/api/portraits/men/32.jpg"
+    comment: "NovaDrive a dépassé toutes mes attentes. Le véhicule de luxe était impeccable et le service était de premier ordre. C'est maintenant mon choix privilégié pour mes voyages d'affaires."
   },
   {
     id: 2,
     name: "Sophia Chen",
     role: "Blogueuse Voyage",
     rating: 5,
-    comment: "J'ai loué des voitures partout dans le monde, mais l'attention aux détails et le service client de NovaDrive sont inégalés. Je recommande vivement !",
-    image: "https://randomuser.me/api/portraits/women/44.jpg"
+    comment: "J'ai loué des voitures partout dans le monde, mais l'attention aux détails et le service client de NovaDrive sont inégalés. Je recommande vivement !"
   },
   {
     id: 3,
     name: "Marcus Johnson",
     role: "Producteur de Films",
     rating: 5,
-    comment: "Lorsque nous avions besoin de véhicules de luxe pour notre tournage, NovaDrive a dépassé nos attentes. Des voitures professionnelles, ponctuelles et parfaites.",
-    image: "https://randomuser.me/api/portraits/men/22.jpg"
+    comment: "Lorsque nous avions besoin de véhicules de luxe pour notre tournage, NovaDrive a dépassé nos attentes. Des voitures professionnelles, ponctuelles et parfaites."
   },
   {
     id: 4,
     name: "Emma Laurent",
     role: "Organisatrice de Mariages",
     rating: 5,
-    comment: "Mes clients demandent toujours le meilleur pour leur jour spécial, et NovaDrive ne déçoit jamais. Des voitures élégantes et un service impeccable.",
-    image: "https://randomuser.me/api/portraits/women/29.jpg"
+    comment: "Mes clients demandent toujours le meilleur pour leur jour spécial, et NovaDrive ne déçoit jamais. Des voitures élégantes et un service impeccable."
   },
 ];
 
@@ -122,18 +115,9 @@ export const TestimonialsSection = () => {
                       ))}
                     </div>
                     
-                    <div className="flex items-center">
-                      <div className="h-12 w-12 rounded-full overflow-hidden mr-4 border-2 border-nova-gold/50">
-                        <img 
-                          src={testimonial.image} 
-                          alt={testimonial.name} 
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-nova-white">{testimonial.name}</h4>
-                        <p className="text-sm text-nova-white/60">{testimonial.role}</p>
-                      </div>
+                    <div>
+                      <h4 className="font-semibold text-nova-white">{testimonial.name}</h4>
+                      <p className="text-sm text-nova-white/60">{testimonial.role}</p>
                     </div>
                   </CardContent>
                 </Card>
