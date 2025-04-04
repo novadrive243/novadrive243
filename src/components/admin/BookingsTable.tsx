@@ -78,14 +78,16 @@ export const BookingsTable = ({
                 ? 'Aucune réservation pour le moment.' 
                 : 'No bookings available yet.'}
             </div>
-            <Button 
-              variant="outline" 
-              className="border-nova-gold/30 text-nova-gold hover:bg-nova-gold/10 hover:text-nova-white"
-              onClick={onAddBooking}
-            >
-              <PlusCircle className="h-4 w-4 mr-2" />
-              {language === 'fr' ? 'Ajouter une réservation' : 'Add Booking'}
-            </Button>
+            {onAddBooking && (
+              <Button 
+                variant="outline" 
+                className="border-nova-gold/30 text-nova-gold hover:bg-nova-gold/10 hover:text-nova-white"
+                onClick={onAddBooking}
+              >
+                <PlusCircle className="h-4 w-4 mr-2" />
+                {language === 'fr' ? 'Ajouter une réservation' : 'Add Booking'}
+              </Button>
+            )}
           </div>
         )}
       </CardContent>
