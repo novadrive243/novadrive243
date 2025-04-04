@@ -11,7 +11,7 @@ import { Menu } from 'lucide-react';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import { AdminContent } from '@/components/admin/AdminContent';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
-import { useAdminData } from '@/components/admin/useAdminData';
+import { useAdminData } from '@/components/admin/hooks/useAdminData';
 import { useAdminFormat } from '@/hooks/use-admin-format';
 
 const AdminPage = () => {
