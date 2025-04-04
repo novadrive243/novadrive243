@@ -9,6 +9,7 @@ import { VehicleSelector } from './components/VehicleSelector';
 import { DateRangePicker } from './components/DateRangePicker';
 import { PriceEstimate } from './components/PriceEstimate';
 import { calculateTotalPrice, createBookingNotification, updateVehicleAvailability } from './utils/booking-dialog-utils';
+import { CalendarIcon } from 'lucide-react';
 
 interface AddBookingDialogProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
     new Date(new Date().setDate(new Date().getDate() + 3))
   );
   const [loading, setLoading] = useState(false);
+  const [isValidated, setIsValidated] = useState(false);
 
   // Reset form when dialog is opened
   useEffect(() => {
@@ -35,35 +37,40 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
       setVehicleId('');
       setStartDate(new Date());
       setEndDate(new Date(new Date().setDate(new Date().getDate() + 3)));
+      setIsValidated(false);
     }
   }, [isOpen]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Form submitted with:", { userId, vehicleId, startDate, endDate });
-    
-    // Validate required fields
+  const validateAllFields = () => {
     if (!userId) {
-      console.error("Missing required field: userId is null");
-      toast.error(language === 'fr' 
-        ? 'Veuillez sélectionner un client' 
-        : 'Please select a customer');
-      return;
+      toast.error(language === 'fr' ? 'Veuillez sélectionner un client' : 'Please select a customer');
+      return false;
+    }
+    
+    if (!userName) {
+      toast.error(language === 'fr' ? 'Nom du client non valide' : 'Invalid customer name');
+      return false;
     }
     
     if (!vehicleId) {
-      console.error("Missing required field: vehicleId is empty");
-      toast.error(language === 'fr' 
-        ? 'Veuillez sélectionner un véhicule' 
-        : 'Please select a vehicle');
-      return;
+      toast.error(language === 'fr' ? 'Veuillez sélectionner un véhicule' : 'Please select a vehicle');
+      return false;
     }
     
     if (!startDate || !endDate) {
-      console.error("Missing required field: dates are undefined", { startDate, endDate });
-      toast.error(language === 'fr' 
-        ? 'Veuillez sélectionner les dates de réservation' 
-        : 'Please select booking dates');
+      toast.error(language === 'fr' ? 'Veuillez sélectionner les dates de réservation' : 'Please select booking dates');
+      return false;
+    }
+    
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Form submitted with:", { userId, vehicleId, startDate, endDate, userName });
+    
+    // Validate all fields
+    if (!validateAllFields()) {
       return;
     }
     
@@ -83,7 +90,7 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
           start_date: startDate.toISOString().split('T')[0],
           end_date: endDate.toISOString().split('T')[0],
           total_price: totalPrice,
-          status: 'pending'
+          status: 'confirmed' // Auto-validate the booking
         })
         .select();
         
@@ -92,7 +99,17 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
         throw error;
       }
       
-      console.log("Booking created:", data);
+      console.log("Booking created and auto-validated:", data);
+      
+      // Show success notification with auto-validation
+      toast.success(language === 'fr' 
+        ? `Réservation créée et validée automatiquement pour ${userName}` 
+        : `Booking created and automatically validated for ${userName}`, {
+        description: language === 'fr'
+          ? 'La réservation apparaît maintenant dans le calendrier'
+          : 'The booking now appears in the calendar',
+        icon: <CalendarIcon className="text-nova-gold h-4 w-4" />
+      });
       
       // Log the admin activity using the edge function
       try {
@@ -108,7 +125,9 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
               details: {
                 booking_id: data?.[0]?.id,
                 user_id: userId,
-                vehicle_id: vehicleId
+                vehicle_id: vehicleId,
+                customer_name: userName,
+                auto_validated: true
               }
             }
           });
@@ -122,11 +141,6 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
       
       // Update vehicle availability
       await updateVehicleAvailability(vehicleId, startDate, endDate);
-      
-      // Show success notification
-      toast.success(language === 'fr' 
-        ? 'Réservation créée avec succès' 
-        : 'Booking created successfully');
       
       // Close dialog and refresh data
       onClose();
