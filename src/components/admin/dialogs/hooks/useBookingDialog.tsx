@@ -138,7 +138,7 @@ export const useBookingDialog = (language: string, onClose: () => void, refreshD
       );
       
       // Update vehicle availability
-      await updateVehicleAvailability(vehicleId, startDate, endDate);
+      await updateVehicleAvailability(vehicleId, startDate, endDate, language);
       
       // Show success notification
       toast.success(language === 'fr' 

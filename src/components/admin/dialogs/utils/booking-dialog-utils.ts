@@ -1,191 +1,105 @@
 
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
-import { vehicles } from '@/data/vehicles';
-import { toast } from 'sonner';
+import { updateVehicleAvailabilityFromBookings } from '@/components/admin/hooks/useVehicleAvailability';
 
-// Calculate the price based on vehicle and dates
-export const calculateTotalPrice = (
-  vehicleId: string, 
-  startDate: Date | undefined, 
-  endDate: Date | undefined
-) => {
-  if (!vehicleId || !startDate || !endDate) return 0;
-  
-  const selectedVehicle = vehicles.find(v => v.id === vehicleId);
-  if (!selectedVehicle) return 0;
-  
-  const daysDiff = Math.max(1, Math.ceil(
-    (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
-  ));
-  console.log(`Days difference: ${daysDiff}`);
-  
-  return calculateVehiclePrice(
-    selectedVehicle,
-    'daily',
-    daysDiff,
-    daysDiff
-  );
+// Calculate total price based on vehicle and dates
+export const calculateTotalPrice = (vehicleId: string, startDate: Date, endDate: Date) => {
+  // This is a placeholder function - in a real app, you would fetch the vehicle's price
+  // and calculate based on the number of days
+  const dailyRate = 100; // Default rate
+  const days = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+  return dailyRate * days;
 };
 
-// Function imported from booking-utils.ts
-export const calculateVehiclePrice = (
-  vehicle: any,
-  type: 'hourly' | 'daily' | 'monthly',
-  days: number,
-  hours: number
-) => {
-  if (type === 'hourly') {
-    return vehicle.price.hourly * hours;
-  } else if (type === 'daily') {
-    // Check if package pricing applies
-    if (days >= 25) {
-      return vehicle.price.twentyFiveDayPackage;
-    } else if (days >= 15) {
-      return vehicle.price.fifteenDayPackage;
-    } else if (days >= 10) {
-      return vehicle.price.tenDayPackage;
-    } else {
-      return vehicle.price.daily * days;
-    }
-  } else if (type === 'monthly') {
-    return vehicle.price.monthly;
-  }
-  
-  return 0;
-};
-
-// Create a notification for new booking
+// Create a notification for a new booking
 export const createBookingNotification = async (
   userName: string,
   vehicleId: string,
-  startDate: Date | undefined,
-  endDate: Date | undefined,
+  startDate: Date,
+  endDate: Date,
   language: string
 ) => {
   try {
-    if (!startDate || !endDate) return;
-    
-    const selectedVehicle = vehicles.find(v => v.id === vehicleId);
-    const vehicleName = selectedVehicle ? selectedVehicle.name : 'Vehicle';
-    
-    // Format dates for notification message
-    const formattedStartDate = format(
-      startDate, 
-      'PP', 
-      { locale: language === 'fr' ? fr : undefined }
-    );
-    const formattedEndDate = format(
-      endDate, 
-      'PP', 
-      { locale: language === 'fr' ? fr : undefined }
-    );
-    
-    // Create notification content
-    const notificationTitle = language === 'fr' 
-      ? `Nouvelle réservation - ${vehicleName}` 
-      : `New booking - ${vehicleName}`;
+    // Get vehicle details
+    const { data: vehicle } = await supabase
+      .from('vehicles')
+      .select('name')
+      .eq('id', vehicleId)
+      .single();
       
-    const notificationMessage = language === 'fr'
-      ? `Réservation créée pour ${userName} du ${formattedStartDate} au ${formattedEndDate}`
-      : `Booking created for ${userName} from ${formattedStartDate} to ${formattedEndDate}`;
+    const vehicleName = vehicle?.name || 'Unknown';
     
-    // Use toast for notification
-    console.log("Creating notification:", notificationTitle, notificationMessage);
-    toast.success(notificationTitle, {
-      description: notificationMessage,
-      duration: 5000
-    });
+    // Format dates
+    const formattedStartDate = startDate.toLocaleDateString();
+    const formattedEndDate = endDate.toLocaleDateString();
     
+    // Create notification message
+    const message = language === 'fr' 
+      ? `Nouvelle réservation: ${vehicleName} pour ${userName} du ${formattedStartDate} au ${formattedEndDate}`
+      : `New booking: ${vehicleName} for ${userName} from ${formattedStartDate} to ${formattedEndDate}`;
+      
+    // Insert notification into the database
+    await supabase
+      .from('notifications')
+      .insert({
+        type: 'booking',
+        message,
+        is_read: false
+      });
+      
+    console.log('Booking notification created');
   } catch (error) {
-    console.error('Error creating notification:', error);
+    console.error('Error creating booking notification:', error);
   }
 };
 
-// Check for existing bookings and update vehicle availability
-export const updateVehicleAvailability = async (vehicleId: string, startDate: Date | undefined, endDate: Date | undefined) => {
+// Update vehicle availability based on booking dates
+export const updateVehicleAvailability = async (
+  vehicleId: string,
+  startDate: Date,
+  endDate: Date,
+  language: string
+) => {
   try {
-    if (!vehicleId || !startDate || !endDate) return;
-    
-    console.log("Updating vehicle availability for:", vehicleId);
-    
-    // Update vehicle availability based on booking dates
-    const { data: vehicle, error: vehicleError } = await supabase
-      .from('vehicles')
-      .select('*')
-      .eq('id', vehicleId)
-      .single();
-    
-    if (vehicleError) {
-      console.error("Error fetching vehicle:", vehicleError);
-      throw vehicleError;
-    }
-    
-    // Check if there are any existing bookings for this vehicle in this date range
-    const { data: existingBookings, error: checkError } = await supabase
+    // Fetch all bookings for this vehicle
+    const { data: bookings, error: bookingsError } = await supabase
       .from('bookings')
       .select('*')
-      .eq('vehicle_id', vehicleId)
-      .neq('status', 'cancelled')
-      .or(`start_date.lte.${endDate.toISOString().split('T')[0]},end_date.gte.${startDate.toISOString().split('T')[0]}`);
+      .eq('vehicle_id', vehicleId);
+      
+    if (bookingsError) throw bookingsError;
     
-    if (checkError) {
-      console.error("Error checking existing bookings:", checkError);
-      throw checkError;
-    }
+    // Fetch current vehicle data
+    const { data: vehicles, error: vehiclesError } = await supabase
+      .from('vehicles')
+      .select('*')
+      .eq('id', vehicleId);
+      
+    if (vehiclesError) throw vehiclesError;
     
-    // If there are bookings (including this new one) that overlap with today,
-    // we should mark the vehicle as unavailable
+    // Check if vehicle should be marked as unavailable
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    const hasCurrentBooking = existingBookings && existingBookings.some(booking => {
-      const bookingStart = new Date(booking.start_date);
-      const bookingEnd = new Date(booking.end_date);
-      return (bookingStart <= today && bookingEnd >= today);
-    });
+    // Check if this new booking would make the vehicle unavailable today
+    const newBookingIsToday = 
+      (startDate <= today && endDate >= today) || 
+      (startDate.toDateString() === today.toDateString());
     
-    // Update vehicle availability if needed
-    if (hasCurrentBooking && vehicle.available) {
-      console.log("Marking vehicle as unavailable:", vehicleId);
-      const { error: updateError } = await supabase
-        .from('vehicles')
-        .update({ available: false })
-        .eq('id', vehicleId);
-        
-      if (updateError) {
-        console.error("Error updating vehicle availability:", updateError);
-      } else {
-        console.log(`Vehicle ${vehicleId} marked as unavailable due to current booking`);
-      }
-    }
+    // Call the shared function to update vehicle availability
+    await updateVehicleAvailabilityFromBookings(
+      [...(bookings || []), { 
+        vehicle_id: vehicleId, 
+        start_date: startDate.toISOString(), 
+        end_date: endDate.toISOString(),
+        status: 'pending'
+      }], 
+      vehicles || [],
+      language
+    );
     
-    // Log the number of bookings in this period
-    console.log(`Vehicle has ${existingBookings?.length || 0} bookings in this period`);
-    
+    console.log(`Vehicle availability updated for booking from ${startDate.toDateString()} to ${endDate.toDateString()}`);
   } catch (error) {
     console.error('Error updating vehicle availability:', error);
-  }
-};
-
-// Search for users matching the query
-export const searchUsers = async (query: string) => {
-  if (query.length < 2) return [];
-  
-  try {
-    console.log("Searching users with query:", query);
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id, full_name')
-      .ilike('full_name', `%${query}%`)
-      .limit(5);
-      
-    if (error) throw error;
-    console.log("Search results:", data);
-    return data || [];
-  } catch (error) {
-    console.error('Error searching users:', error);
-    return [];
   }
 };

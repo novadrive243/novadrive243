@@ -7,7 +7,8 @@ import { toast } from 'sonner';
  */
 export const updateVehicleAvailabilityFromBookings = async (
   fetchedBookings: any[], 
-  fetchedVehicles: any[]
+  fetchedVehicles: any[],
+  language: string
 ) => {
   try {
     const today = new Date();
@@ -108,7 +109,7 @@ export const forceRefreshVehicleAvailability = async (language: string) => {
     if (vehiclesError) throw vehiclesError;
     
     // Update availability based on fetched data
-    await updateVehicleAvailabilityFromBookings(bookings || [], vehicles || []);
+    await updateVehicleAvailabilityFromBookings(bookings || [], vehicles || [], language);
     
     // Show success notification
     toast.success(language === 'fr' ? 'Synchronisation forcée réussie' : 'Forced synchronization successful', {
