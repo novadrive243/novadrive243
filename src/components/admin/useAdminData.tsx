@@ -63,6 +63,9 @@ export const useAdminData = (isAuthorized: boolean, language: string) => {
             .from('vehicles')
             .update({ available: isAvailable })
             .eq('id', vehicleId);
+            
+          // Log the vehicle status change
+          console.log(`Vehicle ${vehicle.name} availability changed to ${isAvailable ? 'available' : 'unavailable'}`);
         }
       }
     } catch (error) {

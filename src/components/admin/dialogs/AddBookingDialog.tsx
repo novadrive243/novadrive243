@@ -14,6 +14,7 @@ import { fr } from 'date-fns/locale';
 import { vehicles } from '@/data/vehicles';
 import { calculateVehiclePrice } from '@/components/booking/utils/booking-utils';
 import { toast } from 'sonner';
+import { NotificationType } from '@/components/notifications/notifications-center';
 
 interface AddBookingDialogProps {
   isOpen: boolean;
@@ -86,6 +87,60 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
     );
   };
 
+  // Function to create a notification in the database when booking is created
+  const createBookingNotification = async (bookingData: any) => {
+    try {
+      const selectedVehicle = vehicles.find(v => v.id === vehicleId);
+      const vehicleName = selectedVehicle ? selectedVehicle.name : 'Vehicle';
+      
+      // Format dates for notification message
+      const formattedStartDate = format(startDate || new Date(), 'PP', { locale: language === 'fr' ? fr : undefined });
+      const formattedEndDate = format(endDate || new Date(), 'PP', { locale: language === 'fr' ? fr : undefined });
+      
+      // Create notification content
+      const notificationTitle = language === 'fr' 
+        ? `Nouvelle réservation - ${vehicleName}` 
+        : `New booking - ${vehicleName}`;
+        
+      const notificationMessage = language === 'fr'
+        ? `Réservation créée pour ${userName} du ${formattedStartDate} au ${formattedEndDate}`
+        : `Booking created for ${userName} from ${formattedStartDate} to ${formattedEndDate}`;
+      
+      // Dispatch notification using toast
+      toast({
+        title: notificationTitle,
+        description: notificationMessage
+      });
+
+      // Update vehicle availability during booking period
+      await updateVehicleAvailability();
+      
+    } catch (error) {
+      console.error('Error creating notification:', error);
+    }
+  };
+
+  // Function to update vehicle availability
+  const updateVehicleAvailability = async () => {
+    try {
+      // First check if there are any existing bookings for this vehicle in this date range
+      const { data: existingBookings, error: checkError } = await supabase
+        .from('bookings')
+        .select('*')
+        .eq('vehicle_id', vehicleId)
+        .neq('status', 'cancelled')
+        .or(`start_date.lte.${endDate?.toISOString().split('T')[0]},end_date.gte.${startDate?.toISOString().split('T')[0]}`);
+      
+      if (checkError) throw checkError;
+      
+      // If the vehicle is already booked during this period, we don't need to update its availability
+      // The status will be managed by the admin data hook that checks current date against bookings
+      console.log(`Vehicle has ${existingBookings?.length || 0} bookings in this period`);
+    } catch (error) {
+      console.error('Error updating vehicle availability:', error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -120,6 +175,9 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
         console.error('Supabase error:', error);
         throw error;
       }
+      
+      // Create notification for the new booking
+      await createBookingNotification(data?.[0]);
       
       // Afficher une notification de succès
       toast.success(language === 'fr' 

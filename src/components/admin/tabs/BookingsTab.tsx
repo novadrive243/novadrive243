@@ -5,6 +5,7 @@ import { BookingsTable } from '@/components/admin/BookingsTable';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, RefreshCw } from 'lucide-react';
 import { AddBookingDialog } from '@/components/admin/dialogs/AddBookingDialog';
+import { NotificationsCenter } from '@/components/notifications/notifications-center';
 
 interface BookingsTabProps {
   bookings: any[];
