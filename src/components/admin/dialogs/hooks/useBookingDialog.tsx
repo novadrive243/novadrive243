@@ -31,15 +31,7 @@ export const useBookingDialog = (language: string, onClose: () => void, refreshD
     e.preventDefault();
     console.log("Form submitted with:", { userId, vehicleId, startDate, endDate });
     
-    // Validate required fields
-    if (!userId) {
-      console.error("Missing required field: userId is null");
-      toast.error(language === 'fr' 
-        ? 'Veuillez sélectionner un client' 
-        : 'Please select a customer');
-      return;
-    }
-    
+    // Validate vehicleId and dates
     if (!vehicleId) {
       console.error("Missing required field: vehicleId is empty");
       toast.error(language === 'fr' 
@@ -56,6 +48,9 @@ export const useBookingDialog = (language: string, onClose: () => void, refreshD
       return;
     }
     
+    // Si userId est null mais que le champ userName contient du texte, nous créons une réservation de test
+    const isTestBooking = !userId && userName.trim() !== '';
+    
     setLoading(true);
     
     try {
@@ -64,16 +59,28 @@ export const useBookingDialog = (language: string, onClose: () => void, refreshD
       console.log("Calculated price:", totalPrice);
       
       // Create booking in Supabase
+      const bookingData: any = {
+        vehicle_id: vehicleId,
+        start_date: startDate.toISOString().split('T')[0],
+        end_date: endDate.toISOString().split('T')[0],
+        total_price: totalPrice,
+        status: 'pending'
+      };
+      
+      // Ajouter user_id seulement s'il est disponible
+      if (userId) {
+        bookingData.user_id = userId;
+      } else if (isTestBooking) {
+        // Pour les réservations de test, nous stockons le nom dans les métadonnées
+        bookingData.metadata = { test_booking: true, customer_name: userName };
+      } else {
+        // Si aucun utilisateur n'est sélectionné, créer un utilisateur de test
+        bookingData.metadata = { test_booking: true, customer_name: 'Client Test' };
+      }
+      
       const { data, error } = await supabase
         .from('bookings')
-        .insert({
-          user_id: userId,
-          vehicle_id: vehicleId,
-          start_date: startDate.toISOString().split('T')[0],
-          end_date: endDate.toISOString().split('T')[0],
-          total_price: totalPrice,
-          status: 'pending'
-        })
+        .insert(bookingData)
         .select();
         
       if (error) {
@@ -96,8 +103,8 @@ export const useBookingDialog = (language: string, onClose: () => void, refreshD
               activityType: 'booking_created',
               details: {
                 booking_id: data?.[0]?.id,
-                user_id: userId,
-                vehicle_id: vehicleId
+                vehicle_id: vehicleId,
+                is_test_booking: isTestBooking
               }
             }
           });
@@ -107,7 +114,13 @@ export const useBookingDialog = (language: string, onClose: () => void, refreshD
       }
       
       // Create notification for the new booking
-      await createBookingNotification(userName, vehicleId, startDate, endDate, language);
+      await createBookingNotification(
+        userId ? userName : 'Client Test', 
+        vehicleId, 
+        startDate, 
+        endDate, 
+        language
+      );
       
       // Update vehicle availability
       await updateVehicleAvailability(vehicleId, startDate, endDate);

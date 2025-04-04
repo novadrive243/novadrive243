@@ -6,6 +6,8 @@ import { UserSearchField } from './UserSearchField';
 import { VehicleSelector } from './VehicleSelector';
 import { DateRangePicker } from './DateRangePicker';
 import { PriceEstimate } from './PriceEstimate';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 interface BookingFormProps {
   userName: string;
@@ -51,6 +53,17 @@ export const BookingForm = ({
         language={language}
       />
       
+      {!userId && (
+        <Alert variant="info" className="bg-blue-500/10 text-blue-300 border-blue-400/20">
+          <AlertCircle className="h-4 w-4 text-blue-400" />
+          <AlertDescription>
+            {language === 'fr' 
+              ? "Si aucun utilisateur n'est trouvé, vous pouvez quand même créer une réservation test avec le nom saisi."
+              : "If no user is found, you can still create a test booking with the entered name."}
+          </AlertDescription>
+        </Alert>
+      )}
+      
       {/* Vehicle selector */}
       <VehicleSelector 
         vehicleId={vehicleId}
@@ -90,7 +103,7 @@ export const BookingForm = ({
         <Button 
           type="submit"
           className="bg-nova-gold text-nova-black hover:bg-nova-gold/90"
-          disabled={loading}
+          disabled={loading || (!vehicleId) || !startDate || !endDate}
         >
           {loading ? 
             (language === 'fr' ? 'Création...' : 'Creating...') : 
