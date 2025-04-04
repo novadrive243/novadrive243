@@ -80,19 +80,21 @@ export const useVehicleCalendar = (
       
       if (error) throw error;
       
-      // Log the change for admin activity using Raw Insert
+      // Log the change for admin activity using the edge function
       try {
         const adminUser = await supabase.auth.getUser();
         const adminId = adminUser.data.user?.id;
         
         if (adminId) {
-          // Use a raw query approach to insert into admin_activity
-          const { error: logError } = await supabase.rpc('log_admin_activity', {
-            p_admin_id: adminId,
-            p_activity_type: 'vehicle_status_change',
-            p_details: {
-              vehicle_id: vehicleId,
-              new_status: isAvailable ? 'available' : 'unavailable'
+          // Use the edge function to log admin activity
+          const { error: logError } = await supabase.functions.invoke('log-admin-activity', {
+            body: {
+              adminId: adminId,
+              activityType: 'vehicle_status_change',
+              details: {
+                vehicle_id: vehicleId,
+                new_status: isAvailable ? 'available' : 'unavailable'
+              }
             }
           });
           

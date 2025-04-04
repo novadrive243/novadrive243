@@ -73,20 +73,22 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
         throw error;
       }
       
-      // Log the admin activity using RPC
+      // Log the admin activity using the edge function
       try {
         const adminUser = await supabase.auth.getUser();
         const adminId = adminUser.data.user?.id;
         
         if (adminId) {
-          // Use a stored procedure to log the activity
-          await supabase.rpc('log_admin_activity', {
-            p_admin_id: adminId,
-            p_activity_type: 'booking_created',
-            p_details: {
-              booking_id: data?.[0]?.id,
-              user_id: userId,
-              vehicle_id: vehicleId
+          // Use the edge function to log admin activity
+          await supabase.functions.invoke('log-admin-activity', {
+            body: {
+              adminId: adminId,
+              activityType: 'booking_created',
+              details: {
+                booking_id: data?.[0]?.id,
+                user_id: userId,
+                vehicle_id: vehicleId
+              }
             }
           });
         }
