@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useEffect } from 'react';
+import { Card } from "@/components/ui/card";
 import { LoadingState } from './LoadingState';
 import { VehicleSelector } from './calendar/VehicleSelector';
 import { VehicleInfo } from './calendar/VehicleInfo';
@@ -26,8 +26,16 @@ export const VehicleCalendar = ({ vehicles, bookings, language, isLoading }: Veh
     isUpdating,
     updateVehicleAvailability,
     calendarView,
-    setCalendarView
+    setCalendarView,
+    refreshCalendarData
   } = useVehicleCalendar(vehicles, bookings, language);
+
+  // Ensure the vehicles are loaded properly
+  useEffect(() => {
+    if (vehicles.length > 0 && !selectedVehicle) {
+      setSelectedVehicle(vehicles[0].id);
+    }
+  }, [vehicles, selectedVehicle, setSelectedVehicle]);
 
   if (isLoading) {
     return <LoadingState language={language} />;
@@ -74,7 +82,12 @@ export const VehicleCalendar = ({ vehicles, bookings, language, isLoading }: Veh
               </ToggleGroupItem>
             </ToggleGroup>
             
-            <Button variant="outline" size="sm" className="text-nova-white border-nova-gold/30 hover:bg-nova-gold/10">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="text-nova-white border-nova-gold/30 hover:bg-nova-gold/10"
+              onClick={refreshCalendarData}
+            >
               <RefreshCw className="h-4 w-4 mr-2" />
               {language === 'fr' ? 'Rafraîchir' : 'Refresh'}
             </Button>

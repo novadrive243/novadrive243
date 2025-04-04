@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { calculateTotalPrice } from '../utils/booking-dialog-utils';
 
 interface PriceEstimateProps {
@@ -10,9 +10,16 @@ interface PriceEstimateProps {
 }
 
 export const PriceEstimate = ({ vehicleId, startDate, endDate, language }: PriceEstimateProps) => {
-  if (!vehicleId || !startDate || !endDate) return null;
+  const [totalPrice, setTotalPrice] = useState<number>(0);
   
-  const totalPrice = calculateTotalPrice(vehicleId, startDate, endDate);
+  useEffect(() => {
+    if (vehicleId && startDate && endDate) {
+      const price = calculateTotalPrice(vehicleId, startDate, endDate);
+      setTotalPrice(price);
+    }
+  }, [vehicleId, startDate, endDate]);
+  
+  if (!vehicleId || !startDate || !endDate) return null;
   
   return (
     <div className="py-2 border-t border-nova-gold/20">

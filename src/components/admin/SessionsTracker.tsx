@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LoadingState } from './LoadingState';
 import { User, Laptop, Smartphone, Clock } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 export const SessionsTracker = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -13,57 +14,65 @@ export const SessionsTracker = () => {
   const [selectedDevice, setSelectedDevice] = useState<string>('all');
   
   useEffect(() => {
-    // Simulate data loading
-    setTimeout(() => {
-      // Mock data
-      const mockSessions = [
-        {
-          id: '1',
-          user_id: 'u1',
-          device_info: JSON.stringify({
-            userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            platform: 'Windows',
-            deviceType: 'desktop'
-          }),
-          created_at: new Date().toISOString(),
-          last_active: new Date().toISOString(),
-          is_active: true
-        },
-        {
-          id: '2',
-          user_id: 'u2',
-          device_info: JSON.stringify({
-            userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X)',
-            platform: 'iOS',
-            deviceType: 'mobile'
-          }),
-          created_at: new Date(Date.now() - 3600000).toISOString(),
-          last_active: new Date(Date.now() - 1800000).toISOString(),
-          is_active: true
-        },
-        {
-          id: '3',
-          user_id: 'u3',
-          device_info: JSON.stringify({
-            userAgent: 'Mozilla/5.0 (Linux; Android 12)',
-            platform: 'Android',
-            deviceType: 'mobile'
-          }),
-          created_at: new Date(Date.now() - 7200000).toISOString(),
-          last_active: new Date(Date.now() - 3600000).toISOString(),
-          is_active: true
+    const fetchUserSessions = async () => {
+      setIsLoading(true);
+      try {
+        // Fetch real user sessions from the database
+        const { data, error } = await supabase
+          .from('user_sessions')
+          .select(`
+            id,
+            user_id,
+            session_id,
+            device_info,
+            login_timestamp,
+            is_active,
+            profiles(full_name)
+          `)
+          .eq('is_active', true)
+          .order('login_timestamp', { ascending: false });
+        
+        if (error) {
+          console.error('Error fetching sessions:', error);
+          throw error;
         }
-      ];
-      
-      setActiveSessions(mockSessions);
-      setIsLoading(false);
-    }, 1500);
+        
+        setActiveSessions(data || []);
+      } catch (error) {
+        console.error('Failed to load session data:', error);
+        // If we fail to load data, use empty array
+        setActiveSessions([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchUserSessions();
+    
+    // Set up a real-time subscription for user sessions
+    const sessionsChannel = supabase
+      .channel('user_sessions_changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'user_sessions' }, 
+        () => {
+          fetchUserSessions();
+        }
+      )
+      .subscribe();
+    
+    // Refresh sessions data every 2 minutes
+    const interval = setInterval(fetchUserSessions, 2 * 60 * 1000);
+    
+    return () => {
+      supabase.removeChannel(sessionsChannel);
+      clearInterval(interval);
+    };
   }, []);
   
   const getDeviceIcon = (deviceInfo: any) => {
     try {
-      const parsed = JSON.parse(deviceInfo);
-      const deviceType = parsed.deviceType || 'desktop';
+      const parsed = typeof deviceInfo === 'string' ? JSON.parse(deviceInfo) : deviceInfo;
+      const deviceType = parsed?.deviceType || 'desktop';
       
       switch (deviceType) {
         case 'mobile':
@@ -92,8 +101,10 @@ export const SessionsTracker = () => {
     
     return activeSessions.filter(session => {
       try {
-        const deviceInfo = JSON.parse(session.device_info);
-        const deviceType = deviceInfo.deviceType || 'desktop';
+        const deviceInfo = typeof session.device_info === 'string' 
+          ? JSON.parse(session.device_info) 
+          : session.device_info;
+        const deviceType = deviceInfo?.deviceType || 'desktop';
         return deviceType === selectedDevice;
       } catch (e) {
         return false;
@@ -135,7 +146,9 @@ export const SessionsTracker = () => {
                       
                       <div className="flex-1">
                         <div className="flex justify-between items-center mb-1">
-                          <span className="font-medium text-nova-white">User: {session.user_id}</span>
+                          <span className="font-medium text-nova-white">
+                            {session.profiles?.full_name || `User: ${session.user_id?.substring(0, 8)}`}
+                          </span>
                           <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/30">
                             Active
                           </Badge>
@@ -146,8 +159,10 @@ export const SessionsTracker = () => {
                           <span>
                             {(() => {
                               try {
-                                const deviceInfo = JSON.parse(session.device_info);
-                                return deviceInfo.platform || 'Unknown device';
+                                const deviceInfo = typeof session.device_info === 'string' 
+                                  ? JSON.parse(session.device_info) 
+                                  : session.device_info;
+                                return deviceInfo?.platform || 'Unknown device';
                               } catch (e) {
                                 return 'Unknown device';
                               }
@@ -157,7 +172,9 @@ export const SessionsTracker = () => {
                         
                         <div className="flex items-center gap-1 mt-2 text-sm text-muted-foreground">
                           <Clock className="h-3.5 w-3.5 text-nova-gold/70" />
-                          <span>Last active: {formatTime(session.last_active)}</span>
+                          <span>
+                            Last active: {formatTime(session.login_timestamp)}
+                          </span>
                         </div>
                       </div>
                     </div>

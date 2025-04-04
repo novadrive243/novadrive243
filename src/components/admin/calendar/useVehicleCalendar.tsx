@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useTimezone } from '@/hooks/use-timezone';
@@ -23,8 +23,8 @@ export const useVehicleCalendar = (
     }
   }, [vehicles, selectedVehicle]);
 
-  // Update booked dates when selected vehicle or bookings change
-  useEffect(() => {
+  // Function to update booked dates based on selected vehicle
+  const updateBookedDates = useCallback(() => {
     if (selectedVehicle && bookings.length > 0) {
       // Filter bookings for the selected vehicle
       const vehicleBookings = bookings.filter(booking => booking.vehicle_id === selectedVehicle);
@@ -33,14 +33,16 @@ export const useVehicleCalendar = (
       const allBookedDates: Date[] = [];
       
       vehicleBookings.forEach(booking => {
-        const startDate = toKinshasaTime(new Date(booking.start_date));
-        const endDate = toKinshasaTime(new Date(booking.end_date));
-        
-        // Add all dates between start and end (inclusive)
-        const currentDate = new Date(startDate);
-        while (currentDate <= endDate) {
-          allBookedDates.push(toKinshasaTime(new Date(currentDate)));
-          currentDate.setDate(currentDate.getDate() + 1);
+        if (booking.start_date && booking.end_date) {
+          const startDate = toKinshasaTime(new Date(booking.start_date));
+          const endDate = toKinshasaTime(new Date(booking.end_date));
+          
+          // Add all dates between start and end (inclusive)
+          const currentDate = new Date(startDate);
+          while (currentDate <= endDate) {
+            allBookedDates.push(toKinshasaTime(new Date(currentDate)));
+            currentDate.setDate(currentDate.getDate() + 1);
+          }
         }
       });
       
@@ -49,6 +51,22 @@ export const useVehicleCalendar = (
       setBookedDates([]);
     }
   }, [selectedVehicle, bookings, toKinshasaTime]);
+
+  // Update booked dates when selected vehicle or bookings change
+  useEffect(() => {
+    updateBookedDates();
+  }, [updateBookedDates]);
+
+  // Refresh calendar data
+  const refreshCalendarData = () => {
+    updateBookedDates();
+    toast({
+      title: language === 'fr' ? 'Calendrier mis à jour' : 'Calendar updated',
+      description: language === 'fr' 
+        ? 'Les données du calendrier ont été rafraîchies' 
+        : 'Calendar data has been refreshed',
+    });
+  };
 
   // Update vehicle availability status in the database
   const updateVehicleAvailability = async (vehicleId: string, isAvailable: boolean) => {
@@ -61,6 +79,16 @@ export const useVehicleCalendar = (
         .eq('id', vehicleId);
       
       if (error) throw error;
+      
+      // Log the change for admin activity
+      await supabase.from('admin_activity').insert({
+        admin_id: (await supabase.auth.getUser()).data.user?.id,
+        activity_type: 'vehicle_status_change',
+        details: {
+          vehicle_id: vehicleId,
+          new_status: isAvailable ? 'available' : 'unavailable'
+        }
+      }).single();
       
       toast({
         title: language === 'fr' 
@@ -92,6 +120,7 @@ export const useVehicleCalendar = (
     isUpdating,
     updateVehicleAvailability,
     calendarView,
-    setCalendarView
+    setCalendarView,
+    refreshCalendarData
   };
 };

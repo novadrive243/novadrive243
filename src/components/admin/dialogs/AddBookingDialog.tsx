@@ -73,6 +73,18 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
         throw error;
       }
       
+      // Log the admin activity
+      const adminUser = await supabase.auth.getUser();
+      await supabase.from('admin_activity').insert({
+        admin_id: adminUser.data.user?.id,
+        activity_type: 'booking_created',
+        details: {
+          booking_id: data?.[0]?.id,
+          user_id: userId,
+          vehicle_id: vehicleId
+        }
+      });
+      
       // Create notification for the new booking
       await createBookingNotification(userName, vehicleId, startDate, endDate, language);
       
@@ -87,11 +99,11 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
       // Close dialog and refresh data
       onClose();
       refreshData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating booking:', error);
       toast.error(language === 'fr' 
-        ? 'Erreur lors de la création de la réservation' 
-        : 'Error creating booking');
+        ? `Erreur lors de la création de la réservation: ${error.message || ''}` 
+        : `Error creating booking: ${error.message || ''}`);
     } finally {
       setLoading(false);
     }

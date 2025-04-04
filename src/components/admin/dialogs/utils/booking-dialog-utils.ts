@@ -89,7 +89,7 @@ export const createBookingNotification = async (
       : `Booking created for ${userName} from ${formattedStartDate} to ${formattedEndDate}`;
     
     // Use toast for notification
-    toast(notificationTitle, {
+    toast.success(notificationTitle, {
       description: notificationMessage
     });
     
@@ -103,6 +103,15 @@ export const updateVehicleAvailability = async (vehicleId: string, startDate: Da
   try {
     if (!vehicleId || !startDate || !endDate) return;
     
+    // Update vehicle availability based on booking dates
+    const { data: vehicle, error: vehicleError } = await supabase
+      .from('vehicles')
+      .select('*')
+      .eq('id', vehicleId)
+      .single();
+    
+    if (vehicleError) throw vehicleError;
+    
     // Check if there are any existing bookings for this vehicle in this date range
     const { data: existingBookings, error: checkError } = await supabase
       .from('bookings')
@@ -113,8 +122,30 @@ export const updateVehicleAvailability = async (vehicleId: string, startDate: Da
     
     if (checkError) throw checkError;
     
+    // If there are bookings (including this new one) that overlap with today,
+    // we should mark the vehicle as unavailable
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const hasCurrentBooking = existingBookings && existingBookings.some(booking => {
+      const bookingStart = new Date(booking.start_date);
+      const bookingEnd = new Date(booking.end_date);
+      return (bookingStart <= today && bookingEnd >= today);
+    });
+    
+    // Update vehicle availability if needed
+    if (hasCurrentBooking && vehicle.available) {
+      await supabase
+        .from('vehicles')
+        .update({ available: false })
+        .eq('id', vehicleId);
+      
+      console.log(`Vehicle ${vehicleId} marked as unavailable due to current booking`);
+    }
+    
     // Log the number of bookings in this period
     console.log(`Vehicle has ${existingBookings?.length || 0} bookings in this period`);
+    
   } catch (error) {
     console.error('Error updating vehicle availability:', error);
   }
