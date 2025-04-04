@@ -22,58 +22,7 @@ interface StaffManagementProps {
 export const StaffManagement = ({ language, formatDate, refreshData }: StaffManagementProps) => {
   const { toast } = useToast();
   
-  const [staffMembers, setStaffMembers] = useState([
-    {
-      id: 1,
-      name: 'Emma Richardson',
-      email: 'emma.r@novadrive.com',
-      phone: '+1 (514) 555-1234',
-      role: 'manager',
-      joinDate: '2025-04-15',
-      avatar: 'https://randomuser.me/api/portraits/women/33.jpg',
-      rating: 4.9
-    },
-    {
-      id: 2,
-      name: 'James Wilson',
-      email: 'james.w@novadrive.com',
-      phone: '+1 (514) 555-2345',
-      role: 'assistant',
-      joinDate: '2025-06-22',
-      avatar: 'https://randomuser.me/api/portraits/men/44.jpg',
-      rating: 4.7
-    },
-    {
-      id: 3,
-      name: 'Sophia Chen',
-      email: 'sophia.c@novadrive.com',
-      phone: '+1 (514) 555-3456',
-      role: 'driver',
-      joinDate: '2025-01-10',
-      avatar: 'https://randomuser.me/api/portraits/women/17.jpg',
-      rating: 4.8
-    },
-    {
-      id: 4,
-      name: 'Michael Rodriguez',
-      email: 'michael.r@novadrive.com',
-      phone: '+1 (514) 555-4567',
-      role: 'mechanic',
-      joinDate: '2025-03-05',
-      avatar: 'https://randomuser.me/api/portraits/men/22.jpg',
-      rating: 4.6
-    },
-    {
-      id: 5,
-      name: 'Olivia Johnson',
-      email: 'olivia.j@novadrive.com',
-      phone: '+1 (514) 555-5678',
-      role: 'driver',
-      joinDate: '2025-07-18',
-      avatar: 'https://randomuser.me/api/portraits/women/29.jpg',
-      rating: 4.5
-    }
-  ]);
+  const [staffMembers, setStaffMembers] = useState<any[]>([]);
   
   const [newStaff, setNewStaff] = useState({
     name: '',
@@ -508,100 +457,108 @@ export const StaffManagement = ({ language, formatDate, refreshData }: StaffMana
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="border-nova-gold/20">
-                <TableHead className="text-nova-white">
-                  {language === 'fr' ? 'Membre du Personnel' : 'Staff Member'}
-                </TableHead>
-                <TableHead className="text-nova-white">
-                  {language === 'fr' ? 'Contact' : 'Contact'}
-                </TableHead>
-                <TableHead className="text-nova-white">
-                  {language === 'fr' ? 'Rôle' : 'Role'}
-                </TableHead>
-                <TableHead className="text-nova-white">
-                  {language === 'fr' ? 'Date d\'Embauche' : 'Join Date'}
-                </TableHead>
-                <TableHead className="text-nova-white">
-                  {language === 'fr' ? 'Évaluation' : 'Rating'}
-                </TableHead>
-                <TableHead className="text-nova-white">
-                  {language === 'fr' ? 'Actions' : 'Actions'}
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {staffMembers.map((staff) => (
-                <TableRow key={staff.id} className="border-nova-gold/10">
-                  <TableCell className="font-medium text-nova-white">
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarImage src={staff.avatar} alt={staff.name} />
-                        <AvatarFallback>{staff.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                      </Avatar>
-                      <span>{staff.name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-nova-white/80">
-                    <div className="flex flex-col gap-1">
-                      <span className="flex items-center">
-                        <Mail className="h-4 w-4 mr-2 text-nova-gold" />
-                        {staff.email}
-                      </span>
-                      <span className="flex items-center">
-                        <Phone className="h-4 w-4 mr-2 text-nova-gold" />
-                        {staff.phone}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {getRoleBadge(staff.role)}
-                  </TableCell>
-                  <TableCell className="text-nova-white/80">
-                    <div className="flex items-center">
-                      <CalendarClock className="h-4 w-4 mr-2 text-nova-gold" />
-                      {formatDate(staff.joinDate)}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center">
-                      <span className="text-nova-gold font-semibold mr-2">{staff.rating}</span>
-                      <div className="flex">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-4 h-4 ${i < Math.floor(staff.rating) ? 'text-nova-gold' : 'text-nova-white/30'}`}
-                            fill={i < Math.floor(staff.rating) ? '#D4AF37' : 'none'}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8 text-nova-gold hover:bg-nova-gold/10"
-                        onClick={() => openEditDialog(staff)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8 text-red-500 hover:bg-red-500/10"
-                        onClick={() => confirmDelete(staff.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+          {staffMembers.length === 0 ? (
+            <div className="text-center py-8 text-nova-white/60">
+              {language === 'fr' 
+                ? 'Aucun membre du personnel n\'a été ajouté. Cliquez sur "Ajouter du Personnel" pour commencer.'
+                : 'No staff members have been added. Click "Add Staff" to get started.'}
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow className="border-nova-gold/20">
+                  <TableHead className="text-nova-white">
+                    {language === 'fr' ? 'Membre du Personnel' : 'Staff Member'}
+                  </TableHead>
+                  <TableHead className="text-nova-white">
+                    {language === 'fr' ? 'Contact' : 'Contact'}
+                  </TableHead>
+                  <TableHead className="text-nova-white">
+                    {language === 'fr' ? 'Rôle' : 'Role'}
+                  </TableHead>
+                  <TableHead className="text-nova-white">
+                    {language === 'fr' ? 'Date d\'Embauche' : 'Join Date'}
+                  </TableHead>
+                  <TableHead className="text-nova-white">
+                    {language === 'fr' ? 'Évaluation' : 'Rating'}
+                  </TableHead>
+                  <TableHead className="text-nova-white">
+                    {language === 'fr' ? 'Actions' : 'Actions'}
+                  </TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {staffMembers.map((staff) => (
+                  <TableRow key={staff.id} className="border-nova-gold/10">
+                    <TableCell className="font-medium text-nova-white">
+                      <div className="flex items-center gap-3">
+                        <Avatar>
+                          <AvatarImage src={staff.avatar} alt={staff.name} />
+                          <AvatarFallback>{staff.name.split(' ').map((n: string) => n[0]).join('')}</AvatarFallback>
+                        </Avatar>
+                        <span>{staff.name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-nova-white/80">
+                      <div className="flex flex-col gap-1">
+                        <span className="flex items-center">
+                          <Mail className="h-4 w-4 mr-2 text-nova-gold" />
+                          {staff.email}
+                        </span>
+                        <span className="flex items-center">
+                          <Phone className="h-4 w-4 mr-2 text-nova-gold" />
+                          {staff.phone}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {getRoleBadge(staff.role)}
+                    </TableCell>
+                    <TableCell className="text-nova-white/80">
+                      <div className="flex items-center">
+                        <CalendarClock className="h-4 w-4 mr-2 text-nova-gold" />
+                        {formatDate(staff.joinDate)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <span className="text-nova-gold font-semibold mr-2">{staff.rating}</span>
+                        <div className="flex">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-4 h-4 ${i < Math.floor(staff.rating) ? 'text-nova-gold' : 'text-nova-white/30'}`}
+                              fill={i < Math.floor(staff.rating) ? '#D4AF37' : 'none'}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-8 w-8 text-nova-gold hover:bg-nova-gold/10"
+                          onClick={() => openEditDialog(staff)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-8 w-8 text-red-500 hover:bg-red-500/10"
+                          onClick={() => confirmDelete(staff.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
     </div>

@@ -6,11 +6,13 @@ import { StaffManagement } from '@/components/admin/StaffManagement';
 interface StaffTabProps {
   language: string;
   formatDate: (dateString: string) => string;
+  refreshData?: () => void;
 }
 
 export const StaffTab = ({
   language,
-  formatDate
+  formatDate,
+  refreshData
 }: StaffTabProps) => {
   return (
     <Card>
@@ -22,6 +24,7 @@ export const StaffTab = ({
         <StaffManagement 
           language={language}
           formatDate={formatDate}
+          refreshData={refreshData}
         />
       </CardContent>
     </Card>
