@@ -73,20 +73,26 @@ export const updateVehicleAvailabilityFromBookings = async (
 
     // Only show sync notification if updates occurred
     if (updated) {
-      toast.success(language === 'fr' ? 'Synchronisation terminée' : 'Synchronization complete', {
-        description: language === 'fr' 
-          ? 'La disponibilité des véhicules et le statut des réservations ont été mis à jour'
-          : 'Vehicle availability and booking status have been updated'
-      });
+      toast.success(
+        language === 'fr' ? 'Synchronisation terminée' : 'Synchronization complete', 
+        {
+          description: language === 'fr' 
+            ? 'La disponibilité des véhicules et le statut des réservations ont été mis à jour'
+            : 'Vehicle availability and booking status have been updated'
+        }
+      );
     }
     
   } catch (error) {
     console.error('Error updating vehicle availability:', error);
-    toast.error(language === 'fr' ? 'Erreur de synchronisation' : 'Synchronization error', {
-      description: language === 'fr'
-        ? 'Impossible de mettre à jour la disponibilité des véhicules'
-        : 'Unable to update vehicle availability'
-    });
+    toast.error(
+      language === 'fr' ? 'Erreur de synchronisation' : 'Synchronization error', 
+      {
+        description: language === 'fr'
+          ? 'Impossible de mettre à jour la disponibilité des véhicules'
+          : 'Unable to update vehicle availability'
+      }
+    );
   }
 };
 
@@ -112,11 +118,14 @@ export const forceRefreshVehicleAvailability = async (language: string) => {
     await updateVehicleAvailabilityFromBookings(bookings || [], vehicles || [], language);
     
     // Show success notification
-    toast.success(language === 'fr' ? 'Synchronisation forcée réussie' : 'Forced synchronization successful', {
-      description: language === 'fr'
-        ? 'La disponibilité des véhicules a été mise à jour'
-        : 'Vehicle availability has been updated'
-    });
+    toast.success(
+      language === 'fr' ? 'Synchronisation forcée réussie' : 'Forced synchronization successful', 
+      {
+        description: language === 'fr'
+          ? 'La disponibilité des véhicules a été mise à jour'
+          : 'Vehicle availability has been updated'
+      }
+    );
     
   } catch (error) {
     console.error('Error in force refresh:', error);

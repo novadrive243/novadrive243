@@ -12,6 +12,8 @@ interface AddBookingDialogProps {
 }
 
 export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: AddBookingDialogProps) => {
+  console.log("AddBookingDialog rendered, refreshData:", !!refreshData);
+  
   const {
     userName,
     setUserName,
@@ -36,8 +38,8 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
           </DialogTitle>
           <DialogDescription className="text-nova-white/70">
             {language === 'fr' 
-              ? 'Remplissez le formulaire pour créer une nouvelle réservation'
-              : 'Fill out the form to create a new booking'}
+              ? 'Remplissez le formulaire pour créer une nouvelle réservation. Vous pouvez créer une réservation pour un utilisateur existant ou une réservation test.'
+              : 'Fill out the form to create a new booking. You can create a booking for an existing user or a test booking.'}
           </DialogDescription>
         </DialogHeader>
         

@@ -29,7 +29,13 @@ export const useBookingDialog = (language: string, onClose: () => void, refreshD
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted with:", { userId, vehicleId, startDate, endDate });
+    console.log("Form submitted with:", { 
+      userId, 
+      vehicleId, 
+      userName, 
+      startDate: startDate?.toISOString(), 
+      endDate: endDate?.toISOString() 
+    });
     
     // Validate vehicleId and dates
     if (!vehicleId) {
@@ -85,7 +91,6 @@ export const useBookingDialog = (language: string, onClose: () => void, refreshD
           console.log("Using test user ID:", testUser.id);
         } else {
           // If there are no users in the database, we can't create a booking
-          // This is because the database schema requires a user_id
           toast.error(language === 'fr' 
             ? 'Impossible de créer une réservation sans utilisateur. Veuillez d\'abord créer un compte utilisateur.' 
             : 'Unable to create booking without a user. Please create a user account first.');
@@ -129,6 +134,7 @@ export const useBookingDialog = (language: string, onClose: () => void, refreshD
         }
       } catch (logError) {
         console.error('Error logging admin activity:', logError);
+        // Don't throw error for logging failure
       }
       
       // Create notification for the new booking
@@ -150,6 +156,7 @@ export const useBookingDialog = (language: string, onClose: () => void, refreshD
       
       // Close dialog and refresh data
       onClose();
+      
       if (typeof refreshData === 'function') {
         console.log("Refreshing data after booking creation");
         refreshData();

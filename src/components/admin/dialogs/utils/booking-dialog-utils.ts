@@ -7,7 +7,7 @@ export const calculateTotalPrice = (vehicleId: string, startDate: Date, endDate:
   // This is a placeholder function - in a real app, you would fetch the vehicle's price
   // and calculate based on the number of days
   const dailyRate = 100; // Default rate
-  const days = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+  const days = Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
   return dailyRate * days;
 };
 
@@ -55,12 +55,26 @@ export const createBookingNotification = async (
       ? `Nouvelle réservation: ${vehicleName} pour ${userName} du ${formattedStartDate} au ${formattedEndDate}`
       : `New booking: ${vehicleName} for ${userName} from ${formattedStartDate} to ${formattedEndDate}`;
       
-    // Instead of directly inserting into a notifications table (which doesn't exist),
-    // we'll log the notification to console
+    // Log the notification to console
     console.log('Booking notification:', message);
     
-    // In a real app, you would store this in a notifications table or use some notification service
-    // For now, we'll just show a toast notification through the booking dialog itself
+    // Insert notification into admin_activity table
+    try {
+      await supabase
+        .from('admin_activity')
+        .insert({
+          activity_type: 'booking_notification',
+          details: {
+            message,
+            vehicle_name: vehicleName,
+            user_name: userName,
+            start_date: formattedStartDate,
+            end_date: formattedEndDate
+          }
+        });
+    } catch (error) {
+      console.error('Error saving notification:', error);
+    }
     
   } catch (error) {
     console.error('Error creating booking notification:', error);

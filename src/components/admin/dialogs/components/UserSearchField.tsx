@@ -26,6 +26,13 @@ export const UserSearchField = ({
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
   
+  // Initialize search query with userName if it exists
+  useEffect(() => {
+    if (userName && searchQuery === '') {
+      setSearchQuery(userName);
+    }
+  }, [userName]);
+  
   useEffect(() => {
     const delaySearch = setTimeout(async () => {
       if (searchQuery.trim().length >= 2) {
@@ -57,6 +64,19 @@ export const UserSearchField = ({
     setSearchQuery('');
   };
   
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    
+    // Clear user selection if input changes
+    if (userId) {
+      setUserId(null);
+    }
+    
+    // Update userName for test booking
+    setUserName(value);
+  };
+  
   return (
     <div className="space-y-2">
       <Label htmlFor="user">{language === 'fr' ? 'Utilisateur' : 'User'}</Label>
@@ -65,14 +85,7 @@ export const UserSearchField = ({
         <Input
           id="user"
           value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            if (userId) {
-              // Clear user selection if input changes
-              setUserId(null);
-              setUserName(e.target.value);
-            }
-          }}
+          onChange={handleInputChange}
           placeholder={language === 'fr' 
             ? "Rechercher un utilisateur..." 
             : "Search for a user..."}
@@ -101,7 +114,7 @@ export const UserSearchField = ({
                 onClick={() => handleSelectUser(user)}
               >
                 <User className="w-4 h-4 mr-2 text-nova-gold" />
-                <span>{user.full_name}</span>
+                <span className="text-nova-white">{user.full_name}</span>
               </div>
             ))}
           </div>
