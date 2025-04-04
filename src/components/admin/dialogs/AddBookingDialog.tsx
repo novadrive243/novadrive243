@@ -14,7 +14,6 @@ import { fr } from 'date-fns/locale';
 import { vehicles } from '@/data/vehicles';
 import { calculateVehiclePrice } from '@/components/booking/utils/booking-utils';
 import { toast } from 'sonner';
-import { NotificationType } from '@/components/notifications/notifications-center';
 
 interface AddBookingDialogProps {
   isOpen: boolean;
@@ -106,9 +105,8 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
         ? `Réservation créée pour ${userName} du ${formattedStartDate} au ${formattedEndDate}`
         : `Booking created for ${userName} from ${formattedStartDate} to ${formattedEndDate}`;
       
-      // Dispatch notification using toast
-      toast({
-        title: notificationTitle,
+      // Use the toast function properly - fixed the issue here
+      toast(notificationTitle, {
         description: notificationMessage
       });
 
