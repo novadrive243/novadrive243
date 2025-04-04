@@ -10,8 +10,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusCircle, AlertTriangle, Wrench, Check, CalendarRange, SquarePen, Cog, Settings } from "lucide-react";
+import { PlusCircle, AlertTriangle, Wrench, Check, CalendarRange, SquarePen, Cog, Settings, Trash2, Edit, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
+interface MaintenanceRecord {
+  id: number;
+  vehicleId: string;
+  vehicleName: string;
+  type: string;
+  status: string;
+  date: string;
+  notes: string;
+  nextDate: string;
+}
 
 interface MaintenanceTrackingProps {
   vehicles: any[];
@@ -21,7 +42,7 @@ interface MaintenanceTrackingProps {
 
 export const MaintenanceTracking = ({ vehicles, language, formatDate }: MaintenanceTrackingProps) => {
   const { toast } = useToast();
-  const [maintenanceRecords, setMaintenanceRecords] = useState([
+  const [maintenanceRecords, setMaintenanceRecords] = useState<MaintenanceRecord[]>([
     {
       id: 1,
       vehicleId: vehicles[0]?.id || '',
@@ -70,9 +91,14 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
     date: '',
     notes: '',
     nextDate: '',
+    status: 'scheduled',
   });
-  
-  const [open, setOpen] = useState(false);
+
+  const [editingRecord, setEditingRecord] = useState<MaintenanceRecord | null>(null);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [recordToDelete, setRecordToDelete] = useState<number | null>(null);
   
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -154,11 +180,20 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setNewRecord(prev => ({ ...prev, [name]: value }));
+    
+    if (editingRecord) {
+      setEditingRecord({ ...editingRecord, [name]: value });
+    } else {
+      setNewRecord(prev => ({ ...prev, [name]: value }));
+    }
   };
   
   const handleSelectChange = (name: string, value: string) => {
-    setNewRecord(prev => ({ ...prev, [name]: value }));
+    if (editingRecord) {
+      setEditingRecord({ ...editingRecord, [name]: value });
+    } else {
+      setNewRecord(prev => ({ ...prev, [name]: value }));
+    }
   };
   
   const handleAddRecord = (e: React.FormEvent) => {
@@ -172,7 +207,7 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
       vehicleId: newRecord.vehicleId,
       vehicleName,
       type: newRecord.type,
-      status: 'scheduled',
+      status: newRecord.status,
       date: newRecord.date,
       notes: newRecord.notes,
       nextDate: newRecord.nextDate,
@@ -186,6 +221,7 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
       date: '',
       notes: '',
       nextDate: '',
+      status: 'scheduled',
     });
     
     toast({
@@ -195,7 +231,203 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
         : 'New maintenance record added successfully',
     });
     
-    setOpen(false);
+    setAddDialogOpen(false);
+  };
+
+  const handleEditClick = (record: MaintenanceRecord) => {
+    setEditingRecord(record);
+    setEditDialogOpen(true);
+  };
+
+  const handleUpdateRecord = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!editingRecord) return;
+    
+    const updatedRecords = maintenanceRecords.map(record => 
+      record.id === editingRecord.id ? editingRecord : record
+    );
+    
+    setMaintenanceRecords(updatedRecords);
+    
+    toast({
+      title: language === 'fr' ? 'Enregistrement mis à jour' : 'Record Updated',
+      description: language === 'fr' 
+        ? 'L\'enregistrement de maintenance a été mis à jour avec succès' 
+        : 'Maintenance record has been updated successfully',
+    });
+    
+    setEditDialogOpen(false);
+    setEditingRecord(null);
+  };
+
+  const openDeleteDialog = (id: number) => {
+    setRecordToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteRecord = () => {
+    if (recordToDelete === null) return;
+    
+    const updatedRecords = maintenanceRecords.filter(record => record.id !== recordToDelete);
+    setMaintenanceRecords(updatedRecords);
+    
+    toast({
+      title: language === 'fr' ? 'Enregistrement supprimé' : 'Record Deleted',
+      description: language === 'fr' 
+        ? 'L\'enregistrement de maintenance a été supprimé avec succès' 
+        : 'Maintenance record has been deleted successfully',
+    });
+    
+    setDeleteDialogOpen(false);
+    setRecordToDelete(null);
+  };
+
+  const renderMaintenanceForm = (isEdit: boolean) => {
+    const record = isEdit ? editingRecord : newRecord;
+    if (!record) return null;
+    
+    return (
+      <form onSubmit={isEdit ? handleUpdateRecord : handleAddRecord}>
+        <div className="space-y-4 py-2">
+          <div>
+            <Label htmlFor="vehicleId" className="text-nova-white">
+              {language === 'fr' ? 'Véhicule' : 'Vehicle'}
+            </Label>
+            <Select 
+              value={record.vehicleId} 
+              onValueChange={(value) => handleSelectChange('vehicleId', value)}
+              disabled={isEdit}
+              required
+            >
+              <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
+                <SelectValue placeholder={language === 'fr' ? 'Sélectionner un véhicule' : 'Select vehicle'} />
+              </SelectTrigger>
+              <SelectContent className="bg-nova-gray border-nova-gold/30">
+                {vehicles.map((vehicle) => (
+                  <SelectItem 
+                    key={vehicle.id} 
+                    value={vehicle.id}
+                    className="text-nova-white hover:bg-nova-gold/20"
+                  >
+                    {vehicle.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div>
+            <Label htmlFor="type" className="text-nova-white">
+              {language === 'fr' ? 'Type' : 'Type'}
+            </Label>
+            <Select 
+              value={record.type} 
+              onValueChange={(value) => handleSelectChange('type', value)}
+              required
+            >
+              <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-nova-gray border-nova-gold/30">
+                <SelectItem value="routine" className="text-nova-white hover:bg-nova-gold/20">
+                  {language === 'fr' ? 'Routine' : 'Routine'}
+                </SelectItem>
+                <SelectItem value="repair" className="text-nova-white hover:bg-nova-gold/20">
+                  {language === 'fr' ? 'Réparation' : 'Repair'}
+                </SelectItem>
+                <SelectItem value="inspection" className="text-nova-white hover:bg-nova-gold/20">
+                  {language === 'fr' ? 'Inspection' : 'Inspection'}
+                </SelectItem>
+                <SelectItem value="emergency" className="text-nova-white hover:bg-nova-gold/20">
+                  {language === 'fr' ? 'Urgence' : 'Emergency'}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div>
+            <Label htmlFor="status" className="text-nova-white">
+              {language === 'fr' ? 'Statut' : 'Status'}
+            </Label>
+            <Select 
+              value={record.status} 
+              onValueChange={(value) => handleSelectChange('status', value)}
+              required
+            >
+              <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-nova-gray border-nova-gold/30">
+                <SelectItem value="scheduled" className="text-nova-white hover:bg-nova-gold/20">
+                  {language === 'fr' ? 'Planifié' : 'Scheduled'}
+                </SelectItem>
+                <SelectItem value="pending" className="text-nova-white hover:bg-nova-gold/20">
+                  {language === 'fr' ? 'En attente' : 'Pending'}
+                </SelectItem>
+                <SelectItem value="inProgress" className="text-nova-white hover:bg-nova-gold/20">
+                  {language === 'fr' ? 'En cours' : 'In Progress'}
+                </SelectItem>
+                <SelectItem value="completed" className="text-nova-white hover:bg-nova-gold/20">
+                  {language === 'fr' ? 'Terminé' : 'Completed'}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div>
+            <Label htmlFor="date" className="text-nova-white">
+              {language === 'fr' ? 'Date' : 'Date'}
+            </Label>
+            <Input
+              id="date"
+              name="date"
+              type="date"
+              value={record.date}
+              onChange={handleInputChange}
+              className="bg-nova-black border-nova-gold/30 text-nova-white"
+              required
+            />
+          </div>
+          
+          <div>
+            <Label htmlFor="nextDate" className="text-nova-white">
+              {language === 'fr' ? 'Prochaine Date' : 'Next Date'}
+            </Label>
+            <Input
+              id="nextDate"
+              name="nextDate"
+              type="date"
+              value={record.nextDate}
+              onChange={handleInputChange}
+              className="bg-nova-black border-nova-gold/30 text-nova-white"
+            />
+          </div>
+          
+          <div>
+            <Label htmlFor="notes" className="text-nova-white">
+              {language === 'fr' ? 'Notes' : 'Notes'}
+            </Label>
+            <Textarea
+              id="notes"
+              name="notes"
+              value={record.notes}
+              onChange={handleInputChange}
+              className="bg-nova-black border-nova-gold/30 text-nova-white min-h-[80px]"
+            />
+          </div>
+        </div>
+        
+        <DialogFooter className="mt-4">
+          <Button type="submit" className="gold-btn">
+            {isEdit 
+              ? (language === 'fr' ? 'Mettre à jour' : 'Update')
+              : (language === 'fr' ? 'Enregistrer' : 'Save')
+            }
+          </Button>
+        </DialogFooter>
+      </form>
+    );
   };
   
   return (
@@ -206,7 +438,7 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
           {language === 'fr' ? 'Suivi de Maintenance' : 'Maintenance Tracking'}
         </h2>
         
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
           <DialogTrigger asChild>
             <Button className="gold-btn">
               <PlusCircle className="mr-2 h-4 w-4" />
@@ -225,112 +457,7 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
               </DialogDescription>
             </DialogHeader>
             
-            <form onSubmit={handleAddRecord}>
-              <div className="space-y-4 py-2">
-                <div>
-                  <Label htmlFor="vehicleId" className="text-nova-white">
-                    {language === 'fr' ? 'Véhicule' : 'Vehicle'}
-                  </Label>
-                  <Select 
-                    value={newRecord.vehicleId} 
-                    onValueChange={(value) => handleSelectChange('vehicleId', value)}
-                    required
-                  >
-                    <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
-                      <SelectValue placeholder={language === 'fr' ? 'Sélectionner un véhicule' : 'Select vehicle'} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-nova-gray border-nova-gold/30">
-                      {vehicles.map((vehicle) => (
-                        <SelectItem 
-                          key={vehicle.id} 
-                          value={vehicle.id}
-                          className="text-nova-white hover:bg-nova-gold/20"
-                        >
-                          {vehicle.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div>
-                  <Label htmlFor="type" className="text-nova-white">
-                    {language === 'fr' ? 'Type' : 'Type'}
-                  </Label>
-                  <Select 
-                    value={newRecord.type} 
-                    onValueChange={(value) => handleSelectChange('type', value)}
-                    required
-                  >
-                    <SelectTrigger className="bg-nova-black border-nova-gold/30 text-nova-white">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-nova-gray border-nova-gold/30">
-                      <SelectItem value="routine" className="text-nova-white hover:bg-nova-gold/20">
-                        {language === 'fr' ? 'Routine' : 'Routine'}
-                      </SelectItem>
-                      <SelectItem value="repair" className="text-nova-white hover:bg-nova-gold/20">
-                        {language === 'fr' ? 'Réparation' : 'Repair'}
-                      </SelectItem>
-                      <SelectItem value="inspection" className="text-nova-white hover:bg-nova-gold/20">
-                        {language === 'fr' ? 'Inspection' : 'Inspection'}
-                      </SelectItem>
-                      <SelectItem value="emergency" className="text-nova-white hover:bg-nova-gold/20">
-                        {language === 'fr' ? 'Urgence' : 'Emergency'}
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div>
-                  <Label htmlFor="date" className="text-nova-white">
-                    {language === 'fr' ? 'Date' : 'Date'}
-                  </Label>
-                  <Input
-                    id="date"
-                    name="date"
-                    type="date"
-                    value={newRecord.date}
-                    onChange={handleInputChange}
-                    className="bg-nova-black border-nova-gold/30 text-nova-white"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="nextDate" className="text-nova-white">
-                    {language === 'fr' ? 'Prochaine Date' : 'Next Date'}
-                  </Label>
-                  <Input
-                    id="nextDate"
-                    name="nextDate"
-                    type="date"
-                    value={newRecord.nextDate}
-                    onChange={handleInputChange}
-                    className="bg-nova-black border-nova-gold/30 text-nova-white"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="notes" className="text-nova-white">
-                    {language === 'fr' ? 'Notes' : 'Notes'}
-                  </Label>
-                  <Textarea
-                    id="notes"
-                    name="notes"
-                    value={newRecord.notes}
-                    onChange={handleInputChange}
-                    className="bg-nova-black border-nova-gold/30 text-nova-white min-h-[80px]"
-                  />
-                </div>
-              </div>
-              
-              <DialogFooter className="mt-4">
-                <Button type="submit" className="gold-btn">
-                  {language === 'fr' ? 'Enregistrer' : 'Save'}
-                </Button>
-              </DialogFooter>
-            </form>
+            {renderMaintenanceForm(false)}
           </DialogContent>
         </Dialog>
       </div>
@@ -368,6 +495,9 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
                 <TableHead className="text-nova-white">
                   {language === 'fr' ? 'Notes' : 'Notes'}
                 </TableHead>
+                <TableHead className="text-nova-white text-right">
+                  {language === 'fr' ? 'Actions' : 'Actions'}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -391,12 +521,77 @@ export const MaintenanceTracking = ({ vehicles, language, formatDate }: Maintena
                   <TableCell className="text-nova-white/80 max-w-[200px] truncate">
                     {record.notes}
                   </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-nova-gold hover:bg-nova-gold/10"
+                        onClick={() => handleEditClick(record)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-red-400 hover:bg-red-500/10"
+                        onClick={() => openDeleteDialog(record.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
+
+      {/* Edit Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="bg-nova-gray text-nova-white border-nova-gold/30 max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {language === 'fr' ? 'Modifier l\'Enregistrement' : 'Edit Maintenance Record'}
+            </DialogTitle>
+            <DialogDescription className="text-nova-white/60">
+              {language === 'fr' 
+                ? 'Mettez à jour les informations de maintenance' 
+                : 'Update the maintenance information'}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {renderMaintenanceForm(true)}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="bg-nova-gray text-nova-white border-nova-gold/30">
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {language === 'fr' ? 'Confirmer la suppression' : 'Confirm Deletion'}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-nova-white/60">
+              {language === 'fr' 
+                ? 'Êtes-vous sûr de vouloir supprimer cet enregistrement de maintenance ? Cette action ne peut pas être annulée.'
+                : 'Are you sure you want to delete this maintenance record? This action cannot be undone.'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="border-nova-gold/30 text-nova-white hover:bg-nova-gold/10">
+              {language === 'fr' ? 'Annuler' : 'Cancel'}
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              className="bg-red-500 text-white hover:bg-red-600"
+              onClick={handleDeleteRecord}
+            >
+              {language === 'fr' ? 'Supprimer' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
