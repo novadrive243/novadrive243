@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from '@/integrations/supabase/client';
 import { LoadingState } from '@/components/admin/LoadingState';
+import { useLanguage } from '@/contexts/language-context';
 
 type Ride = {
   id: string;
@@ -28,6 +29,7 @@ export const RidesHistory = () => {
   const [rides, setRides] = useState<Ride[]>([]);
   const [loading, setLoading] = useState(false);
   const [expandedRideId, setExpandedRideId] = useState<string | null>(null);
+  const { t, language } = useLanguage();
 
   useEffect(() => {
     fetchRides();
@@ -64,44 +66,55 @@ export const RidesHistory = () => {
   return (
     <Card>
       <CardHeader className="flex items-center justify-between">
-        <CardTitle>Rides History</CardTitle>
+        <CardTitle>{t('account.reservationHistory')}</CardTitle>
         <Button variant="ghost" onClick={fetchRides} disabled={loading}>
           <RefreshCw className="mr-2 h-4 w-4" />
-          Refresh
+          {language === 'fr' ? 'Actualiser' : 'Refresh'}
         </Button>
       </CardHeader>
       <CardContent className="p-4">
         {loading ? (
-          <LoadingState language="en" />
+          <LoadingState language={language} />
         ) : (
           <div className="space-y-3">
-            {rides.map((ride) => (
-              <div key={ride.id} className="border rounded-md p-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-sm font-semibold">
-                      {ride.start_location} to {ride.end_location}
-                    </h3>
-                    <p className="text-xs text-gray-500">
-                      {new Date(ride.start_time).toLocaleString()}
-                    </p>
+            {rides.length === 0 ? (
+              <p className="text-center py-4 text-gray-500">
+                {language === 'fr' ? 'Aucune course complétée trouvée' : 'No completed rides found'}
+              </p>
+            ) : (
+              rides.map((ride) => (
+                <div key={ride.id} className="border rounded-md p-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-semibold">
+                        {ride.start_location} {language === 'fr' ? 'à' : 'to'} {ride.end_location}
+                      </h3>
+                      <p className="text-xs text-gray-500">
+                        {new Date(ride.start_time).toLocaleString(language === 'fr' ? 'fr-FR' : 'en-US')}
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant="secondary">
+                        {language === 'fr' 
+                          ? ride.status === 'completed' ? 'complétée' 
+                            : ride.status === 'scheduled' ? 'programmée' : 'annulée'
+                          : ride.status}
+                      </Badge>
+                      <Button variant="ghost" size="sm" onClick={() => toggleRideDetails(ride.id)}>
+                        <ChevronDown className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge variant="secondary">{ride.status}</Badge>
-                    <Button variant="ghost" size="sm" onClick={() => toggleRideDetails(ride.id)}>
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  {expandedRideId === ride.id && (
+                    <div className="mt-3 border-t pt-3">
+                      <p className="text-xs">{language === 'fr' ? 'Prix' : 'Price'}: ${ride.price}</p>
+                      <p className="text-xs">{language === 'fr' ? 'ID du chauffeur' : 'Driver ID'}: {ride.driver_id}</p>
+                      <p className="text-xs">{language === 'fr' ? 'ID du client' : 'User ID'}: {ride.user_id}</p>
+                    </div>
+                  )}
                 </div>
-                {expandedRideId === ride.id && (
-                  <div className="mt-3 border-t pt-3">
-                    <p className="text-xs">Price: ${ride.price}</p>
-                    <p className="text-xs">Driver ID: {ride.driver_id}</p>
-                    <p className="text-xs">User ID: {ride.user_id}</p>
-                  </div>
-                )}
-              </div>
-            ))}
+              ))
+            )}
           </div>
         )}
       </CardContent>
