@@ -1,9 +1,10 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { calculateTotalPrice, createBookingNotification, updateVehicleAvailability } from '../utils/booking-dialog-utils';
 import { CalendarIcon } from 'lucide-react';
+import React from 'react'; // Import React to use JSX
 
 export const useBookingForm = (onClose: () => void, refreshData: () => void, language: string) => {
   const [userName, setUserName] = useState('');
@@ -85,14 +86,17 @@ export const useBookingForm = (onClose: () => void, refreshData: () => void, lan
       console.log("Booking created and auto-validated:", data);
       
       // Show success notification with auto-validation
-      toast.success(language === 'fr' 
-        ? `Réservation créée et validée automatiquement pour ${userName}` 
-        : `Booking created and automatically validated for ${userName}`, {
-        description: language === 'fr'
-          ? 'La réservation apparaît maintenant dans le calendrier'
-          : 'The booking now appears in the calendar',
-        icon: <CalendarIcon className="text-nova-gold h-4 w-4" />
-      });
+      toast.success(
+        language === 'fr' 
+          ? `Réservation créée et validée automatiquement pour ${userName}` 
+          : `Booking created and automatically validated for ${userName}`, 
+        {
+          description: language === 'fr'
+            ? 'La réservation apparaît maintenant dans le calendrier'
+            : 'The booking now appears in the calendar',
+          icon: <CalendarIcon className="text-nova-gold h-4 w-4" />
+        }
+      );
       
       // Log the admin activity using the edge function
       try {
