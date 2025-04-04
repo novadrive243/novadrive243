@@ -30,7 +30,7 @@ export const VehicleCalendar = ({ vehicles, bookings, language, isLoading }: Veh
     refreshCalendarData
   } = useVehicleCalendar(vehicles, bookings, language);
 
-  // Ensure the vehicles are loaded properly
+  // Ensure all vehicles are displayed properly
   useEffect(() => {
     if (vehicles.length > 0 && !selectedVehicle) {
       setSelectedVehicle(vehicles[0].id);

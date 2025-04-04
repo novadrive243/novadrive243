@@ -73,17 +73,26 @@ export const AddBookingDialog = ({ isOpen, onClose, refreshData, language }: Add
         throw error;
       }
       
-      // Log the admin activity
-      const adminUser = await supabase.auth.getUser();
-      await supabase.from('admin_activity').insert({
-        admin_id: adminUser.data.user?.id,
-        activity_type: 'booking_created',
-        details: {
-          booking_id: data?.[0]?.id,
-          user_id: userId,
-          vehicle_id: vehicleId
+      // Log the admin activity using RPC
+      try {
+        const adminUser = await supabase.auth.getUser();
+        const adminId = adminUser.data.user?.id;
+        
+        if (adminId) {
+          // Use a stored procedure to log the activity
+          await supabase.rpc('log_admin_activity', {
+            p_admin_id: adminId,
+            p_activity_type: 'booking_created',
+            p_details: {
+              booking_id: data?.[0]?.id,
+              user_id: userId,
+              vehicle_id: vehicleId
+            }
+          });
         }
-      });
+      } catch (logError) {
+        console.error('Error logging admin activity:', logError);
+      }
       
       // Create notification for the new booking
       await createBookingNotification(userName, vehicleId, startDate, endDate, language);

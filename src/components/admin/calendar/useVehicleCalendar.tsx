@@ -80,15 +80,29 @@ export const useVehicleCalendar = (
       
       if (error) throw error;
       
-      // Log the change for admin activity
-      await supabase.from('admin_activity').insert({
-        admin_id: (await supabase.auth.getUser()).data.user?.id,
-        activity_type: 'vehicle_status_change',
-        details: {
-          vehicle_id: vehicleId,
-          new_status: isAvailable ? 'available' : 'unavailable'
+      // Log the change for admin activity using Raw Insert
+      try {
+        const adminUser = await supabase.auth.getUser();
+        const adminId = adminUser.data.user?.id;
+        
+        if (adminId) {
+          // Use a raw query approach to insert into admin_activity
+          const { error: logError } = await supabase.rpc('log_admin_activity', {
+            p_admin_id: adminId,
+            p_activity_type: 'vehicle_status_change',
+            p_details: {
+              vehicle_id: vehicleId,
+              new_status: isAvailable ? 'available' : 'unavailable'
+            }
+          });
+          
+          if (logError) {
+            console.error('Error logging admin activity:', logError);
+          }
         }
-      }).single();
+      } catch (logError) {
+        console.error('Error logging admin activity:', logError);
+      }
       
       toast({
         title: language === 'fr' 
