@@ -46,7 +46,7 @@ export const UserSearchField = ({ userName, setUserName, userId, setUserId, lang
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="userName">
+      <Label htmlFor="userName" className="text-nova-white">
         {language === 'fr' ? 'Client' : 'Customer'}
       </Label>
       
@@ -56,13 +56,13 @@ export const UserSearchField = ({ userName, setUserName, userId, setUserId, lang
           value={userName}
           onChange={(e) => handleSearch(e.target.value)}
           placeholder={language === 'fr' ? 'Rechercher un client...' : 'Search for a customer...'}
-          className="bg-nova-gray-dark border-nova-gold/20 text-nova-white"
+          className="bg-nova-black text-nova-white border-nova-gold/20"
           autoComplete="off"
         />
         
         {/* Search results dropdown */}
         {isSearching && (
-          <div className="absolute inset-x-0 top-full mt-1 py-1 bg-nova-gray-dark rounded-md shadow-lg z-10">
+          <div className="absolute inset-x-0 top-full mt-1 py-1 bg-nova-black rounded-md shadow-lg z-10">
             <div className="px-3 py-2 text-sm text-nova-white/70">
               {language === 'fr' ? 'Recherche...' : 'Searching...'}
             </div>
@@ -70,7 +70,7 @@ export const UserSearchField = ({ userName, setUserName, userId, setUserId, lang
         )}
         
         {!isSearching && searchResults.length > 0 && (
-          <div className="absolute inset-x-0 top-full mt-1 py-1 bg-nova-gray-dark rounded-md shadow-lg z-10">
+          <div className="absolute inset-x-0 top-full mt-1 py-1 bg-nova-black rounded-md shadow-lg z-10">
             {searchResults.map((result) => (
               <div
                 key={result.id}
