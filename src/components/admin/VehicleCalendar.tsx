@@ -27,8 +27,7 @@ export const VehicleCalendar = ({ vehicles, bookings, language, isLoading }: Veh
     updateVehicleAvailability,
     calendarView,
     setCalendarView,
-    refreshCalendarData,
-    bookingsData
+    refreshCalendarData
   } = useVehicleCalendar(vehicles, bookings, language);
 
   // Ensure all vehicles are displayed properly
@@ -96,7 +95,6 @@ export const VehicleCalendar = ({ vehicles, bookings, language, isLoading }: Veh
           
           <VehicleCalendarDisplay 
             bookedDates={bookedDates}
-            bookingsData={bookingsData}
             language={language}
             view={calendarView}
           />

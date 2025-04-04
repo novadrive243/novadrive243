@@ -13,7 +13,6 @@ export const useVehicleCalendar = (
   const { toKinshasaTime } = useTimezone();
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
   const [bookedDates, setBookedDates] = useState<Date[]>([]);
-  const [bookingsData, setBookingsData] = useState<any[]>([]);
   const [isUpdating, setIsUpdating] = useState(false);
   const [calendarView, setCalendarView] = useState<'month' | 'week' | 'day'>('month');
 
@@ -25,56 +24,30 @@ export const useVehicleCalendar = (
   }, [vehicles, selectedVehicle]);
 
   // Function to update booked dates based on selected vehicle
-  const updateBookedDates = useCallback(async () => {
+  const updateBookedDates = useCallback(() => {
     if (selectedVehicle && bookings.length > 0) {
       // Filter bookings for the selected vehicle
       const vehicleBookings = bookings.filter(booking => booking.vehicle_id === selectedVehicle);
       
       // Create an array of all dates between start_date and end_date for each booking
       const allBookedDates: Date[] = [];
-      const bookingsWithUserInfo: any[] = [];
       
-      // Fetch user information for all bookings
-      const userIds = [...new Set(vehicleBookings.map(booking => booking.user_id))];
-      if (userIds.length > 0) {
-        const { data: profiles } = await supabase
-          .from('profiles')
-          .select('id, full_name')
-          .in('id', userIds);
-        
-        const userMap = new Map();
-        if (profiles) {
-          profiles.forEach(profile => {
-            userMap.set(profile.id, profile.full_name);
-          });
-        }
-        
-        vehicleBookings.forEach(booking => {
-          if (booking.start_date && booking.end_date) {
-            const startDate = toKinshasaTime(new Date(booking.start_date));
-            const endDate = toKinshasaTime(new Date(booking.end_date));
-            
-            // Add all dates between start and end (inclusive)
-            const currentDate = new Date(startDate);
-            while (currentDate <= endDate) {
-              allBookedDates.push(toKinshasaTime(new Date(currentDate)));
-              currentDate.setDate(currentDate.getDate() + 1);
-            }
-            
-            // Add booking with user info
-            bookingsWithUserInfo.push({
-              ...booking,
-              userName: userMap.get(booking.user_id) || 'Unknown',
-              dates: { startDate, endDate }
-            });
+      vehicleBookings.forEach(booking => {
+        if (booking.start_date && booking.end_date) {
+          const startDate = toKinshasaTime(new Date(booking.start_date));
+          const endDate = toKinshasaTime(new Date(booking.end_date));
+          
+          // Add all dates between start and end (inclusive)
+          const currentDate = new Date(startDate);
+          while (currentDate <= endDate) {
+            allBookedDates.push(toKinshasaTime(new Date(currentDate)));
+            currentDate.setDate(currentDate.getDate() + 1);
           }
-        });
-      }
+        }
+      });
       
-      setBookingsData(bookingsWithUserInfo);
       setBookedDates(allBookedDates);
     } else {
-      setBookingsData([]);
       setBookedDates([]);
     }
   }, [selectedVehicle, bookings, toKinshasaTime]);
@@ -160,7 +133,6 @@ export const useVehicleCalendar = (
     selectedVehicle,
     setSelectedVehicle,
     bookedDates,
-    bookingsData,
     isUpdating,
     updateVehicleAvailability,
     calendarView,

@@ -1,202 +1,105 @@
 
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { addDays, format, isAfter, isBefore, isSameDay, startOfDay, endOfDay, subDays, startOfWeek, endOfWeek, addWeeks, subWeeks, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
+import { Calendar } from '@/components/ui/calendar';
 import { fr, enUS } from 'date-fns/locale';
+import { DateRange } from 'react-day-picker';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Info } from 'lucide-react';
+import { useTimezone } from '@/hooks/use-timezone';
 
 interface VehicleCalendarDisplayProps {
   bookedDates: Date[];
-  bookingsData: any[];
   language: string;
-  view: 'day' | 'week' | 'month';
+  view?: string;
 }
 
-export const VehicleCalendarDisplay: React.FC<VehicleCalendarDisplayProps> = ({
-  bookedDates,
-  bookingsData,
+export const VehicleCalendarDisplay = ({ 
+  bookedDates, 
   language,
-  view
-}) => {
-  const [displayMonth, setDisplayMonth] = useState<Date>(new Date());
-  const locale = language === 'fr' ? fr : enUS;
+  view = 'month'
+}: VehicleCalendarDisplayProps) => {
+  const { toKinshasaTime } = useTimezone();
   
-  // Helper function to check if a date is booked
+  // Convert booked dates to Date objects in Kinshasa timezone if they're not already
+  const bookedDateObjects = bookedDates.map(date => 
+    date instanceof Date ? toKinshasaTime(date) : toKinshasaTime(new Date(date))
+  );
+  
+  const [selectedRange, setSelectedRange] = useState<DateRange | undefined>({
+    from: toKinshasaTime(new Date()),
+    to: undefined
+  });
+  
+  // Function to check if a date is booked
   const isDateBooked = (date: Date) => {
-    return bookedDates.some(bookedDate => isSameDay(bookedDate, date));
-  };
-  
-  // Get booking info for a specific date
-  const getBookingInfo = (date: Date) => {
-    return bookingsData.find(booking => {
-      const bookingStart = new Date(booking.start_date);
-      const bookingEnd = new Date(booking.end_date);
-      return (
-        isSameDay(date, bookingStart) || 
-        isSameDay(date, bookingEnd) || 
-        (isAfter(date, bookingStart) && isBefore(date, bookingEnd))
-      );
-    });
-  };
-  
-  // Navigation handlers
-  const goToPreviousPeriod = () => {
-    if (view === 'day') {
-      setDisplayMonth(subDays(displayMonth, 1));
-    } else if (view === 'week') {
-      setDisplayMonth(subWeeks(displayMonth, 1));
-    } else {
-      setDisplayMonth(subMonths(displayMonth, 1));
-    }
-  };
-  
-  const goToNextPeriod = () => {
-    if (view === 'day') {
-      setDisplayMonth(addDays(displayMonth, 1));
-    } else if (view === 'week') {
-      setDisplayMonth(addWeeks(displayMonth, 1));
-    } else {
-      setDisplayMonth(addMonths(displayMonth, 1));
-    }
-  };
-  
-  const goToToday = () => {
-    setDisplayMonth(new Date());
-  };
-  
-  // Get days to display based on view
-  const getDaysToDisplay = () => {
-    if (view === 'day') {
-      return [displayMonth];
-    } else if (view === 'week') {
-      const start = startOfWeek(displayMonth, { locale });
-      const end = endOfWeek(displayMonth, { locale });
-      return eachDayOfInterval({ start, end });
-    } else {
-      const start = startOfMonth(displayMonth);
-      const end = endOfMonth(displayMonth);
-      return eachDayOfInterval({ start, end });
-    }
-  };
-  
-  // Format the current view period for display
-  const formatViewPeriod = () => {
-    if (view === 'day') {
-      return format(displayMonth, 'PPP', { locale });
-    } else if (view === 'week') {
-      const start = startOfWeek(displayMonth, { locale });
-      const end = endOfWeek(displayMonth, { locale });
-      return `${format(start, 'MMM d', { locale })} - ${format(end, 'MMM d, yyyy', { locale })}`;
-    } else {
-      return format(displayMonth, 'MMMM yyyy', { locale });
-    }
+    return bookedDateObjects.some(bookedDate => 
+      bookedDate.getDate() === date.getDate() && 
+      bookedDate.getMonth() === date.getMonth() && 
+      bookedDate.getFullYear() === date.getFullYear()
+    );
   };
 
-  const days = getDaysToDisplay();
-  
   return (
-    <Card className="bg-nova-gray border-nova-gold/10 p-4">
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-2">
-          <CalendarIcon className="h-5 w-5 text-nova-gold" />
-          <h3 className="text-lg font-semibold text-nova-white">
-            {formatViewPeriod()}
-          </h3>
+    <Card className="border border-nova-gold/20 bg-nova-gray/10">
+      <CardContent className="p-4">
+        <div className="flex items-center gap-2 mb-4 text-sm text-nova-white/70">
+          <Info size={16} />
+          <span>
+            {language === 'fr' 
+              ? 'Cliquez pour sélectionner une plage de dates'
+              : 'Click to select a date range'}
+          </span>
         </div>
         
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-nova-white border-nova-gold/20 hover:bg-nova-gold/10"
-            onClick={goToPreviousPeriod}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
+        <div className="grid grid-cols-1 gap-4">
+          <div className="flex flex-wrap gap-2 mb-2">
+            <Badge variant="outline" className="bg-nova-gold/20 text-nova-gold border-nova-gold/40">
+              {language === 'fr' ? 'Disponible' : 'Available'}
+            </Badge>
+            <Badge variant="outline" className="bg-red-500/20 text-red-300 border-red-500/40">
+              {language === 'fr' ? 'Réservé' : 'Booked'}
+            </Badge>
+            <Badge variant="outline" className="bg-nova-gold text-nova-black border-nova-gold">
+              {language === 'fr' ? 'Sélectionné' : 'Selected'}
+            </Badge>
+          </div>
           
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-nova-white border-nova-gold/20 hover:bg-nova-gold/10"
-            onClick={goToToday}
-          >
-            {language === 'fr' ? 'Aujourd\'hui' : 'Today'}
-          </Button>
+          <Calendar
+            mode="range"
+            selected={selectedRange}
+            onSelect={setSelectedRange}
+            className="rounded-md text-nova-white"
+            classNames={{
+              day_today: "bg-nova-gold/20 text-nova-white",
+              day_selected: "bg-nova-gold text-nova-black hover:bg-nova-gold/80",
+              day_disabled: "text-nova-white/30",
+              day_range_middle: "bg-nova-gold/30 text-nova-white rounded-none",
+              day_range_end: "bg-nova-gold text-nova-black rounded-r-md",
+              day_range_start: "bg-nova-gold text-nova-black rounded-l-md"
+            }}
+            modifiers={{
+              booked: bookedDateObjects
+            }}
+            modifiersClassNames={{
+              booked: "bg-red-500/20 text-red-200 relative before:absolute before:inset-0 before:border-2 before:border-red-500/40 before:rounded-full before:scale-75"
+            }}
+            fromMonth={new Date()}
+            disabled={isDateBooked}
+            fixedWeeks={true}
+            weekStartsOn={1}
+            locale={language === 'fr' ? fr : enUS}
+          />
           
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-nova-white border-nova-gold/20 hover:bg-nova-gold/10"
-            onClick={goToNextPeriod}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-      
-      <div className={`grid ${view === 'month' ? 'grid-cols-7' : view === 'week' ? 'grid-cols-7' : 'grid-cols-1'} gap-1`}>
-        {/* Weekday headers for week and month views */}
-        {(view === 'week' || view === 'month') && (
-          <>
-            {eachDayOfInterval({
-              start: startOfWeek(new Date(), { locale }),
-              end: endOfWeek(new Date(), { locale })
-            }).map((day, i) => (
-              <div key={`header-${i}`} className="text-center py-2 text-xs font-medium text-nova-white/70">
-                {format(day, 'EEE', { locale })}
-              </div>
-            ))}
-          </>
-        )}
-        
-        {/* Calendar days */}
-        {days.map((day, i) => {
-          const isBooked = isDateBooked(day);
-          const isToday = isSameDay(day, new Date());
-          const bookingInfo = getBookingInfo(day);
-          const customerName = bookingInfo?.customer_name || bookingInfo?.user_details?.full_name || "";
-          
-          return (
-            <div 
-              key={`day-${i}`}
-              className={`
-                relative min-h-[80px] p-2 border rounded
-                ${isToday ? 'border-nova-gold' : 'border-nova-gray-dark/50'}
-                ${isBooked ? 'bg-nova-gold/10' : 'bg-nova-black/20'}
-              `}
-            >
-              <div className="text-right mb-1">
-                <span className={`text-sm font-medium ${isToday ? 'text-nova-gold' : 'text-nova-white/80'}`}>
-                  {format(day, 'd', { locale })}
-                </span>
-              </div>
-              
-              {isBooked && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Badge className="bg-nova-gold/80 text-nova-black text-xs whitespace-nowrap overflow-hidden text-ellipsis">
-                        {customerName || (language === 'fr' ? 'Réservé' : 'Booked')}
-                      </Badge>
-                    </TooltipTrigger>
-                    <TooltipContent className="bg-nova-gray border-nova-gold/30 text-nova-white">
-                      <p>{customerName ? customerName : (language === 'fr' ? 'Réservé' : 'Booked')}</p>
-                      {bookingInfo && (
-                        <p className="text-xs text-nova-gold">
-                          {format(new Date(bookingInfo.start_date), 'PP', { locale })} - {format(new Date(bookingInfo.end_date), 'PP', { locale })}
-                        </p>
-                      )}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
+          {view !== 'month' && (
+            <div className="mt-2 text-xs text-nova-white/50 text-center">
+              {language === 'fr' 
+                ? `Vue ${view === 'week' ? 'hebdomadaire' : 'journalière'} (aperçu limité)`
+                : `${view === 'week' ? 'Weekly' : 'Daily'} view (limited preview)`}
             </div>
-          );
-        })}
-      </div>
+          )}
+        </div>
+      </CardContent>
     </Card>
   );
 };
