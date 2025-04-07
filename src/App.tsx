@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   Route,
@@ -10,7 +11,6 @@ import { useCookies } from 'react-cookie';
 import { v4 as uuidv4 } from 'uuid';
 import { LanguageProvider } from '@/contexts/language-context';
 import { ThemeProvider } from '@/contexts/theme-context';
-import { Toaster } from '@/components/ui/toaster';
 import { supabase } from "@/integrations/supabase/client";
 import { AuthProvider } from '@/contexts/auth-context';
 
@@ -119,7 +119,6 @@ function RootApp() {
       <LanguageProvider>
         <AuthProvider>
           <App />
-          <Toaster />
         </AuthProvider>
       </LanguageProvider>
     </ThemeProvider>
