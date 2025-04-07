@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App.tsx'
 import './index.css'
 import { CookiesProvider } from 'react-cookie'
+import { Toaster } from 'sonner'
 
 // Create the root element first
 const rootElement = document.getElementById("root");
@@ -23,6 +24,7 @@ root.render(
     <BrowserRouter>
       <CookiesProvider>
         <App />
+        <Toaster position="top-right" />
       </CookiesProvider>
     </BrowserRouter>
   </React.StrictMode>

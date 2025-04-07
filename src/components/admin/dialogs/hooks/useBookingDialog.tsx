@@ -77,7 +77,7 @@ export const useBookingDialog = (language: string, onClose: () => void, refreshD
         const { data: newProfile, error: profileError } = await supabase
           .from('profiles')
           .insert({
-            id: testUserId,  // Use the generated UUID as the ID
+            id: testUserId,
             full_name: userName || 'Test User',
             phone: 'Test Phone'
           })
