@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useLanguage } from "@/contexts/language-context";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -78,7 +79,7 @@ export const BlogNewsSection = () => {
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-3">
             <BookOpen className="inline-block mr-2 text-nova-gold h-8 w-8" />
-            <span className="gold-gradient-text">
+            <span className="text-nova-white">
               {language === 'fr' ? 'Actualités & Tendances' : 'News & Trends'}
             </span>
           </h2>
