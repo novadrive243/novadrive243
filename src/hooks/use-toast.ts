@@ -1,4 +1,5 @@
-import { toast as sonnerToast } from "sonner";
+
+import { toast as sonnerToast, ExternalToast } from "sonner";
 import React from "react";
 
 // Define proper types for the toast function that match how it's being used
@@ -28,19 +29,19 @@ export const toast = (props: ToastProps | string) => {
       description,
       duration,
       action,
-      type,
+      ...(type === 'error' ? { type: 'error' as const } : {})
     });
   } else if (title) {
     return sonnerToast(title, {
       duration,
       action,
-      type,
+      ...(type === 'error' ? { type: 'error' as const } : {})
     });
   } else if (description) {
     return sonnerToast(description, {
       duration,
       action,
-      type,
+      ...(type === 'error' ? { type: 'error' as const } : {})
     });
   }
   
