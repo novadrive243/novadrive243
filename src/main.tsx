@@ -24,7 +24,7 @@ root.render(
     <BrowserRouter>
       <CookiesProvider>
         <App />
-        <Toaster position="top-right" />
+        <Toaster position="top-right" richColors />
       </CookiesProvider>
     </BrowserRouter>
   </React.StrictMode>

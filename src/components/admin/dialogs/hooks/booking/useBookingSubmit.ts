@@ -1,12 +1,8 @@
 
 import { useState } from 'react';
-import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
-import { 
-  calculateTotalPrice, 
-  createBookingNotification, 
-  updateVehicleAvailability 
-} from '../../utils/booking-dialog-utils';
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { v4 as uuidv4 } from 'uuid';
 
 interface UseBookingSubmitProps {
   userName: string;
@@ -33,168 +29,85 @@ export const useBookingSubmit = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted with:", { 
-      userId, 
-      vehicleId, 
-      userName, 
-      startDate: startDate?.toISOString(), 
-      endDate: endDate?.toISOString() 
-    });
-    
-    // Validate vehicleId and dates
-    if (!vehicleId) {
-      console.error("Missing required field: vehicleId is empty");
-      toast.error(language === 'fr' 
-        ? 'Veuillez sélectionner un véhicule' 
-        : 'Please select a vehicle');
-      return;
-    }
     
     if (!startDate || !endDate) {
-      console.error("Missing required field: dates are undefined", { startDate, endDate });
-      toast.error(language === 'fr' 
-        ? 'Veuillez sélectionner les dates de réservation' 
-        : 'Please select booking dates');
+      toast.error(language === 'fr' ? 'Veuillez sélectionner les dates' : 'Please select dates');
       return;
     }
-    
-    // If userId is null but userName contains text, we create a test booking
-    const isTestBooking = !userId && userName.trim() !== '';
-    
+
+    if (!vehicleId) {
+      toast.error(language === 'fr' ? 'Veuillez sélectionner un véhicule' : 'Please select a vehicle');
+      return;
+    }
+
     setLoading(true);
-    
+
     try {
-      // Calculate total price
-      const totalPrice = calculateTotalPrice(vehicleId, startDate, endDate);
-      console.log("Calculated price:", totalPrice);
-      
-      // First, create a temporary profile for test bookings if needed
-      let bookingUserId = userId;
-      
-      if (!bookingUserId) {
-        // For test bookings, create a temporary profile
-        console.log("Creating temporary profile for test booking");
+      // If no userId but we have a username, create a test profile
+      let effectiveUserId = userId;
+      if (!effectiveUserId && userName) {
+        const testId = uuidv4();
         
-        // Generate a UUID for the profile
-        const testUserId = crypto.randomUUID();
-        
-        const { data: newProfile, error: profileError } = await supabase
+        // Create test profile for demo purposes
+        const { error: profileError } = await supabase
           .from('profiles')
           .insert({
-            id: testUserId,
-            full_name: userName || 'Test User',
-            phone: 'Test Phone'
-          })
-          .select()
-          .single();
-          
+            id: testId,
+            full_name: userName
+          });
+        
         if (profileError) {
-          console.error("Error creating test profile:", profileError);
-          throw new Error(language === 'fr' 
-            ? 'Erreur lors de la création du profil de test' 
-            : 'Error creating test profile');
+          throw profileError;
         }
-        
-        if (newProfile) {
-          bookingUserId = newProfile.id;
-          console.log("Created test profile with ID:", bookingUserId);
-        }
+        effectiveUserId = testId;
       }
-      
-      if (!bookingUserId) {
-        throw new Error(language === 'fr'
-          ? 'Impossible de créer une réservation sans utilisateur'
-          : 'Unable to create booking without a user');
+
+      if (!effectiveUserId) {
+        throw new Error('No user ID available');
       }
-      
-      // Create booking in Supabase
-      const bookingData = {
-        vehicle_id: vehicleId,
-        user_id: bookingUserId,
-        start_date: startDate.toISOString().split('T')[0],
-        end_date: endDate.toISOString().split('T')[0],
-        total_price: totalPrice,
-        status: 'pending'
-      };
-      
-      console.log("Booking data being sent:", bookingData);
-      
-      const { data, error } = await supabase
+
+      // Calculate price - in a real app this would be more sophisticated
+      const pricePerDay = 100; // Default price
+      const days = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+      const totalPrice = pricePerDay * days;
+
+      // Create booking
+      const { error: bookingError } = await supabase
         .from('bookings')
-        .insert(bookingData)
-        .select();
-        
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
+        .insert({
+          user_id: effectiveUserId,
+          vehicle_id: vehicleId,
+          start_date: startDate.toISOString().split('T')[0],
+          end_date: endDate.toISOString().split('T')[0],
+          total_price: totalPrice,
+        });
+
+      if (bookingError) {
+        throw bookingError;
       }
-      
-      console.log("Booking created:", data);
-      
-      // Log the admin activity using the edge function
-      await logAdminActivity(isTestBooking, data?.[0]?.id, vehicleId);
-      
-      // Create notification for the new booking
-      await createBookingNotification(
-        userName || 'Client Test', 
-        vehicleId, 
-        startDate, 
-        endDate, 
-        language
+
+      toast.success(
+        language === 'fr' 
+          ? 'Réservation créée avec succès' 
+          : 'Booking created successfully'
       );
       
-      // Update vehicle availability
-      await updateVehicleAvailability(vehicleId, startDate, endDate, language);
-      
-      // Show success notification
-      toast.success(language === 'fr' 
-        ? 'Réservation créée avec succès' 
-        : 'Booking created successfully');
-      
-      // Close dialog and refresh data
       onClose();
-      
-      if (typeof refreshData === 'function') {
-        console.log("Refreshing data after booking creation");
-        refreshData();
-      } else {
-        console.error("refreshData is not a function:", refreshData);
-      }
-    } catch (error: any) {
-      console.error('Error creating booking:', error);
-      toast.error(language === 'fr' 
-        ? `Erreur lors de la création de la réservation: ${error.message || ''}` 
-        : `Error creating booking: ${error.message || ''}`);
+      refreshData();
+    } catch (error) {
+      console.error("Error creating booking:", error);
+      toast.error(
+        language === 'fr' 
+          ? 'Erreur lors de la création de la réservation' 
+          : 'Error creating booking'
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  // Helper function to log admin activity
-  const logAdminActivity = async (isTestBooking: boolean, bookingId: string | undefined, vehicleId: string) => {
-    try {
-      const adminUser = await supabase.auth.getUser();
-      const adminId = adminUser.data.user?.id;
-      
-      if (adminId) {
-        // Use the edge function to log admin activity
-        await supabase.functions.invoke('log-admin-activity', {
-          body: {
-            adminId: adminId,
-            activityType: 'booking_created',
-            details: {
-              booking_id: bookingId,
-              vehicle_id: vehicleId,
-              is_test_booking: isTestBooking
-            }
-          }
-        });
-      }
-    } catch (logError) {
-      console.error('Error logging admin activity:', logError);
-      // Don't throw error for logging failure
-    }
+  return {
+    loading,
+    handleSubmit
   };
-
-  return { loading, handleSubmit };
 };
