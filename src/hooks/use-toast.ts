@@ -1,4 +1,3 @@
-
 import { toast as sonnerToast, ExternalToast } from "sonner";
 import React from "react";
 
@@ -20,29 +19,28 @@ export const toast = (props: ToastProps | string) => {
   
   const { title, description, variant, duration, action } = props;
   
-  // Map variant to sonner's type
-  const type = variant === 'destructive' ? 'error' : undefined;
+  // Map variant to sonner's type - fixed to avoid TS error with type property
+  const toastOptions: ExternalToast = {
+    duration,
+    action
+  };
+
+  // Add error styling if variant is destructive
+  if (variant === 'destructive') {
+    // Using proper typing for the sonner toast
+    Object.assign(toastOptions, { style: { backgroundColor: 'var(--destructive)', color: 'var(--destructive-foreground)' } });
+  }
   
   // Use the appropriate sonner toast based on available props
   if (title && description) {
     return sonnerToast(title, {
-      description,
-      duration,
-      action,
-      ...(type === 'error' ? { type: 'error' as const } : {})
+      ...toastOptions,
+      description
     });
   } else if (title) {
-    return sonnerToast(title, {
-      duration,
-      action,
-      ...(type === 'error' ? { type: 'error' as const } : {})
-    });
+    return sonnerToast(title, toastOptions);
   } else if (description) {
-    return sonnerToast(description, {
-      duration,
-      action,
-      ...(type === 'error' ? { type: 'error' as const } : {})
-    });
+    return sonnerToast(description, toastOptions);
   }
   
   // Fallback to empty toast (shouldn't happen)
