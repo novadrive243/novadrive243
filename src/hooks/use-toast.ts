@@ -21,7 +21,7 @@ export const toast = (props: ToastProps | string) => {
   const { title, description, variant, duration, action } = props;
   
   // Map variant to sonner's type
-  const type = variant === 'destructive' ? 'error' : 'default';
+  const type = variant === 'destructive' ? 'error' : undefined;
   
   // Use the appropriate sonner toast based on available props
   if (title && description) {
