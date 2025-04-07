@@ -10,7 +10,6 @@ import { PromotionsBanner } from "@/components/home/promotions-banner";
 import { QuickBookingWidget } from "@/components/home/quick-booking-widget";
 import { FaqSection } from "@/components/home/faq-section";
 import { SocialMediaIntegration } from "@/components/home/social-media-integration";
-import { BlogNewsSection } from "@/components/home/blog-news-section";
 
 const HomePage = () => {
   return (
@@ -24,7 +23,6 @@ const HomePage = () => {
         <QuickBookingWidget />
         <TestimonialsSection />
         <FaqSection />
-        <BlogNewsSection />
         <SocialMediaIntegration />
       </main>
       <Footer />
