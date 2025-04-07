@@ -1,12 +1,15 @@
-import { toast as sonnerToast } from "sonner";
 
-type ToastProps = {
+import { toast as sonnerToast } from "sonner";
+import React from "react";
+
+// Define proper types for the toast function that match how it's being used
+export interface ToastProps {
   title?: string;
   description?: string;
   variant?: "default" | "destructive";
   duration?: number;
   action?: React.ReactNode;
-};
+}
 
 // Custom toast function that supports both old and new API
 export const toast = (props: ToastProps | string) => {
