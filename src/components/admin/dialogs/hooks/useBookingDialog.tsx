@@ -71,9 +71,13 @@ export const useBookingDialog = (language: string, onClose: () => void, refreshD
         // For test bookings, create a temporary profile
         console.log("Creating temporary profile for test booking");
         
+        // Generate a UUID for the profile
+        const testUserId = crypto.randomUUID();
+        
         const { data: newProfile, error: profileError } = await supabase
           .from('profiles')
           .insert({
+            id: testUserId,  // Use the generated UUID as the ID
             full_name: userName || 'Test User',
             phone: 'Test Phone'
           })
