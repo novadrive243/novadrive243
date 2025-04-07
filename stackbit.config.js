@@ -54,11 +54,16 @@ export default {
     uploadDir: "lovable-uploads",
     publicPath: "/"
   },
-  // Adding Netlify-specific configuration
+  // Updated Netlify configuration for branch previews
   deployment: {
     provider: "netlify",
-    siteId: "5c06cea2-b5b0-428b-a81b-84700530d1a4", // Updated with the actual Netlify site ID
-    buildHook: "", // Optional: Add a build hook URL if you have one configured
-    previewBranches: true // Enable branch previews
+    siteId: "5c06cea2-b5b0-428b-a81b-84700530d1a4",
+    buildHook: "",
+    previewBranches: true,
+    // Adding more detailed Netlify configuration
+    netlify: {
+      baseDir: ".",
+      framework: "vite"
+    }
   }
 }

@@ -1,0 +1,21 @@
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Production context
+[context.production]
+  environment = { NODE_VERSION = "18" }
+
+# Branch preview context
+[context.branch-deploy]
+  command = "npm run build"
+
+# Deploy preview context
+[context.deploy-preview]
+  command = "npm run build"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
