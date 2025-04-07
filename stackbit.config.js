@@ -5,6 +5,7 @@ export default {
   buildCommand: "npm run build",
   publishDir: "dist",
   devCommand: "npm run dev",
+  nodeVersion: "18",
   contentSources: [
     {
       name: "pages",
@@ -52,5 +53,11 @@ export default {
     staticDir: "public",
     uploadDir: "lovable-uploads",
     publicPath: "/"
+  },
+  // Adding Netlify-specific configuration
+  deployment: {
+    provider: "netlify",
+    siteId: "your-netlify-site-id", // This should be replaced with the actual Netlify site ID
+    buildHook: "" // Optional: Add a build hook URL if you have one configured
   }
-};
+}
