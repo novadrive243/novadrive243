@@ -57,7 +57,7 @@ export default {
   // Adding Netlify-specific configuration
   deployment: {
     provider: "netlify",
-    siteId: "your-netlify-site-id", // This should be replaced with the actual Netlify site ID
+    siteId: "5c06cea2-b5b0-428b-a81b-84700530d1a4", // Updated with the actual Netlify site ID
     buildHook: "" // Optional: Add a build hook URL if you have one configured
   }
 }
