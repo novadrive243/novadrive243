@@ -1,4 +1,3 @@
-
 import { toast as sonnerToast } from "sonner";
 import React from "react";
 
@@ -29,21 +28,18 @@ export const toast = (props: ToastProps | string) => {
       description,
       duration,
       action,
-      // @ts-ignore - sonner has different types but this works
       type,
     });
   } else if (title) {
     return sonnerToast(title, {
       duration,
       action,
-      // @ts-ignore - sonner has different types but this works
       type,
     });
   } else if (description) {
     return sonnerToast(description, {
       duration,
       action,
-      // @ts-ignore - sonner has different types but this works
       type,
     });
   }
